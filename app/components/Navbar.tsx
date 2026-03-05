@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ChartColumnIncreasing, CircleQuestionMark, Cog, House } from 'lucide-react'
+import Image from 'next/image';
 
 type NavLinkProps = {
   href?: string;
@@ -49,10 +50,12 @@ export default function Navbar() {
 
             <li>
             <Link href="#" aria-label="Go to home">
-              <img
-                src="https://placehold.co/120x40?text=Logo"
+              <Image
+                src="/images/icons/five-icon.png"
+                width={30}
+                height={60}
                 alt="App logo"
-                className="h-10 w-30 block object-cover"
+                className="h-10 w-auto block object-cover"
               />
             </Link>
             </li>

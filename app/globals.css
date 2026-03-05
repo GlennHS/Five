@@ -3,27 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-
-  /* Metric colors (single source of truth) */
-  --mind-rgb: 59 130 246;   /* blue */
-  --body-rgb: 249 115 22;   /* orange */
-  --cash-rgb: 34 197 94;    /* green */
-  --work-rgb: 168 85 247;   /* purple */
-  --bond-rgb: 236 72 153;   /* pink */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  /* Tailwind utilities for metric colors */
-  --color-mind: rgb(var(--mind-rgb));
-  --color-body: rgb(var(--body-rgb));
-  --color-cash: rgb(var(--cash-rgb));
-  --color-work: rgb(var(--work-rgb));
-  --color-bond: rgb(var(--bond-rgb));
 }
 
 body {

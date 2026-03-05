@@ -20,11 +20,8 @@ const APP_DATA = {
       name: 'Bond',
       value: 22,
     },
-    total:{
-      name: 'Total',
-      value: 47,
-    },
-  }
+  },
+  total: 47,
 }
 
 export default APP_DATA;

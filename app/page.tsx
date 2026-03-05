@@ -16,6 +16,9 @@ import { useEffect, useState } from 'react';
 
 import type { ChartConfiguration } from 'chart.js'
 import { createRandomFive } from './utils/factories';
+import { calculateTotal } from './utils/helpers';
+import { FIVE_COLORS } from './utils/colors';
+import FiveRadarGraph from './components/FiveRadarGraph';
 
 ChartJS.register(
   RadialLinearScale,
@@ -29,51 +32,28 @@ ChartJS.register(
 export default function Home() {
 
   const metrics = Object.values(APP_DATA.metrics);
-  console.log(metrics);
+  const total = calculateTotal(metrics.map(m => m.value))
 
   const [chartData, setChartData] = useState<ChartConfiguration<'radar'>>(RADAR_DEFAULT_CONFIG);
 
-  useEffect(() => {
-
-    setChartData({
-      ...RADAR_DEFAULT_CONFIG,
-      data: {
-        labels: [
-          'MIND',
-          'BODY',
-          'CASH',
-          'WORK',
-          'BOND',
-          'TOTAL',
-        ],
-        datasets:[{
-          label: 'Metrics',
-          data: createRandomFive(),
-          fill: true,
-          backgroundColor: "rgb(59 130 246 / 0.2)",
-          borderColor: "rgb(59 130 246)",
-          pointBackgroundColor: "rgb(59 130 246)",
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: "rgb(59 130 246)",
-        }]
-      }
-    });
-  }, []);
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
-      <main className="flex min-h-screen w-full sm:max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white sm:items-start">
+      <main className="flex min-h-screen w-full sm:max-w-3xl flex-col items-center justify-between p-4 bg-white sm:items-start">
         <div className="w-full">
-          <Radar data={chartData.data} />
+          {/* <FiveRadarGraph data={metrics.map(m=>m.value)} /> */}
+          <FiveRadarGraph data={createRandomFive()} />
         </div>
         <div className='w-full flex items-center content-between'>
             {metrics.map((metric) => (
               <div key={metric.name} className="w-full h-full bg-white flex flex-col items-center">
                 <h3 className={`text-sm font-medium text-${metric.name.toLowerCase()}`}>{metric.name}</h3>
-                <p className="text-sm text-gray-500">{metric.value}</p>
+                <p className="text-sm text-gray-500 uppercase">{metric.value}</p>
               </div>
             ))}
+            <div className="w-full h-full bg-white flex flex-col items-center">
+              <h3 className={"text-sm font-medium text-total"}>TOTAL</h3>
+              <p className="text-sm text-gray-500 uppercase">{total}</p>
+            </div>
         </div>
         <div>
           { /* Actions */ }
