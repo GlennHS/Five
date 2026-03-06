@@ -25,6 +25,7 @@ export const RADAR_DEFAULT_CONFIG: ChartConfiguration<'radar'> = {
       pointHoverBorderColor: radarColor,
       borderWidth: 5,
       pointRadius: 2,
+      pointHitRadius: 8
     }]
   },
   options: {
@@ -35,12 +36,50 @@ export const RADAR_DEFAULT_CONFIG: ChartConfiguration<'radar'> = {
     },
     scales: {
       r: {
-          angleLines: {
-              display: false
-          },
-          min: 0,
-          max: 100
+        min: 0,
+        max: 100,
+        beginAtZero: true,
+        ticks: {
+          stepSize: 20
+        },
+        grid: {
+          circular: true
+        }
       }
-    }
-  }
+    },
+  },
+}
+
+export const LINE_DEFAULT_CONFIG: ChartConfiguration<'line'> = {
+  type: 'line',
+  data: {
+    labels: [
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thu',
+      'Fri',
+      'Sat',
+      'Sun',
+    ],
+    datasets: [{
+      label: 'Metrics',
+      data: [65, 59, 80, 81, 56, 55, 40],
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        beginAtZero: true,
+        ticks: {
+          stepSize: 20
+        },
+        grid: {
+          circular: true
+        }
+      }
+    },
+  },
 }

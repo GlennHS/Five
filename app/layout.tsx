@@ -25,6 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={nunito.className}>
+      <head>
+        <title>FIVE! Love Yourself</title>
+      </head>
       <link rel="icon" href="/images/icons/five-icon.png" sizes="any" />
       <body>
         {children}
