@@ -49,7 +49,7 @@ export default function Home() {
                 <p className="text-sm text-gray-500 uppercase">{metric.value}</p>
               </div>
             ))}
-            <div className="w-full h-full bg-white flex flex-col items-center text-mind">
+            <div className="w-full h-full bg-white flex flex-col items-center text-slate-600">
               <h3 className={"text-sm font-medium text-total"}>TOTAL</h3>
               <p className="text-sm text-gray-500 uppercase">{total}</p>
             </div>
