@@ -3,9 +3,10 @@ import { Bar, getElementAtEvent } from "react-chartjs-2";
 import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
 import { BarElement, CategoryScale, Chart, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../fixtures/Colors";
+import APP_DATA from "@/app/fixtures/AppData";
 
 type FiveBarGraphProps = {
-  data: number[];
+  data?: number[];
 };
 
 Chart.register(LinearScale, CategoryScale, BarElement)
@@ -61,7 +62,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
         ],
         datasets: [{
           label: 'Metrics',
-          data: props.data,
+          data: props.data || Object.values(APP_DATA.metrics).map(v => v.value) || [0,0,0,0,0],
           backgroundColor: [
             `rgba(${METRIC_COLORS.MIND}, 0.3)`,
             `rgba(${METRIC_COLORS.BODY}, 0.3)`,
@@ -82,11 +83,13 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
   }, []);
 
   return (
-    <Bar
-      ref={chartRef}
-      onClick={handleChartClick}
-      data={chartData.data}
-      options={chartData.options}
-    />
+    <div className="h-full w-full">
+      <Bar
+        ref={chartRef}
+        onClick={handleChartClick}
+        data={chartData.data}
+        options={chartData.options}
+      />
+    </div>
   )
 }

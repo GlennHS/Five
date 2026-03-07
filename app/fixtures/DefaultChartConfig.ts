@@ -116,13 +116,14 @@ export const BAR_DEFAULT_CONFIG: ChartConfiguration<'bar'> = {
     }]
   },
   options: {
+    maintainAspectRatio: false,
     scales: {
-      r: {
+      y: {
         min: 0,
-        max: 100,
+        suggestedMax: 70,
         beginAtZero: true,
         ticks: {
-          stepSize: 20
+          stepSize: 10,
         }
       }
     },
