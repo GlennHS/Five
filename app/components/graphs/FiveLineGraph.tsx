@@ -28,6 +28,8 @@ export default function FiveLineGraph(props: FiveLineGraphProps) {
         datasets: [{
           label: 'Metrics',
           data: props.data,
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
         }]
       },
     });

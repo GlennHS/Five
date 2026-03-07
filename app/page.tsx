@@ -17,6 +17,8 @@ import type { ChartConfiguration } from 'chart.js'
 import { createRandomFive } from './utils/factories';
 import { calculateTotal } from './utils/helpers';
 import FiveLineGraph from './components/graphs/FiveLineGraph';
+import FiveRadarGraph from './components/graphs/FiveRadarGraph';
+import FiveBarGraph from './components/graphs/FiveBarGraph';
 
 ChartJS.register(
   RadialLinearScale,
@@ -36,8 +38,9 @@ export default function Home() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
       <main className="flex min-h-screen w-full sm:max-w-3xl flex-col items-center justify-between p-4 bg-white sm:items-start">
         <div className="w-full">
-          <FiveLineGraph data={metrics.map(m=>m.value)} />
-          {/* <FiveLineGraph data={[0,1,2,3,4,5]} /> */}
+          {/* <FiveRadarGraph data={metrics.map(m=>m.value)} /> */}
+          {/* <FiveLineGraph data={createRandomFive()} /> */}
+          <FiveBarGraph data={createRandomFive()} />
         </div>
         <div className='w-full flex items-center content-between'>
             {metrics.map((metric) => (

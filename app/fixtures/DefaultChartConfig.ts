@@ -65,6 +65,7 @@ export const LINE_DEFAULT_CONFIG: ChartConfiguration<'line'> = {
     datasets: [{
       label: 'Metrics',
       data: [65, 59, 80, 81, 56, 55, 40],
+      pointHitRadius: 20  
     }]
   },
   options: {
@@ -78,6 +79,35 @@ export const LINE_DEFAULT_CONFIG: ChartConfiguration<'line'> = {
         },
         grid: {
           circular: true
+        }
+      }
+    },
+  },
+}
+
+export const BAR_DEFAULT_CONFIG: ChartConfiguration<'bar'> = {
+  type: 'bar',
+  data: {
+    labels: [
+      'MIND',
+      'BODY',
+      'CASH',
+      'WORK',
+      'BOND',
+    ],
+    datasets: [{
+      label: 'Metrics',
+      data: [65, 59, 80, 81, 56, 55, 40],
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        beginAtZero: true,
+        ticks: {
+          stepSize: 20
         }
       }
     },
