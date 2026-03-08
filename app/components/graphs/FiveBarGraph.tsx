@@ -4,10 +4,15 @@ import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../fixtures/Colors";
 import APP_DATA from "@/app/fixtures/AppData";
+import type { MetricName } from "../../types";
 
 type FiveBarGraphProps = {
   data?: number[];
+  highlightedMetric?: MetricName | null;
+  onMetricChange?: (metric: MetricName | null) => void;
 };
+
+const METRIC_ORDER: MetricName[] = ["MIND", "BODY", "CASH", "WORK", "BOND"];
 
 Chart.register(LinearScale, CategoryScale, BarElement)
 
@@ -16,9 +21,26 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
   const chartRef = useRef<Chart | null>(null);
 
   const handleChartClick = (event: ChartEvent, elements: ActiveElement[], chart: Chart<'bar'>) => {
-    if (!chartRef?.current || !elements?.length) return;
+    if (!chartRef?.current) return;
+
+    if (!elements?.length) {
+      changeSelectedBar(-1);
+      props.onMetricChange?.(null);
+      return;
+    }
 
     const index = elements[0].index;
+
+    changeSelectedBar(index);
+
+    const metricName = METRIC_ORDER[index];
+    if (metricName) {
+      props.onMetricChange?.(metricName);
+    }
+  };
+
+  const changeSelectedBar = (index: number | null) => {
+    if (!chartRef?.current) return;
 
     const baseBackgrounds = [
       `rgba(${METRIC_COLORS.MIND}, 0.3)`,
@@ -29,7 +51,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
     ];
 
     const nextBackgrounds = [...baseBackgrounds];
-    if (index >= 0 && index < nextBackgrounds.length) {
+    if (index !== null && index >= 0 && index < nextBackgrounds.length) {
       const colorValues = [
         METRIC_COLORS.MIND,
         METRIC_COLORS.BODY,
@@ -44,19 +66,13 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
 
     chartRef.current.data.datasets[0].backgroundColor = nextBackgrounds;
     chartRef.current.update();
-  };
+  }
 
   useEffect(() => {
     setChartData({
       ...chartData,
       data: {
-        labels: [
-          'MIND',
-          'BODY',
-          'CASH',
-          'WORK',
-          'BOND',
-        ],
+        labels: METRIC_ORDER,
         datasets: [{
           label: 'Metrics',
           data: props.data || Object.values(APP_DATA.metrics).map(v => v.value) || [0,0,0,0,0],
@@ -82,6 +98,16 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (props.highlightedMetric == null) {
+      changeSelectedBar(-1);
+      return;
+    }
+
+    const index = METRIC_ORDER.indexOf(props.highlightedMetric);
+    changeSelectedBar(index === -1 ? -1 : index);
+  }, [props.highlightedMetric])
 
   return (
     <div className="h-full w-full">
