@@ -1,27 +1,28 @@
-const APP_DATA = {
-  metrics: {
-    mind: {
-      name: 'Mind',
+import { AppData } from "../types";
+
+const APP_DATA: AppData = {
+  metrics: [
+    {
+      name: 'MIND',
       value: 48,
     },
-    body: {
-      name: 'Body',
+    {
+      name: 'BODY',
       value: 27,
     },
-    cash: {
-      name: 'Cash',
+    {
+      name: 'CASH',
       value: 84,
     },
-    work: {
-      name: 'Work',
+    {
+      name: 'WORK',
       value: 12,
     },
-    bond: {
-      name: 'Bond',
+    {
+      name: 'BOND',
       value: 22,
     },
-  },
-  total: 47,
+  ]
 }
 
 export default APP_DATA;

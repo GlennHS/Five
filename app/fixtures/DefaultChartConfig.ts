@@ -125,7 +125,16 @@ export const BAR_DEFAULT_CONFIG: ChartConfiguration<'bar'> = {
         ticks: {
           stepSize: 10,
         }
-      }
+      },
     },
+    interaction: {
+      mode: 'nearest',
+      intersect: true
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
   },
 }

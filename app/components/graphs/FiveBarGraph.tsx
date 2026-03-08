@@ -1,7 +1,7 @@
-import { MouseEvent, useEffect, useRef, useState } from "react";
-import { Bar, getElementAtEvent } from "react-chartjs-2";
+import { useEffect, useRef, useState } from "react";
+import { Bar } from "react-chartjs-2";
 import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
-import { BarElement, CategoryScale, Chart, LinearScale } from "chart.js";
+import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../fixtures/Colors";
 import APP_DATA from "@/app/fixtures/AppData";
 
@@ -15,11 +15,8 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
   const [chartData, setChartData] = useState(BAR_DEFAULT_CONFIG);
   const chartRef = useRef<Chart | null>(null);
 
-  const handleChartClick = (event: MouseEvent) => {
-    if (!chartRef.current) return;
-
-    const elements = getElementAtEvent(chartRef.current, event);
-    if (!elements.length) return;
+  const handleChartClick = (event: ChartEvent, elements: ActiveElement[], chart: Chart<'bar'>) => {
+    if (!chartRef?.current || !elements?.length) return;
 
     const index = elements[0].index;
 
@@ -79,6 +76,10 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
           ],
         }]
       },
+      options: {
+        onClick: handleChartClick,
+        onHover: handleChartClick
+      }
     });
   }, []);
 
