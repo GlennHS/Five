@@ -15,7 +15,7 @@ export default function MetricCard({ metric, isActive, onClick }: MetricCardProp
         bg-${metric.name.toLowerCase()}
         cursor-pointer select-none transition
         hover:-translate-y-0.5 hover:shadow-md
-        ${isActive ? "ring-2 ring-offset-2 ring-slate-900 ring-offset-white" : ""}
+        ${isActive ? "opacity-100 ring-2 ring-offset-2 ring-slate-900 ring-offset-white" : "opacity-50"}
       `}
     >
       <h3 className="text-lg font-semibold tracking-wide">
