@@ -113,6 +113,8 @@ export const BAR_DEFAULT_CONFIG: ChartConfiguration<'bar'> = {
         `rgb(${METRIC_COLORS.WORK})`,
         `rgb(${METRIC_COLORS.BOND})`,
       ],
+      borderWidth: 2,
+      hoverBorderWidth: 4
     }]
   },
   options: {

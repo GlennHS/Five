@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChartColumnIncreasing, CircleQuestionMark, Cog, House } from 'lucide-react'
+import { ChartColumnIncreasing, Cog, House, ListChecks } from 'lucide-react'
 import Image from 'next/image';
 
 type NavLinkProps = {
@@ -25,12 +25,12 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
 export default function Navbar() {
   return (
     <header className="w-full border-t-2 border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center">
-      <div className="mx-auto flex max-w-sm flex-col items-center gap-2 px-4 py-2">
+      <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
         <nav className="w-full">
-          <ul className="h-full flex items-center justify-between text-sm gap-4">
+          <ul className="h-full flex items-center justify-between text-base gap-4">
             <li>
               <NavLink
-                href="#"
+                href="/"
                 aria-label="Go to home"
               >
                 <House />
@@ -39,17 +39,17 @@ export default function Navbar() {
             </li>
 
             <li>
-            <NavLink
-              href="#"
-              aria-label="Go to metrics"
-            >
-              <ChartColumnIncreasing />
-              <span>Metrics</span>
-            </NavLink>
+              <NavLink
+                href="#"
+                aria-label="Go to about"
+              >
+                <ListChecks />
+                <span>Track</span>
+              </NavLink>
             </li>
 
             <li>
-            <Link href="#" aria-label="Go to home">
+            <Link href="/" aria-label="Go to home">
               <Image
                 src="/images/icons/five-icon.png"
                 width={30}
@@ -61,23 +61,23 @@ export default function Navbar() {
             </li>
 
             <li>
-            <NavLink
-              href="#"
-              aria-label="Go to about"
-            >
-              <CircleQuestionMark />
-              <span>About</span>
-            </NavLink>
+              <NavLink
+                href="#"
+                aria-label="Go to metrics"
+              >
+                <ChartColumnIncreasing />
+                <span>Metrics</span>
+              </NavLink>
             </li>
 
             <li>
-            <NavLink
-              href="#"
-              aria-label="Go to settings"
-            >
-              <Cog />
-              <span>Settings</span>
-            </NavLink>
+              <NavLink
+                href="#"
+                aria-label="Go to settings"
+              >
+                <Cog />
+                <span>Settings</span>
+              </NavLink>
             </li>
           </ul>
         </nav>

@@ -69,8 +69,8 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
   }
 
   useEffect(() => {
-    setChartData({
-      ...chartData,
+    setChartData((prev) => ({
+      ...prev,
       data: {
         labels: METRIC_ORDER,
         datasets: [{
@@ -96,7 +96,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
         onClick: handleChartClick,
         onHover: handleChartClick
       }
-    });
+    }));
   }, []);
 
   useEffect(() => {
