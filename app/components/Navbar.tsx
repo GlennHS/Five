@@ -62,7 +62,7 @@ export default function Navbar() {
 
             <li>
               <NavLink
-                href="#"
+                href="/metrics"
                 aria-label="Go to metrics"
               >
                 <ChartColumnIncreasing />
