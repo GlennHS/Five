@@ -1,6 +1,7 @@
 import type { MetricKey } from '@/app/types'
 import { use } from 'react'
 import MetricPage from './MetricPage'
+import { notFound } from 'next/navigation'
 
 const VALID_METRIC_SLUGS = ['mind', 'body', 'cash', 'work', 'bond'] as const
 
@@ -14,5 +15,5 @@ export default function Page({
   params: Promise<{ metric: MetricKey }>
 }) {
   const { metric } = use(params)
-  return <MetricPage metric={metric}/>
+  return VALID_METRIC_SLUGS.includes(metric) ? <MetricPage metric={metric}/> : notFound()
 }

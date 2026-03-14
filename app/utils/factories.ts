@@ -1,11 +1,11 @@
-import { Action, ActionDefinition, FiveMetrics } from "../types"
+import { Action, ActionDefinition, FiveMetric } from "../types"
 import { createRandomUUID, pickRandom } from "./helpers"
 import { convertDayJSToTimestamp, getRandomDateBetween } from "./dateTime"
 import { Dayjs } from "dayjs"
 
 export const createRandomMetric = (min: number = 30, max: number = 80): number => Math.floor(Math.random() * (max - min) + min)
 
-export const createRandomFive = (min: number = 30, max: number = 80): FiveMetrics => {
+export const createRandomFive = (min: number = 30, max: number = 80): FiveMetric => {
   return {
     mind: createRandomMetric(min, max),
     body: createRandomMetric(min, max),

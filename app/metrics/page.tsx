@@ -1,14 +1,15 @@
 'use client';
 
-import { calculateTotal, getMetricsFromSnapshot } from "../utils/helpers";
-import type { Metric } from "../types";
+import { calculateMetricsForRange, calculateTotal } from "../utils/helpers";
+import { METRIC_KEYS } from "../types";
 import MetricCardLarge from "../components/MetricCardLarge";
-import { metricSnapshots } from "../fixtures/AppData";
+import { actionDefinitions, actionHistory } from "../fixtures/AppData";
+import { getAWeekAgo, getToday } from "../utils/dateTime";
 
 export default function Page() {
 
-  const metrics = getMetricsFromSnapshot(metricSnapshots.day);
-  const total = calculateTotal(metrics.map((m) => m.value));
+  const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
+  const total = calculateTotal(metrics);
 
   return (
     <main className="min-h-screen w-full bg-white px-4 py-8">
@@ -23,11 +24,11 @@ export default function Page() {
         </header>
 
         <section className="grid grid-cols-2 gap-4">
-          {metrics.map((m: Metric) => (
-            <MetricCardLarge key={m.name} metric={m} />
+          {METRIC_KEYS.map(k => (
+            <MetricCardLarge key={k} metric={{name: k, value: metrics[k]}} />
           ))}
           <MetricCardLarge
-            metric={{ name: "TOTAL", value: total }}
+            metric={{ name: "total", value: total }}
           />
         </section>
 

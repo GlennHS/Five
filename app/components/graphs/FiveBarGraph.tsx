@@ -3,10 +3,10 @@ import { Bar } from "react-chartjs-2";
 import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../fixtures/Colors";
-import type { FiveMetrics, MetricKey } from "../../types";
+import type { FiveMetric, MetricKey } from "../../types";
 
 type FiveBarGraphProps = {
-  data?: FiveMetrics;
+  data?: FiveMetric;
   highlightedMetric?: MetricKey | null;
   onMetricChange?: (metric: MetricKey | null) => void;
 };
@@ -67,7 +67,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
     chartRef.current.update();
   }
 
-  const convertMetricsToData = (m: FiveMetrics): number[] => [m.mind, m.body, m.cash, m.work, m.bond]
+  const convertMetricsToData = (m: FiveMetric): number[] => [m.mind, m.body, m.cash, m.work, m.bond]
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

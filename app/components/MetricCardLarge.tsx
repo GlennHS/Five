@@ -7,15 +7,12 @@ type MetricCardProps = {
   onClick?: () => void;
 }
 
-export default function MetricCardLarge({ className, metric, isActive, onClick }: MetricCardProps) {
+export default function MetricCardLarge({ className, metric }: MetricCardProps) {
   const router = useRouter();
-  const isTouch = typeof window !== "undefined" && "ontouchstart" in window;
 
-  /**
-   * If we're on mobile, first tap just selects (highlights), second tap navigates.
-   * If we're on desktop, hover selects (highlights) and click navigates.
-   */
   const handleClick = () => {
+    if (metric.name == "total") return
+
     const target = `/metrics/${metric.name.toLowerCase()}`;
     router.push(target);
   };

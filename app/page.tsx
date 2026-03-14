@@ -35,12 +35,11 @@ ChartJS.register(
 );
 
 export default function Home() {
-
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null);
 
   // const metrics = getMetricsFromSnapshot(metricSnapshots.day);
   const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
-  const total = calculateTotal(Object.values(metrics))
+  const total = calculateTotal(metrics)
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -73,7 +72,7 @@ export default function Home() {
             <MetricCard
               metric={{name: "total", value: total}}
               isActive={highlightedMetric === null}
-              onClick={() => handleMetricCardClick("total")}
+              onClick={() => handleMetricCardClick('total')}
             />
           </div>
         </section>

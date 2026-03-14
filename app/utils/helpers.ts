@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, ActionDefinition, FiveMetrics, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
+import { Action, ActionDefinition, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
 import { convertTimestampToDayJS, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
@@ -14,11 +14,8 @@ export const days = [
   "Sun",
 ]
 
-export const calculateTotal = (five: number[]) : number => {
-  if (five.length !== 5)
-    return 0
-  else
-    return five.reduce((a,b) => a + b) / 5
+export const calculateTotal = (five: FiveMetric) : number => {
+    return Object.values(five).reduce((a,b) => a + b) / 5
 }
 
 export const createLineChartData = (labels: string[] = days, values: number[][]) : object => {
@@ -118,6 +115,17 @@ export const getMetricScore = (
   )[metricKey]
 }
 
+/**
+ * @description Used to get values for FiveLineGraph
+ * @param actionHistory action history from app data
+ * @param actionDefinitions action definitions from app data
+ * @param metricKey the metric to be queried
+ * @param from date from
+ * @param to date to
+ * @param groupBy time period to group by
+ * @returns Array of numbers where each number represents the sum of the metric change for that time period group
+ * @
+ */
 export const getMetricSeries = (
   actionHistory: Action[],
   actionDefinitions: ActionDefinition[],
@@ -165,7 +173,7 @@ export const buildActionMap = (
 export const actionToMetrics = (
   action: Action,
   actionMap: Record<string, ActionDefinition>
-): Partial<FiveMetrics> => {
+): Partial<FiveMetric> => {
 
   const def = actionMap[action.actionId]
   if (!def) return {}
@@ -180,10 +188,10 @@ export const actionToMetrics = (
 }
 
 export const sumMetrics = (
-  deltas: Partial<FiveMetrics>[]
-): FiveMetrics => {
+  deltas: Partial<FiveMetric>[]
+): FiveMetric => {
 
-  const r: FiveMetrics = { mind: 0, body: 0, work: 0, cash: 0, bond: 0 }
+  const r: FiveMetric = { mind: 0, body: 0, work: 0, cash: 0, bond: 0 }
 
   deltas.forEach(d => {
     METRIC_KEYS.forEach(k => {
@@ -199,7 +207,7 @@ export const calculateMetricsForRange = (
   defs: ActionDefinition[],
   from: Dayjs,
   to: Dayjs
-): FiveMetrics => {
+): FiveMetric => {
 
   const actionMap = buildActionMap(defs)
 

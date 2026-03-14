@@ -16,23 +16,15 @@ export type Action = {
   note?: string
 }
 
-export type FiveMetrics = {
-  mind: number
-  body: number
-  work: number
-  cash: number
-  bond: number
-}
-
 export type ActionDefinition = {
   id: string
   name: string
   tags?: string[]
-} & Partial<FiveMetrics>
+} & Partial<FiveMetric>
 
 export type MetricSnapshot = {
   timestamp: number
-} & FiveMetrics
+} & FiveMetric
 
 export type MetricSnapshotHistory = {
   day: MetricSnapshot
