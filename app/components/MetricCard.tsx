@@ -49,10 +49,10 @@ export default function MetricCard({ className, metric, isActive, onClick }: Met
         ${className ? className : ""}
       `}
     >
-      <h3 className="text-lg font-semibold tracking-wide">
+      <h3 className="text-lg font-semibold tracking-wide uppercase">
         {metric.name}
       </h3>
-      <p className="mt-2 text-lg font-medium uppercase">
+      <p className="mt-2 text-lg font-medium">
         {metric.value}
       </p>
     </div>

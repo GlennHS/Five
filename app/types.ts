@@ -5,7 +5,7 @@ export type FiveMetric = Record<MetricKey, number>
 export type MetricName = Uppercase<MetricKey>
 
 export type Metric = {
-  name: MetricName | "total"
+  name: MetricKey | "total"
   value: number
 }
 

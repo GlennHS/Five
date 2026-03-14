@@ -81,23 +81,23 @@ export const getMetricsFromSnapshot = (m: MetricSnapshot | undefined): Metric[] 
 
   return [
     {
-      name: "MIND",
+      name: "mind",
       value: m.mind,
     },
     {
-      name: "BODY",
+      name: "body",
       value: m.body,
     },
     {
-      name: "WORK",
+      name: "work",
       value: m.work,
     },
     {
-      name: "CASH",
+      name: "cash",
       value: m.cash,
     },
     {
-      name: "BOND",
+      name: "bond",
       value: m.bond,
     },
   ]

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 // Types
-import type { Metric, MetricName } from './types';
+import { METRIC_KEYS, type MetricKey } from './types';
 
 // Components
 import FiveBarGraph from './components/graphs/FiveBarGraph';
@@ -21,8 +21,9 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { calculateTotal, getMetricsFromSnapshot } from './utils/helpers';
-import { metricSnapshots } from './fixtures/AppData';
+import { calculateMetricsForRange, calculateTotal } from './utils/helpers';
+import { actionDefinitions, actionHistory } from './fixtures/AppData';
+import { getAWeekAgo, getToday } from './utils/dateTime';
 
 ChartJS.register(
   RadialLinearScale,
@@ -35,16 +36,17 @@ ChartJS.register(
 
 export default function Home() {
 
-  const [highlightedMetric, setHighlightedMetric] = useState<MetricName | null>(null);
+  const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null);
 
-  const metrics = getMetricsFromSnapshot(metricSnapshots.day);
-  const total = calculateTotal(metrics.map(m => m.value))
+  // const metrics = getMetricsFromSnapshot(metricSnapshots.day);
+  const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
+  const total = calculateTotal(Object.values(metrics))
 
-  const handleMetricCardClick = (metricName: Metric["name"]) => {
-    if (metricName === "TOTAL") {
+  const handleMetricCardClick = (metricName: MetricKey | "total") => {
+    if (metricName === "total") {
       setHighlightedMetric(null);
     } else {
-      setHighlightedMetric(metricName as MetricName);
+      setHighlightedMetric(metricName);
     }
   };
 
@@ -53,26 +55,25 @@ export default function Home() {
       <main className="flex min-h-screen w-full sm:max-w-3xl flex-col gap-6 p-4 bg-white">
         <section className="flex-1 w-full rounded-2xl bg-slate-50 p-4 max-h-2/3">
           <FiveBarGraph
+            data={metrics}
             highlightedMetric={highlightedMetric}
             onMetricChange={(metric) => setHighlightedMetric(metric)}
           />
         </section>
         <section className="w-full">
           <div className="grid grid-cols-3 grid-rows-2 gap-4">
-            {metrics.map((m: Metric) => {
-              return (
-                <MetricCard
-                  key={m.name}
-                  metric={m}
-                  isActive={highlightedMetric === m.name}
-                  onClick={() => handleMetricCardClick(m.name)}
-                />
-              );
-            })}
+            {METRIC_KEYS.map((key) => (
+              <MetricCard
+                key={key}
+                metric={{ name: key, value: metrics[key] }}
+                isActive={highlightedMetric === key}
+                onClick={() => handleMetricCardClick(key)}
+              />
+            ))}
             <MetricCard
-              metric={{name: "TOTAL", value: total}}
+              metric={{name: "total", value: total}}
               isActive={highlightedMetric === null}
-              onClick={() => handleMetricCardClick("TOTAL")}
+              onClick={() => handleMetricCardClick("total")}
             />
           </div>
         </section>

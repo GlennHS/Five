@@ -3,21 +3,21 @@ import { Bar } from "react-chartjs-2";
 import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../fixtures/Colors";
-import type { MetricName } from "../../types";
+import type { FiveMetrics, MetricKey } from "../../types";
 
 type FiveBarGraphProps = {
-  data?: number[];
-  highlightedMetric?: MetricName | null;
-  onMetricChange?: (metric: MetricName | null) => void;
+  data?: FiveMetrics;
+  highlightedMetric?: MetricKey | null;
+  onMetricChange?: (metric: MetricKey | null) => void;
 };
 
-const METRIC_ORDER: MetricName[] = ["MIND", "BODY", "CASH", "WORK", "BOND"];
+const METRIC_ORDER: MetricKey[] = ["mind", "body", "cash", "work", "bond"];
 
 Chart.register(LinearScale, CategoryScale, BarElement)
 
 export default function FiveBarGraph(props: FiveBarGraphProps) {
   const [chartData, setChartData] = useState(BAR_DEFAULT_CONFIG);
-  const chartRef = useRef<Chart | null>(null);
+  const chartRef = useRef<Chart<'bar'> | null>(null);
 
   const handleChartClick = (event: ChartEvent, elements: ActiveElement[], chart: Chart<'bar'>) => {
     if (!chartRef?.current) return;
@@ -32,9 +32,9 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
 
     changeSelectedBar(index);
 
-    const metricName = METRIC_ORDER[index];
-    if (metricName) {
-      props.onMetricChange?.(metricName);
+    const MetricKey = METRIC_ORDER[index];
+    if (MetricKey) {
+      props.onMetricChange?.(MetricKey);
     }
   };
 
@@ -67,14 +67,17 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
     chartRef.current.update();
   }
 
+  const convertMetricsToData = (m: FiveMetrics): number[] => [m.mind, m.body, m.cash, m.work, m.bond]
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setChartData((prev) => ({
       ...prev,
       data: {
         labels: METRIC_ORDER,
         datasets: [{
           label: 'Metrics',
-          data: props.data || [30,40,56,64,88],
+          data: props.data ? convertMetricsToData(props.data) : [30,40,56,64,88],
           backgroundColor: [
             `rgba(${METRIC_COLORS.MIND}, 0.3)`,
             `rgba(${METRIC_COLORS.BODY}, 0.3)`,
@@ -112,7 +115,6 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
     <div className="h-full w-full">
       <Bar
         ref={chartRef}
-        onClick={handleChartClick}
         data={chartData.data}
         options={chartData.options}
       />

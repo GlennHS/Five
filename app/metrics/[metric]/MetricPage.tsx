@@ -51,6 +51,10 @@ export default function MetricPage({
           </div>
         </section>
 
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          { /* Put week/month/6 months toggle buttons here */ }
+        </section>
+
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-semibold text-slate-700">
             Actions
