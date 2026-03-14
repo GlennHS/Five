@@ -1,7 +1,11 @@
-export type MetricName = "MIND" | "BODY" | "CASH" | "WORK" | "BOND"
+export const METRIC_KEYS = ["mind", "body", "work", "cash", "bond"] as const
+export type TimeGroup = "day" | "week" | "month"
+export type MetricKey = typeof METRIC_KEYS[number]
+export type FiveMetric = Record<MetricKey, number>
+export type MetricName = Uppercase<MetricKey>
 
 export type Metric = {
-  name: MetricName | "TOTAL"
+  name: MetricName | "total"
   value: number
 }
 

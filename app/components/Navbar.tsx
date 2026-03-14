@@ -24,7 +24,7 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
 
 export default function Navbar() {
   return (
-    <nav className="w-full border-t-2 border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center">
+    <nav className="w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center">
       <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
         <div className="w-full">
           <ul className="h-full flex items-center justify-between text-base gap-4">

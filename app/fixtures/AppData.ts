@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 
-import { Action, ActionDefinition, FiveMetrics, MetricSnapshotHistory } from "../types";
+import { Action, ActionDefinition, MetricSnapshotHistory } from "../types";
 import { generateHistoryFromActionDefinitions } from "../utils/factories";
-import { getToday } from "../utils/helpers";
+import { getToday } from '../utils/dateTime';
 
 export const metricSnapshots: Partial<MetricSnapshotHistory> = {
   day: {
@@ -178,9 +178,12 @@ export const actionDefinitions: ActionDefinition[] = [
   }
 ]
 
-export const actionHistory: Action[] = generateHistoryFromActionDefinitions(
-  actionDefinitions,
-  50,
-  getToday(),
-  dayjs(getToday()).subtract(3, 'months').toDate()
-)
+const getActionHistory = (): Action[] =>
+  generateHistoryFromActionDefinitions(
+    actionDefinitions,
+    50,
+    getToday(),
+    dayjs(getToday()).subtract(14, "days")
+  )
+  
+export const actionHistory = getActionHistory()

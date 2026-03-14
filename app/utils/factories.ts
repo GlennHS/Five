@@ -1,5 +1,7 @@
 import { Action, ActionDefinition, FiveMetrics } from "../types"
-import { DateToTimestamp, createRandomUUID, getRandomDateBetween, pickRandom } from "./helpers"
+import { createRandomUUID, pickRandom } from "./helpers"
+import { convertDayJSToTimestamp, getRandomDateBetween } from "./dateTime"
+import { Dayjs } from "dayjs"
 
 export const createRandomMetric = (min: number = 30, max: number = 80): number => Math.floor(Math.random() * (max - min) + min)
 
@@ -16,15 +18,15 @@ export const createRandomFive = (min: number = 30, max: number = 80): FiveMetric
 export const generateHistoryFromActionDefinitions = (
   definitions: ActionDefinition[],
   quantity: number,
-  fromDate: Date,
-  toDate: Date,
+  fromDate: Dayjs,
+  toDate: Dayjs,
 ): Action[] => {
   const actions: Action[] = []
   for(let i = 0; i < quantity; i++) {
     const newAction: Action = {
       id: createRandomUUID(),
       actionId: pickRandom(definitions).id,
-      timestamp: DateToTimestamp(getRandomDateBetween(fromDate, toDate)),
+      timestamp: convertDayJSToTimestamp(getRandomDateBetween(fromDate, toDate)),
       note: "Test Data",
     }
     actions.push(newAction)

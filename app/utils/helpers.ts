@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, Metric, MetricSnapshot, MetricSnapshotHistory } from '../types'
+import { Action, ActionDefinition, FiveMetrics, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
+import { convertTimestampToDayJS, isDateBetween } from './dateTime'
+import { Dayjs } from 'dayjs'
 
 
 export const days = [
@@ -64,24 +66,7 @@ export const pickRandom = <T>(a: T[]): T => {
 
 export const createRandomUUID = () => uuidv4()
 
-// #region Time Utils
-export const DateToTimestamp = (d: Date): number => d.getTime()
-
-export const getToday = (): Date => new Date()
-
-export const getRandomDateBetween = (from: Date, to: Date): Date => {
-  const fromTime = from.getTime()
-  const toTime = to.getTime()
-
-  const randomTime =
-    fromTime + Math.random() * (toTime - fromTime)
-
-  return new Date(randomTime)
-}
-
-export const dateToHumanString = (d: Date): string => d.toLocaleString()
-// #endregion
-
+// #region Metric Helpers
 export const calculateMetricValueFromHistory = (metricName: string, history: Partial<MetricSnapshotHistory>): number => {
   let totalValue = 0;
 
@@ -118,6 +103,113 @@ export const getMetricsFromSnapshot = (m: MetricSnapshot | undefined): Metric[] 
   ]
 }
 
-export const getMetricScore = (n: string): number => {
-  return 69
+export const getMetricScore = (
+  actionHistory: Action[],
+  actionDefinitions: ActionDefinition[],
+  metricKey: MetricKey,
+  from: Dayjs,
+  to: Dayjs
+): number => {
+  return calculateMetricsForRange(
+    actionHistory,
+    actionDefinitions,
+    from,
+    to
+  )[metricKey]
 }
+
+export const getMetricSeries = (
+  actionHistory: Action[],
+  actionDefinitions: ActionDefinition[],
+  metricKey: MetricKey,
+  from: Dayjs,
+  to: Dayjs,
+  groupBy: TimeGroup
+): number[] => {
+
+  const values: number[] = []
+
+  const actions = actionHistory
+  const defs = actionDefinitions
+
+  let cursor = from.startOf(groupBy)
+
+  while (cursor.isBefore(to) || cursor.isSame(to)) {
+
+    const bucketStart = cursor
+    const bucketEnd = cursor.endOf(groupBy)
+
+    const metrics = calculateMetricsForRange(
+      actions,
+      defs,
+      bucketStart,
+      bucketEnd
+    )
+
+    values.push(metrics[metricKey])
+
+    cursor = cursor.add(1, groupBy)
+  }
+
+  return values
+}
+
+export const filterActionsByRange = (actions: Action[], from: Dayjs, to: Dayjs ): Action[] =>
+  actions.filter(a => isDateBetween(convertTimestampToDayJS(a.timestamp), from, to))
+
+export const buildActionMap = (
+  defs: ActionDefinition[]
+): Record<string, ActionDefinition> =>
+  Object.fromEntries(defs.map(d => [d.id, d]))
+
+export const actionToMetrics = (
+  action: Action,
+  actionMap: Record<string, ActionDefinition>
+): Partial<FiveMetrics> => {
+
+  const def = actionMap[action.actionId]
+  if (!def) return {}
+
+  return {
+    mind: def.mind,
+    body: def.body,
+    work: def.work,
+    cash: def.cash,
+    bond: def.bond
+  }
+}
+
+export const sumMetrics = (
+  deltas: Partial<FiveMetrics>[]
+): FiveMetrics => {
+
+  const r: FiveMetrics = { mind: 0, body: 0, work: 0, cash: 0, bond: 0 }
+
+  deltas.forEach(d => {
+    METRIC_KEYS.forEach(k => {
+      r[k] += d[k] ?? 0
+    })
+  })
+
+  return r
+}
+
+export const calculateMetricsForRange = (
+  actions: Action[],
+  defs: ActionDefinition[],
+  from: Dayjs,
+  to: Dayjs
+): FiveMetrics => {
+
+  const actionMap = buildActionMap(defs)
+
+  const filtered = filterActionsByRange(actions, from, to)
+  console.log(filtered)
+
+  const deltas = filtered.map(a =>
+    actionToMetrics(a, actionMap)
+  )
+
+  return sumMetrics(deltas)
+}
+// #endregion
