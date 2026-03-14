@@ -1,10 +1,13 @@
+'use client'
+
 import type { MetricKey } from '@/app/types'
 import Link from 'next/link'
 import { getMetricScore, getMetricSeries } from '@/app/utils/helpers'
 import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
 import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { actionDefinitions, actionHistory } from '@/app/fixtures/AppData'
+import { use, useState } from 'react'
 
 const VALID_METRIC_SLUGS = ['mind', 'body', 'cash', 'work', 'bond'] as const
 
@@ -12,14 +15,16 @@ export function generateStaticParams() {
   return VALID_METRIC_SLUGS.map(metric => ({ metric }))
 }
 
-export default async function Page({
+export default function Page({
   params,
 }: {
   params: Promise<{ metric: MetricKey }>
 }) {
+  const { metric } = use(params)
 
-
-  const metricName = await params.then(p => p.metric)
+  const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
+  const [toDate, setToDate] = useState<Dayjs>(getToday())
+  const [timeGroup, setTimeGroup] = useState<string>("day")
 
   return (
     <main className="min-h-screen w-full bg-white px-4 py-6">
@@ -33,13 +38,13 @@ export default async function Page({
           </Link>
 
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 uppercase">
-            {metricName}
+            {metric}
           </h1>
 
           <p className="text-sm text-slate-600">
             Current score:
             <span className="font-semibold text-slate-900">
-              {getMetricScore(actionHistory, actionDefinitions, metricName, getAWeekAgo(), getToday())}
+              {getMetricScore(actionHistory, actionDefinitions, metric, fromDate, toDate)}
             </span>
           </p>
         </header>
@@ -50,7 +55,7 @@ export default async function Page({
           </h2>
 
           <div className="h-64 w-full">
-            <FiveLineGraph data={getMetricSeries(actionHistory, actionDefinitions, metricName, getAWeekAgo(), dayjs(), 'day')} />
+            <FiveLineGraph data={getMetricSeries(actionHistory, actionDefinitions, metric, fromDate, toDate, 'day')} />
           </div>
         </section>
 
@@ -63,13 +68,13 @@ export default async function Page({
             className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center text-slate-500"
             aria-label="Action cards container"
           >
-            Action cards will go here.
+            {}
           </div>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
           <h2 className="mb-1 text-base font-semibold text-slate-900">
-            About {metricName}
+            About {metric}
           </h2>
 
           <p>
