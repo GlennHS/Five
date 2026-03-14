@@ -71,18 +71,24 @@ export const LINE_DEFAULT_CONFIG: ChartConfiguration<'line'> = {
   },
   options: {
     scales: {
-      r: {
+      y: {
         min: 0,
-        max: 100,
+        suggestedMax: 70,
         beginAtZero: true,
         ticks: {
           stepSize: 20
         },
-        grid: {
-          circular: true
-        }
-      }
+      },
     },
+    interaction: {
+      mode: 'nearest',
+      intersect: true
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
   },
 }
 

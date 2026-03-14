@@ -1,13 +1,13 @@
 'use client';
 
-import APP_DATA from "../fixtures/AppData";
-import { calculateTotal } from "../utils/helpers";
+import { calculateTotal, getMetricsFromSnapshot } from "../utils/helpers";
 import type { Metric } from "../types";
 import MetricCardLarge from "../components/MetricCardLarge";
+import { metricSnapshots } from "../fixtures/AppData";
 
 export default function Page() {
 
-  const metrics = APP_DATA.metrics;
+  const metrics = getMetricsFromSnapshot(metricSnapshots.day);
   const total = calculateTotal(metrics.map((m) => m.value));
 
   return (

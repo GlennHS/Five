@@ -3,7 +3,6 @@ import { Bar } from "react-chartjs-2";
 import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../fixtures/Colors";
-import APP_DATA from "@/app/fixtures/AppData";
 import type { MetricName } from "../../types";
 
 type FiveBarGraphProps = {
@@ -75,7 +74,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
         labels: METRIC_ORDER,
         datasets: [{
           label: 'Metrics',
-          data: props.data || Object.values(APP_DATA.metrics).map(v => v.value) || [0,0,0,0,0],
+          data: props.data || [30,40,56,64,88],
           backgroundColor: [
             `rgba(${METRIC_COLORS.MIND}, 0.3)`,
             `rgba(${METRIC_COLORS.BODY}, 0.3)`,

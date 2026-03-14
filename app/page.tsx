@@ -20,11 +20,9 @@ import {
   Legend,
 } from 'chart.js';
 
-// Fixtures
-import APP_DATA from './fixtures/AppData';
-
 // Helpers
-import { calculateTotal } from './utils/helpers';
+import { calculateTotal, getMetricsFromSnapshot } from './utils/helpers';
+import { metricSnapshots } from './fixtures/AppData';
 
 ChartJS.register(
   RadialLinearScale,
@@ -39,7 +37,7 @@ export default function Home() {
 
   const [highlightedMetric, setHighlightedMetric] = useState<MetricName | null>(null);
 
-  const metrics = APP_DATA.metrics;
+  const metrics = getMetricsFromSnapshot(metricSnapshots.day);
   const total = calculateTotal(metrics.map(m => m.value))
 
   const handleMetricCardClick = (metricName: Metric["name"]) => {
