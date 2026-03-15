@@ -5,6 +5,7 @@ import { METRIC_KEYS } from "../types";
 import MetricCardLarge from "../components/MetricCardLarge";
 import { actionDefinitions, actionHistory } from "../fixtures/AppData";
 import { getAWeekAgo, getToday } from "../utils/dateTime";
+import BackLink from "../components/BackLink";
 
 export default function Page() {
 
@@ -14,6 +15,8 @@ export default function Page() {
   return (
     <main className="min-h-screen w-full bg-white px-4 py-8">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+        <BackLink />
+        
         <header className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             Your metrics overview

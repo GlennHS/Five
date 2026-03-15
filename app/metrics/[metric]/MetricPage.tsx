@@ -8,6 +8,7 @@ import { Dayjs } from 'dayjs'
 import { actionDefinitions, actionHistory } from '@/app/fixtures/AppData'
 import { useState } from 'react'
 import { MetricKey } from '@/app/types'
+import BackLink from '@/app/components/BackLink'
 
 export default function MetricPage({
   metric,
@@ -22,12 +23,7 @@ export default function MetricPage({
     <main className="min-h-screen w-full bg-white px-4 py-6">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
         <header className="flex flex-col gap-2">
-          <Link
-            href="/metrics"
-            className="text-sm font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700"
-          >
-            ← Back to metrics
-          </Link>
+          <BackLink />
 
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 uppercase">
             {metric}

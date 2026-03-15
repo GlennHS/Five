@@ -99,7 +99,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
         onHover: handleChartClick
       }
     }));
-  }, []);
+  }, [props.data]);
 
   useEffect(() => {
     if (props.highlightedMetric == null) {
