@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Action, ActionDefinition, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
-import { convertTimestampToDayJS, isDateBetween } from './dateTime'
+import { convertTimestampToDayJS, getDaysSinceDate, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
 
@@ -13,10 +13,6 @@ export const days = [
   "Sat",
   "Sun",
 ]
-
-export const calculateTotal = (five: FiveMetric) : number => {
-    return Object.values(five).reduce((a,b) => a + b) / 5
-}
 
 export const createLineChartData = (labels: string[] = days, values: number[][]) : object => {
   return {
@@ -172,18 +168,19 @@ export const buildActionMap = (
 
 export const actionToMetrics = (
   action: Action,
-  actionMap: Record<string, ActionDefinition>
+  actionMap: Record<string, ActionDefinition>,
+  decay?: number,
 ): Partial<FiveMetric> => {
 
   const def = actionMap[action.actionId]
   if (!def) return {}
 
   return {
-    mind: def.mind,
-    body: def.body,
-    work: def.work,
-    cash: def.cash,
-    bond: def.bond
+    mind: def.mind ? applyDecayToMetric(def.mind, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    body: def.body ? applyDecayToMetric(def.body, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    work: def.work ? applyDecayToMetric(def.work, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    cash: def.cash ? applyDecayToMetric(def.cash, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    bond: def.bond ? applyDecayToMetric(def.bond, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
   }
 }
 
@@ -199,8 +196,12 @@ export const sumMetrics = (
     })
   })
 
+  METRIC_KEYS.forEach(k => r[k] = Math.floor(r[k]))
+
   return r
 }
+
+const applyDecayToMetric = (m: number, decay: number, days: number): number => m * Math.pow(decay, days)
 
 export const calculateMetricsForRange = (
   actions: Action[],
@@ -215,9 +216,19 @@ export const calculateMetricsForRange = (
   console.log(filtered)
 
   const deltas = filtered.map(a =>
-    actionToMetrics(a, actionMap)
+    actionToMetrics(a, actionMap, 0.9)
   )
 
   return sumMetrics(deltas)
+}
+
+export const calculateTotal = (
+  actions: Action[],
+  defs: ActionDefinition[],
+  from: Dayjs,
+  to: Dayjs
+) : number => {
+  const totals = calculateMetricsForRange(actions, defs, from, to)
+  return Math.floor(Object.values(totals).reduce((a,b) => a + b) / 5)
 }
 // #endregion

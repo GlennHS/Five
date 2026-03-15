@@ -39,7 +39,7 @@ export default function Home() {
 
   // const metrics = getMetricsFromSnapshot(metricSnapshots.day);
   const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
-  const total = calculateTotal(metrics)
+  const total = calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday())
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
