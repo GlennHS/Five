@@ -24,6 +24,7 @@ import {
 import { calculateMetricsForRange, calculateTotal } from './utils/helpers';
 import { actionDefinitions, actionHistory } from './fixtures/AppData';
 import { getAWeekAgo, getToday } from './utils/dateTime';
+import ActionCard from './components/ActionCard';
 
 ChartJS.register(
   RadialLinearScale,
@@ -59,6 +60,7 @@ export default function Home() {
             onMetricChange={(metric) => setHighlightedMetric(metric)}
           />
         </section>
+
         <section className="w-full">
           <div className="grid grid-cols-3 grid-rows-2 gap-4">
             {METRIC_KEYS.map((key) => (
@@ -75,6 +77,19 @@ export default function Home() {
               onClick={() => handleMetricCardClick('total')}
             />
           </div>
+        </section>
+        <section className="flex flex-col w-full rounded-2xl bg-slate-50 p-4 max-h-2/3 gap-4">
+          {actionHistory
+            .slice()
+            .sort((a,b) => b.timestamp - a.timestamp)
+            .slice(0,5)
+            .map(action => (
+              <ActionCard
+                key={action.id}
+                action={action}
+                definitions={actionDefinitions}
+              />
+          ))}
         </section>
       </main>
     </div>

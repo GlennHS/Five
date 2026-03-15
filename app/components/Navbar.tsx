@@ -40,8 +40,8 @@ export default function Navbar() {
 
             <li>
               <NavLink
-                href="#"
-                aria-label="Go to about"
+                href="/track"
+                aria-label="Go to track"
               >
                 <ListChecks />
                 <span>Track</span>

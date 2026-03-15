@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { getMetricScore, getMetricSeries } from '@/app/utils/helpers'
+import { actionAffectsMetric, getMetricScore, getMetricSeries } from '@/app/utils/helpers'
 import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
 import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
 import { Dayjs } from 'dayjs'
@@ -9,6 +9,8 @@ import { actionDefinitions, actionHistory } from '@/app/fixtures/AppData'
 import { useState } from 'react'
 import { MetricKey } from '@/app/types'
 import BackLink from '@/app/components/BackLink'
+import ActionCard from '@/app/components/ActionCard'
+import ActionCardCondensed from '@/app/components/ActionCardCondensed'
 
 export default function MetricPage({
   metric,
@@ -18,6 +20,10 @@ export default function MetricPage({
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
   const [timeGroup, setTimeGroup] = useState<string>("day")
+
+  const actionsForMetric = actionHistory.filter(a =>
+    actionAffectsMetric(a, actionDefinitions, metric)
+  )
 
   return (
     <main className="min-h-screen w-full bg-white px-4 py-6">
@@ -60,7 +66,17 @@ export default function MetricPage({
             className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center text-slate-500"
             aria-label="Action cards container"
           >
-            {}
+            {actionHistory
+              .slice()
+              .sort((a,b) => b.timestamp - a.timestamp)
+              .slice(0,5)
+              .map(action => (
+                <ActionCardCondensed
+                  key={action.id}
+                  action={action}
+                  definitions={actionDefinitions}
+                />
+            ))}
           </div>
         </section>
 

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, ActionDefinition, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
+import { Action, ActionDefinition, ActionDetails, FiveMetric, Metric, METRIC_KEYS, METRIC_LETTERS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
 import { convertTimestampToDayJS, getDaysSinceDate, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
@@ -59,7 +59,6 @@ export const pickRandom = <T>(a: T[]): T => {
 
 export const createRandomUUID = () => uuidv4()
 
-// #region Metric Helpers
 export const calculateMetricValueFromHistory = (metricName: string, history: Partial<MetricSnapshotHistory>): number => {
   let totalValue = 0;
 
@@ -222,6 +221,27 @@ export const calculateMetricsForRange = (
   return sumMetrics(deltas)
 }
 
+export const actionAffectsMetric = (
+  action: Action,
+  defs: ActionDefinition[],
+  metric: MetricKey
+) => {
+
+  const def = defs.find(d => d.id === action.actionId)
+  if (!def) return false
+
+  return (def[metric] ?? 0) !== 0
+}
+
+export const getNonZeroMetrics = (metrics: FiveMetric) => {
+  return METRIC_KEYS
+    .filter(k => metrics[k] !== 0)
+    .map(k => ({
+      key: k,
+      value: metrics[k]
+    }))
+}
+
 export const calculateTotal = (
   actions: Action[],
   defs: ActionDefinition[],
@@ -231,4 +251,60 @@ export const calculateTotal = (
   const totals = calculateMetricsForRange(actions, defs, from, to)
   return Math.floor(Object.values(totals).reduce((a,b) => a + b) / 5)
 }
-// #endregion
+
+export const resolveActionDetails = (
+  action: Action,
+  defs: ActionDefinition[]
+): ActionDetails | null => {
+
+  const def = defs.find(d => d.id === action.actionId)
+  if (!def) return null
+
+  return {
+    id: action.id,
+    name: def.name,
+    timestamp: action.timestamp,
+    note: action.note,
+    metrics: {
+      mind: def.mind ?? 0,
+      body: def.body ?? 0,
+      work: def.work ?? 0,
+      cash: def.cash ?? 0,
+      bond: def.bond ?? 0
+    }
+  }
+}
+
+export const formatMetricSummary = (metrics: FiveMetric): string => {
+  return METRIC_KEYS
+    .filter(k => metrics[k] !== 0)
+    .map(k => {
+      const letter = METRIC_LETTERS[k]
+      const value = metrics[k]
+      const sign = value > 0 ? "+" : ""
+      return `${letter}${sign}${value}`
+    })
+    .join(" ")
+}
+
+export const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
+
+  let best: MetricKey | null = null
+  let bestValue = 0
+
+  METRIC_KEYS.forEach(k => {
+    const value = Math.abs(metrics[k])
+
+    if (value > bestValue) {
+      best = k
+      bestValue = value
+    }
+  })
+
+  return best
+}
+
+export const metricToBackgroundClass = (metric: MetricKey | null) => {
+  if (!metric) return "bg-total/10"
+  return `bg-${metric}/10`
+}
