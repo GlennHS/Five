@@ -16,6 +16,18 @@ const negativeTag: Tag = {
   colorClass: 'red',
 }
 
+const importantTag: Tag = {
+  id: '000000-0000-0000-0000-000002',
+  name: 'important',
+  colorClass: 'yellow',
+}
+
+const otherTag: Tag = {
+  id: '000000-0000-0000-0000-000003',
+  name: 'other',
+  colorClass: 'blue',
+}
+
 export const metricSnapshots: Partial<MetricSnapshotHistory> = {
   day: {
     timestamp: new Date().getTime(),
@@ -34,7 +46,10 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 4,
     body: 4,
     tags: [
-      positiveTag
+      positiveTag,
+      importantTag,
+      negativeTag,
+      otherTag,
     ],
   },
   {

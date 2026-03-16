@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">
       <main className="flex min-h-screen w-full sm:max-w-3xl flex-col gap-6 p-4 bg-white">
-        <section className="flex-1 w-full rounded-2xl bg-slate-50 p-4 max-h-2/3">
+        <section className="w-full rounded-2xl max-h-2/3 h-64">
           <FiveBarGraph
             data={metrics}
             highlightedMetric={highlightedMetric}
@@ -78,7 +78,7 @@ export default function Home() {
             />
           </div>
         </section>
-        <section className="flex flex-col w-full rounded-2xl bg-slate-50 p-4 max-h-2/3 gap-4">
+        <section className="flex flex-col w-full rounded-2xl py-4 max-h-2/3 gap-y-4">
           {actionHistory
             .slice()
             .sort((a,b) => b.timestamp - a.timestamp)

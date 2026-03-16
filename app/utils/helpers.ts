@@ -275,18 +275,6 @@ export const resolveActionDetails = (
   }
 }
 
-export const formatMetricSummary = (metrics: FiveMetric): string => {
-  return METRIC_KEYS
-    .filter(k => metrics[k] !== 0)
-    .map(k => {
-      const letter = METRIC_LETTERS[k]
-      const value = metrics[k]
-      const sign = value > 0 ? "+" : ""
-      return `${letter}${sign}${value}`
-    })
-    .join(" ")
-}
-
 export const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
 
   let best: MetricKey | null = null
@@ -304,11 +292,9 @@ export const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
   return best
 }
 
-export const metricToCardClasses = (metric: MetricKey | null, tags: Tag[]) => {
+export const metricToCardClasses = (metric: MetricKey | null) => {
   let className = ""
   if (!metric) className += "border-total bg-total/10"
   else className += `border-${metric} bg-${metric}/10`
-  // if (tags.includes('negative')) className += " border-red-400 border-2"
-  // else if (tags.includes('positive')) className += " border-green-400 border-2"
   return className
 }
