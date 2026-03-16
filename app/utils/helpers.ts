@@ -212,7 +212,6 @@ export const calculateMetricsForRange = (
   const actionMap = buildActionMap(defs)
 
   const filtered = filterActionsByRange(actions, from, to)
-  console.log(filtered)
 
   const deltas = filtered.map(a =>
     actionToMetrics(a, actionMap, 0.9)
@@ -263,6 +262,7 @@ export const resolveActionDetails = (
   return {
     id: action.id,
     name: def.name,
+    tags: def.tags ?? [],
     timestamp: action.timestamp,
     note: action.note,
     metrics: {
@@ -304,7 +304,11 @@ export const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
   return best
 }
 
-export const metricToBackgroundClass = (metric: MetricKey | null) => {
-  if (!metric) return "bg-total/10"
-  return `bg-${metric}/10`
+export const metricToCardClasses = (metric: MetricKey | null, tags: string[]) => {
+  let className = ""
+  if (!metric) className += "border-total bg-total/10"
+  else className += `border-${metric} bg-${metric}/10`
+  // if (tags.includes('negative')) className += " border-red-400 border-2"
+  // else if (tags.includes('positive')) className += " border-green-400 border-2"
+  return className
 }

@@ -13,6 +13,14 @@ type FiveBarGraphProps = {
 
 const METRIC_ORDER: MetricKey[] = ["mind", "body", "cash", "work", "bond"];
 
+const METRIC_RGB = [
+  METRIC_COLORS.MIND,
+  METRIC_COLORS.BODY,
+  METRIC_COLORS.CASH,
+  METRIC_COLORS.WORK,
+  METRIC_COLORS.BOND,
+]
+
 Chart.register(LinearScale, CategoryScale, BarElement)
 
 export default function FiveBarGraph(props: FiveBarGraphProps) {
@@ -51,15 +59,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
 
     const nextBackgrounds = [...baseBackgrounds];
     if (index !== null && index >= 0 && index < nextBackgrounds.length) {
-      const colorValues = [
-        METRIC_COLORS.MIND,
-        METRIC_COLORS.BODY,
-        METRIC_COLORS.CASH,
-        METRIC_COLORS.WORK,
-        METRIC_COLORS.BOND,
-      ];
-
-      const activeColor = colorValues[index];
+      const activeColor = METRIC_RGB[index];
       nextBackgrounds[index] = `rgba(${activeColor}, 0.8)`;
     }
 

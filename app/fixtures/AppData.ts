@@ -21,17 +21,26 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Have an early night",
     mind: 4,
     body: 4,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000001",
     name: "Drink a pint of water",
     body: 2,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000002",
     name: "Work on portfolio (1 hour)",
     mind: 2,
     work: 4,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000003",
@@ -39,12 +48,18 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: -1,
     body: -4,
     bond: 3,
+    tags: [
+      'negative'
+    ],
   },
   {
     id: "000000-0000-0000-000004",
     name: "Get a takeaway",
     body: -3,
     cash: -3,
+    tags: [
+      'negative'
+    ],
   },
 
   {
@@ -52,28 +67,43 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Go for a walk",
     mind: 2,
     body: 2,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000006",
     name: "Go to the gym",
     mind: 2,
     body: 5,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000007",
     name: "Cook a healthy meal",
     body: 3,
     cash: 1,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000008",
     name: "Meditate",
     mind: 4,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000009",
     name: "Read a book",
     mind: 3,
+    tags: [
+      'positive'
+    ],
   },
 
   {
@@ -81,6 +111,9 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Call a friend",
     mind: 2,
     bond: 4,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000011",
@@ -93,6 +126,9 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Help someone out",
     mind: 2,
     bond: 3,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000013",
@@ -106,18 +142,27 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Deep work session (2 hours)",
     mind: 2,
     work: 5,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000015",
     name: "Learn something new",
     mind: 4,
     work: 2,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000016",
     name: "Plan the week",
     mind: 2,
     work: 3,
+    tags: [
+      'positive'
+    ],
   },
 
   {
@@ -131,12 +176,18 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Impulse online shopping",
     mind: -2,
     cash: -5,
+    tags: [
+      'negative'
+    ],
   },
   {
     id: "000000-0000-0000-000019",
     name: "Put money into savings",
     mind: 2,
     cash: 4,
+    tags: [
+      'positive'
+    ],
   },
 
   {
@@ -144,18 +195,27 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Scroll social media for an hour",
     mind: -3,
     body: -1,
+    tags: [
+      'negative'
+    ],
   },
   {
     id: "000000-0000-0000-000021",
     name: "Binge watch TV late",
     mind: -2,
     body: -2,
+    tags: [
+      'negative'
+    ],
   },
   {
     id: "000000-0000-0000-000022",
     name: "Play video games",
     mind: 1,
     body: -1,
+    tags: [
+      'negative'
+    ],
   },
 
   {
@@ -163,18 +223,27 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Clean the house",
     mind: 2,
     body: 2,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000024",
     name: "Do the laundry",
     mind: 1,
     body: 1,
+    tags: [
+      'positive'
+    ],
   },
   {
     id: "000000-0000-0000-000025",
     name: "Tidy workspace",
     mind: 2,
     work: 2,
+    tags: [
+      'positive'
+    ],
   }
 ]
 

@@ -5,7 +5,7 @@ import {
   resolveActionDetails,
   formatMetricSummary,
   getDominantMetric,
-  metricToBackgroundClass
+  metricToCardClasses
 } from "@/app/utils/helpers"
 
 import { convertTimestampToDayJS } from "@/app/utils/dateTime"
@@ -24,7 +24,7 @@ export default function ActionCardCondensed({ action, definitions }: Props) {
   const summary = formatMetricSummary(details.metrics)
 
   const dominant = getDominantMetric(details.metrics)
-  const bgClass = metricToBackgroundClass(dominant)
+  const bgClass = metricToCardClasses(dominant)
 
   const date = formatSmartDate(
     convertTimestampToDayJS(details.timestamp)

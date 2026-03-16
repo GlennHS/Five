@@ -23,10 +23,6 @@ export const getRandomDateBetween = (from: Dayjs, to: Dayjs): Dayjs => {
   const randomTime =
     fromTime + Math.random() * (toTime - fromTime)
 
-  console.log(dayjs(from).toISOString())
-  console.log(dayjs(to).toISOString())
-  console.log(dayjs(randomTime).toISOString())
-
   return dayjs(randomTime)
 }
 

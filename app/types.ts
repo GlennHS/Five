@@ -25,13 +25,14 @@ export type Action = {
 
 export type ActionDefinition = {
   id: string
-  name: string
+  name: string,
   tags?: string[]
 } & Partial<FiveMetric>
 
 export type ActionDetails = {
   id: string
   name: string
+  tags: string[]
   timestamp: number
   note?: string
   metrics: FiveMetric
