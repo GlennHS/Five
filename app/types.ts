@@ -1,3 +1,5 @@
+import { TAG_COLOR_CLASSES } from "./fixtures/Colors"
+
 export const METRIC_KEYS = ["mind", "body", "work", "cash", "bond"] as const
 export const METRIC_LETTERS = {
   mind: "M",
@@ -26,13 +28,13 @@ export type Action = {
 export type ActionDefinition = {
   id: string
   name: string,
-  tags?: string[]
+  tags?: Tag[]
 } & Partial<FiveMetric>
 
 export type ActionDetails = {
   id: string
   name: string
-  tags: string[]
+  tags: Tag[]
   timestamp: number
   note?: string
   metrics: FiveMetric
@@ -47,4 +49,10 @@ export type MetricSnapshotHistory = {
   week: MetricSnapshot
   month: MetricSnapshot
   year: MetricSnapshot
+}
+
+export type Tag = {
+  id: string,
+  name: string,
+  colorClass: keyof typeof TAG_COLOR_CLASSES,
 }

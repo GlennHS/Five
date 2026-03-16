@@ -1,8 +1,20 @@
 import dayjs from 'dayjs'
 
-import { Action, ActionDefinition, MetricSnapshotHistory } from "../types";
+import { Action, ActionDefinition, MetricSnapshotHistory, Tag } from "../types";
 import { generateHistoryFromActionDefinitions } from "../utils/factories";
 import { getToday } from '../utils/dateTime';
+
+const positiveTag: Tag = {
+  id: '000000-0000-0000-0000-000000',
+  name: 'positive',
+  colorClass: 'green',
+}
+
+const negativeTag: Tag = {
+  id: '000000-0000-0000-0000-000001',
+  name: 'negative',
+  colorClass: 'red',
+}
 
 export const metricSnapshots: Partial<MetricSnapshotHistory> = {
   day: {
@@ -22,7 +34,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 4,
     body: 4,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -30,7 +42,7 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Drink a pint of water",
     body: 2,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -39,7 +51,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     work: 4,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -49,7 +61,7 @@ export const actionDefinitions: ActionDefinition[] = [
     body: -4,
     bond: 3,
     tags: [
-      'negative'
+      negativeTag
     ],
   },
   {
@@ -58,7 +70,7 @@ export const actionDefinitions: ActionDefinition[] = [
     body: -3,
     cash: -3,
     tags: [
-      'negative'
+      negativeTag
     ],
   },
 
@@ -68,7 +80,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     body: 2,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -77,7 +89,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     body: 5,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -86,7 +98,7 @@ export const actionDefinitions: ActionDefinition[] = [
     body: 3,
     cash: 1,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -94,7 +106,7 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Meditate",
     mind: 4,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -102,7 +114,7 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Read a book",
     mind: 3,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
 
@@ -112,7 +124,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     bond: 4,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -127,7 +139,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     bond: 3,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -143,7 +155,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     work: 5,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -152,7 +164,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 4,
     work: 2,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -161,7 +173,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     work: 3,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
 
@@ -177,7 +189,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: -2,
     cash: -5,
     tags: [
-      'negative'
+      negativeTag
     ],
   },
   {
@@ -186,7 +198,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     cash: 4,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
 
@@ -196,7 +208,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: -3,
     body: -1,
     tags: [
-      'negative'
+      negativeTag
     ],
   },
   {
@@ -205,7 +217,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: -2,
     body: -2,
     tags: [
-      'negative'
+      negativeTag
     ],
   },
   {
@@ -214,7 +226,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 1,
     body: -1,
     tags: [
-      'negative'
+      negativeTag
     ],
   },
 
@@ -224,7 +236,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     body: 2,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -233,7 +245,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 1,
     body: 1,
     tags: [
-      'positive'
+      positiveTag
     ],
   },
   {
@@ -242,7 +254,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     work: 2,
     tags: [
-      'positive'
+      positiveTag
     ],
   }
 ]

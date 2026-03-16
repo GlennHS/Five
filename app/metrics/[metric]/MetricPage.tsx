@@ -9,8 +9,8 @@ import { actionDefinitions, actionHistory } from '@/app/fixtures/AppData'
 import { useState } from 'react'
 import { MetricKey } from '@/app/types'
 import BackLink from '@/app/components/BackLink'
-import ActionCard from '@/app/components/ActionCard'
-import ActionCardCondensed from '@/app/components/ActionCardCondensed'
+import ActionCard from '@/app/components/actionCards/ActionCard'
+import ActionCardCondensed from '@/app/components/actionCards/ActionCardCondensed'
 
 export default function MetricPage({
   metric,

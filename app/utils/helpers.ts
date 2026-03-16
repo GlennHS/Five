@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, ActionDefinition, ActionDetails, FiveMetric, Metric, METRIC_KEYS, METRIC_LETTERS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
+import { Action, ActionDefinition, ActionDetails, FiveMetric, Metric, METRIC_KEYS, METRIC_LETTERS, MetricKey, MetricSnapshot, MetricSnapshotHistory, Tag, TimeGroup } from '../types'
 import { convertTimestampToDayJS, getDaysSinceDate, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
@@ -304,7 +304,7 @@ export const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
   return best
 }
 
-export const metricToCardClasses = (metric: MetricKey | null, tags: string[]) => {
+export const metricToCardClasses = (metric: MetricKey | null, tags: Tag[]) => {
   let className = ""
   if (!metric) className += "border-total bg-total/10"
   else className += `border-${metric} bg-${metric}/10`

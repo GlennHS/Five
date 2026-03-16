@@ -24,7 +24,7 @@ import {
 import { calculateMetricsForRange, calculateTotal } from './utils/helpers';
 import { actionDefinitions, actionHistory } from './fixtures/AppData';
 import { getAWeekAgo, getToday } from './utils/dateTime';
-import ActionCard from './components/ActionCard';
+import ActionCard from './components/actionCards/ActionCard';
 
 ChartJS.register(
   RadialLinearScale,
