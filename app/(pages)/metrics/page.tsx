@@ -1,17 +1,40 @@
 'use client';
 
-import { calculateMetricsForRange, calculateTotal } from "../../utils/helpers";
-import { METRIC_KEYS } from "../../types";
+import { calculateMetricsForRange, calculateTotal, hydrateActions } from "../../utils/helpers";
+import { Action, FiveMetric, METRIC_KEYS } from "../../types";
 import MetricCardLarge from "../../components/MetricCardLarge";
-import { actionDefinitions, actionHistory } from "../../fixtures/AppData";
+import { actionDefinitions } from "../../fixtures/AppData";
 import { getAWeekAgo, getToday } from "../../utils/dateTime";
 import BackLink from "../../components/BackLink";
+import { useEffect, useState } from "react";
+import { ActionController } from "@/app/controllers/ActionController";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function Page() {
 
-  const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
-  const total = calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
+  const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
+  const [metrics, setMetrics] = useState<FiveMetric | null>(null)
+  const [total, setTotal] = useState<number>(0)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
+  async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
+
+  useEffect(() => {
+    getActionHistory()
+  }, [])
+  
+  useEffect(() => {
+    if(actionHistory === null) return
+    setMetrics(calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
+    setTotal(calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
+    setIsLoading(false)
+  }, [actionHistory])
+
+  if (isLoading) return (
+    <div className="p-6">
+      <LoadingSpinner />
+    </div>
+  )
   return (
     <main className="min-h-screen w-full bg-white px-4 py-8">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">

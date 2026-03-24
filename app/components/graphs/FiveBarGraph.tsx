@@ -27,6 +27,7 @@ export default function FiveBarGraph({data, highlightedMetric, onMetricChange}: 
   const [chartData, setChartData] = useState(BAR_DEFAULT_CONFIG);
   const chartRef = useRef<Chart<'bar'> | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChartClick = (event: ChartEvent, elements: ActiveElement[], chart: Chart<'bar'>) => {
     if (!chartRef?.current) return;
 

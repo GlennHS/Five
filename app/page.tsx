@@ -41,7 +41,7 @@ export default function Home() {
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
   const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
   const [metrics, setMetrics] = useState<FiveMetric | null>(null)
-  const [total, setTotal] = useState<number | null>(null)
+  const [total, setTotal] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
