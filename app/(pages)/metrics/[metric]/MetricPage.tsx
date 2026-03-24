@@ -21,7 +21,7 @@ export default function MetricPage({
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
   const [timeGroup, setTimeGroup] = useState<string>("day")
-  const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
+  const [actionHistory, setActionHistory] = useState<Action[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   async function getActionHistory() {

@@ -39,7 +39,7 @@ ChartJS.register(
 
 export default function Home() {
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
-  const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
+  const [actionHistory, setActionHistory] = useState<Action[]>([])
   const [metrics, setMetrics] = useState<FiveMetric | null>(null)
   const [total, setTotal] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -87,7 +87,7 @@ export default function Home() {
             {METRIC_KEYS.map((key) => (
               <MetricCard
                 key={key}
-                metric={{ name: key, value: metrics[key] }}
+                metric={{ name: key, value: metrics![key] }}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
               />
@@ -100,7 +100,7 @@ export default function Home() {
           </div>
         </section>
         <section className="flex flex-col w-full rounded-2xl py-4 max-h-2/3 gap-y-4">
-          {actionHistory
+          {actionHistory!
             .slice()
             .sort((a,b) => b.timestamp - a.timestamp)
             .slice(0,5)
