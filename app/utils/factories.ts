@@ -1,5 +1,5 @@
 import { Action, ActionDefinition, FiveMetric } from "../types"
-import { createRandomUUID, pickRandom } from "./helpers"
+import { pickRandom } from "./helpers"
 import { convertDayJSToTimestamp, getRandomDateBetween } from "./dateTime"
 import { Dayjs } from "dayjs"
 

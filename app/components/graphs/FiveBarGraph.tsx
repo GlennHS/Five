@@ -6,7 +6,7 @@ import { METRIC_COLORS } from "../../fixtures/Colors";
 import type { FiveMetric, MetricKey } from "../../types";
 
 type FiveBarGraphProps = {
-  data?: FiveMetric;
+  data: FiveMetric | null;
   highlightedMetric?: MetricKey | null;
   onMetricChange?: (metric: MetricKey | null) => void;
 };
@@ -23,7 +23,7 @@ const METRIC_RGB = [
 
 Chart.register(LinearScale, CategoryScale, BarElement)
 
-export default function FiveBarGraph(props: FiveBarGraphProps) {
+export default function FiveBarGraph({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
   const [chartData, setChartData] = useState(BAR_DEFAULT_CONFIG);
   const chartRef = useRef<Chart<'bar'> | null>(null);
 
@@ -32,7 +32,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
 
     if (!elements?.length) {
       changeSelectedBar(-1);
-      props.onMetricChange?.(null);
+      onMetricChange?.(null);
       return;
     }
 
@@ -42,7 +42,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
 
     const MetricKey = METRIC_ORDER[index];
     if (MetricKey) {
-      props.onMetricChange?.(MetricKey);
+      onMetricChange?.(MetricKey);
     }
   };
 
@@ -77,7 +77,7 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
         labels: METRIC_ORDER,
         datasets: [{
           label: 'Metrics',
-          data: props.data ? convertMetricsToData(props.data) : [30,40,56,64,88],
+          data: data ? convertMetricsToData(data) : [30,40,56,64,88],
           backgroundColor: [
             `rgba(${METRIC_COLORS.MIND}, 0.3)`,
             `rgba(${METRIC_COLORS.BODY}, 0.3)`,
@@ -99,17 +99,19 @@ export default function FiveBarGraph(props: FiveBarGraphProps) {
         onHover: handleChartClick
       }
     }));
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
-    if (props.highlightedMetric == null) {
+    if (highlightedMetric == null) {
       changeSelectedBar(-1);
       return;
     }
 
-    const index = METRIC_ORDER.indexOf(props.highlightedMetric);
+    const index = METRIC_ORDER.indexOf(highlightedMetric);
     changeSelectedBar(index === -1 ? -1 : index);
-  }, [props.highlightedMetric])
+  }, [highlightedMetric])
+
+  if (data === null) return <></>
 
   return (
     <div className="h-full w-full">

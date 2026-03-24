@@ -74,4 +74,11 @@ export interface ActionDefinitionDB {
   cash: number
   bond: number
 }
+
+export type ActionDB = {
+  id: number
+  timestamp: number
+  actionId: number
+  note?: string
+}
 /* #endregion */

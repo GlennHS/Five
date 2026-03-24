@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, ActionDefinition, ActionDefinitionDB, ActionDetails, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, Tag, TagDB, TimeGroup } from '../types'
+import { Action, ActionDB, ActionDefinition, ActionDefinitionDB, ActionDetails, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, Tag, TagDB, TimeGroup } from '../types'
 import { convertTimestampToDayJS, getDaysSinceDate, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
@@ -321,4 +321,15 @@ export function hydrateActionDefinitions(
       bond: def.bond
     }
   })
+}
+
+// For completeness' sake, in case one definition changes in future
+export function hydrateActions(
+  defs: ActionDB[],
+): Action[] {
+    return defs.map(d => {
+      return {
+        ...d
+      }
+    })
 }

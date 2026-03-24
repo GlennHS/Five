@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Types
-import { METRIC_KEYS, type MetricKey } from './types';
+import { Action, FiveMetric, METRIC_KEYS, type MetricKey } from './types';
 
 // Components
 import FiveBarGraph from './components/graphs/FiveBarGraph';
@@ -21,10 +21,12 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { calculateMetricsForRange, calculateTotal } from './utils/helpers';
-import { actionDefinitions, actionHistory } from './fixtures/AppData';
+import { calculateMetricsForRange, calculateTotal, hydrateActions } from './utils/helpers';
+import { actionDefinitions } from './fixtures/AppData';
 import { getAWeekAgo, getToday } from './utils/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
+import { ActionController } from './controllers/ActionController';
+import LoadingSpinner from './components/LoadingSpinner';
 
 ChartJS.register(
   RadialLinearScale,
@@ -36,11 +38,11 @@ ChartJS.register(
 );
 
 export default function Home() {
-  const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null);
-
-  // const metrics = getMetricsFromSnapshot(metricSnapshots.day);
-  const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
-  const total = calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday())
+  const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
+  const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
+  const [metrics, setMetrics] = useState<FiveMetric | null>(null)
+  const [total, setTotal] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -49,6 +51,25 @@ export default function Home() {
       setHighlightedMetric(metricName);
     }
   };
+
+  async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
+
+  useEffect(() => {
+    getActionHistory()
+  }, [])
+  
+  useEffect(() => {
+    if(actionHistory === null) return
+    setMetrics(calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
+    setTotal(calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
+    setIsLoading(false)
+  }, [actionHistory])
+
+  if (isLoading) return (
+    <div className="p-6">
+      <LoadingSpinner />
+    </div>
+  )
 
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">

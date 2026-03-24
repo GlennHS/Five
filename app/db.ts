@@ -1,7 +1,8 @@
 // db.ts
 import { Dexie, type EntityTable } from "dexie"
-import { ActionDefinitionDB, TagDB } from "./types"
+import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
 import { actionDefinitions, tags } from "./fixtures/AppData"
+import { pickRandom } from "./utils/helpers"
 
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<
@@ -12,12 +13,17 @@ const db = new Dexie("Main") as Dexie & {
     ActionDefinitionDB,
     "id" // primary key "id" (for the typings only)
   >
+  actions: EntityTable<
+    ActionDB,
+    "id" // primary key "id" (for the typings only)
+  >
 }
 
 // Schema declaration:
 db.version(1).stores({
   tags: "++id, name, colorKey", // primary key "id" (for the runtime!)
-  actionDefinitions: "++id, name, *tagIds"
+  actionDefinitions: "++id, name, *tagIds",
+  actions: "++id, name, actionId",
 })
 
 db.on("populate", async () => {
@@ -48,6 +54,27 @@ db.on("populate", async () => {
       bond: def.bond ?? 0
     })
   }
+
+  const defs = await db.actionDefinitions.toArray()
+
+  const quantity = 100 // tweak as needed
+  const now = Date.now()
+  const oneMonthAgo = now - 1000 * 60 * 60 * 24 * 30
+
+  const actionsToInsert = []
+
+  for (let i = 0; i < quantity; i++) {
+    const def = pickRandom(defs)
+
+    actionsToInsert.push({
+      actionId: def.id!,
+      timestamp:
+        oneMonthAgo + Math.random() * (now - oneMonthAgo),
+      note: "Test Data"
+    })
+  }
+
+  await db.actions.bulkAdd(actionsToInsert)
 })
 
 export { db }
