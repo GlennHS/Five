@@ -72,7 +72,7 @@ export default function Navbar() {
 
             <li>
               <NavLink
-                href="#"
+                href="/settings"
                 aria-label="Go to settings"
               >
                 <Cog />

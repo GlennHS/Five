@@ -1,16 +1,17 @@
 'use client'
 
-import Link from 'next/link'
-import { actionAffectsMetric, getMetricScore, getMetricSeries } from '@/app/utils/helpers'
+import { actionAffectsMetric, getMetricScore, getMetricSeries, hydrateActions } from '@/app/utils/helpers'
 import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
 import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
 import { Dayjs } from 'dayjs'
-import { actionDefinitions, actionHistory } from '@/app/fixtures/AppData'
-import { useState } from 'react'
-import { MetricKey } from '@/app/types'
+import { actionDefinitions } from '@/app/fixtures/AppData'
+import { useEffect, useState } from 'react'
+import { Action, MetricKey } from '@/app/types'
 import BackLink from '@/app/components/BackLink'
 import ActionCard from '@/app/components/actionCards/ActionCard'
 import ActionCardCondensed from '@/app/components/actionCards/ActionCardCondensed'
+import { ActionController } from '@/app/controllers/ActionController'
+import LoadingSpinner from '@/app/components/LoadingSpinner'
 
 export default function MetricPage({
   metric,
@@ -20,9 +21,25 @@ export default function MetricPage({
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
   const [timeGroup, setTimeGroup] = useState<string>("day")
+  const [actionHistory, setActionHistory] = useState<Action[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const actionsForMetric = actionHistory.filter(a =>
-    actionAffectsMetric(a, actionDefinitions, metric)
+  async function getActionHistory() {
+    ActionController.getAll()
+      .then(data => setActionHistory(
+        hydrateActions(data)
+          .filter((a) => actionAffectsMetric(a, actionDefinitions, metric))
+      )).then(() => setIsLoading(false))
+    }
+
+  useEffect(() => {
+    getActionHistory()
+  }, [])
+
+  if (isLoading) return (
+    <div className="p-6">
+      <LoadingSpinner />
+    </div>
   )
 
   return (

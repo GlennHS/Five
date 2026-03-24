@@ -10,7 +10,7 @@ import {
 
 import { convertTimestampToDayJS } from "@/app/utils/dateTime"
 import { formatSmartDate } from "@/app/utils/dateTime"
-import TagPill from "./TagPill"
+import TagPill from "../TagPill"
 
 type Props = {
   action: Action

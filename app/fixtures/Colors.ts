@@ -12,3 +12,5 @@ export const TAG_COLOR_CLASSES = {
   yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500",
   blue: "bg-blue-500/10 text-blue-500 border-blue-500",
 } as const
+
+export type TagColorKey = keyof typeof TAG_COLOR_CLASSES

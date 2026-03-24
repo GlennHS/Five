@@ -32,4 +32,4 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@source inline("{bg,border,text}-{mind,body,work,cash,bond,total}{,/10}");
+@source inline("{bg,border,text}-{mind,body,work,cash,bond,total}{,/10,/25}");

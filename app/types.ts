@@ -19,20 +19,20 @@ export type Metric = {
 }
 
 export type Action = {
-  id: string
+  id: number
   timestamp: number
-  actionId: string
+  actionId: number
   note?: string
 }
 
 export type ActionDefinition = {
-  id: string
+  id: number
   name: string,
-  tags?: Tag[]
+  tags: Tag[]
 } & Partial<FiveMetric>
 
 export type ActionDetails = {
-  id: string
+  id: number
   name: string
   tags: Tag[]
   timestamp: number
@@ -52,7 +52,33 @@ export type MetricSnapshotHistory = {
 }
 
 export type Tag = {
-  id: string,
+  id: number,
   name: string,
-  colorClass: keyof typeof TAG_COLOR_CLASSES,
+  colorKey: keyof typeof TAG_COLOR_CLASSES,
 }
+
+/* #region DB Types */
+export interface TagDB {
+  id: number
+  name: string
+  colorKey: keyof typeof TAG_COLOR_CLASSES,
+}
+
+export interface ActionDefinitionDB {
+  id: number
+  name: string
+  tagIds: number[]
+  mind: number
+  body: number
+  work: number
+  cash: number
+  bond: number
+}
+
+export type ActionDB = {
+  id: number
+  timestamp: number
+  actionId: number
+  note?: string
+}
+/* #endregion */

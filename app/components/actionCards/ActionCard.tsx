@@ -3,7 +3,7 @@
 import { Action, ActionDefinition, Tag } from "@/app/types"
 import { resolveActionDetails, getNonZeroMetrics, toSentenceCase, getDominantMetric, metricToCardClasses } from "@/app/utils/helpers"
 import { convertTimestampToDayJS, formatSmartDate } from "@/app/utils/dateTime"
-import TagPill from "./TagPill"
+import TagPill from "../TagPill"
 
 type Props = {
   action: Action
