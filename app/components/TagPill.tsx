@@ -1,8 +1,8 @@
-import { TAG_COLOR_CLASSES } from "@/app/fixtures/Colors"
+import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
 
 type TagPillProps = {
   tag: string,
-  color: keyof typeof TAG_COLOR_CLASSES,
+  color: TagColorKey,
 }
 
 export default function TagPill({ tag, color }: TagPillProps) {

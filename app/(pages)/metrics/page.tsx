@@ -1,11 +1,11 @@
 'use client';
 
-import { calculateMetricsForRange, calculateTotal } from "../utils/helpers";
-import { METRIC_KEYS } from "../types";
-import MetricCardLarge from "../components/MetricCardLarge";
-import { actionDefinitions, actionHistory } from "../fixtures/AppData";
-import { getAWeekAgo, getToday } from "../utils/dateTime";
-import BackLink from "../components/BackLink";
+import { calculateMetricsForRange, calculateTotal } from "../../utils/helpers";
+import { METRIC_KEYS } from "../../types";
+import MetricCardLarge from "../../components/MetricCardLarge";
+import { actionDefinitions, actionHistory } from "../../fixtures/AppData";
+import { getAWeekAgo, getToday } from "../../utils/dateTime";
+import BackLink from "../../components/BackLink";
 
 export default function Page() {
 
@@ -19,10 +19,10 @@ export default function Page() {
 
         <header className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Track your actions
+            Your metrics overview
           </h1>
           <p className="text-sm text-slate-600">
-            See your latest actions and log what you&apos;ve done
+            Tap a card to explore that area in more detail
           </p>
         </header>
 
@@ -37,10 +37,13 @@ export default function Page() {
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
           <h2 className="mb-1 text-base font-semibold text-slate-900">
-            What are actions?
+            How to use these metrics
           </h2>
           <p>
-            Actions are the building blocks of your metrics. Each action represents something you did, like working out, studying, or spending time with friends. When you log an action, it contributes points to one or more life metrics; Mind, Body, Work, Cash, or Bond. Over time these actions build up to show patterns in how you spend your time and energy.
+            Each metric represents one dimension of your wellbeing. Use the
+            overview to spot which areas are strong and which might need more
+            attention. Dive into an individual metric page for ideas and actions
+            to move the needle over time.
           </p>
         </section>
       </section>
