@@ -1,5 +1,6 @@
 "use client"
 
+import BackLink from "@/app/components/BackLink"
 import Link from "next/link"
 
 const links = [
@@ -18,6 +19,7 @@ const links = [
 export default function SettingsPage() {
   return (
     <div style={{ padding: 24, maxWidth: 500 }}>
+      <BackLink />
       <h1 style={{ marginBottom: 20 }}>Settings</h1>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

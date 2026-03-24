@@ -6,7 +6,8 @@ import { TagController } from "@/app/controllers/TagController"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { Pencil, Plus, Trash } from "lucide-react"
-import { TagDB, ActionDefinitionDB, Tag } from "@/app/types"
+import { TagDB, ActionDefinitionDB } from "@/app/types"
+import BackLink from "@/app/components/BackLink"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
 
@@ -165,6 +166,7 @@ export default function ActionsSettingsPage() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
+      <BackLink />
       <h1 className="text-xl font-semibold mb-6">Edit Actions</h1>
 
       {/* Create */}

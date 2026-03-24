@@ -7,26 +7,33 @@ import { getToday } from '../utils/dateTime';
 const positiveTag: Tag = {
   id: 0,
   name: 'positive',
-  colorClass: 'green',
+  colorKey: 'green',
 }
 
 const negativeTag: Tag = {
   id: 1,
   name: 'negative',
-  colorClass: 'red',
+  colorKey: 'red',
 }
 
 const importantTag: Tag = {
   id: 2,
   name: 'important',
-  colorClass: 'yellow',
+  colorKey: 'yellow',
 }
 
 const otherTag: Tag = {
   id: 3,
   name: 'other',
-  colorClass: 'blue',
+  colorKey: 'blue',
 }
+
+export const tags = [
+  positiveTag,
+  negativeTag,
+  importantTag,
+  otherTag,
+]
 
 export const metricSnapshots: Partial<MetricSnapshotHistory> = {
   day: {
@@ -147,6 +154,7 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Go for a coffee with someone",
     bond: 4,
     cash: -1,
+    tags: [],
   },
   {
     id: 12,
@@ -162,6 +170,7 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Go on a date",
     bond: 5,
     cash: -2,
+    tags: [],
   },
 
   {
@@ -197,6 +206,7 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Buy something nice",
     mind: 2,
     cash: -4,
+    tags: [],
   },
   {
     id: 18,

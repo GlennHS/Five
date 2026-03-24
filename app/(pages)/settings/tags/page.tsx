@@ -6,6 +6,7 @@ import TagPill from "@/app/components/TagPill"
 import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
 import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
+import BackLink from "@/app/components/BackLink"
 
 type Tag = {
   id?: number
@@ -87,6 +88,7 @@ export default function TagsSettingsPage() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
+      <BackLink />
       <h1 className="text-xl font-semibold mb-6">Edit Tags</h1>
 
       {/* Create */}

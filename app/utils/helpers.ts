@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, ActionDefinition, ActionDefinitionDB, ActionDetails, FiveMetric, Metric, METRIC_KEYS, METRIC_LETTERS, MetricKey, MetricSnapshot, MetricSnapshotHistory, Tag, TagDB, TimeGroup } from '../types'
+import { Action, ActionDefinition, ActionDefinitionDB, ActionDetails, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, Tag, TagDB, TimeGroup } from '../types'
 import { convertTimestampToDayJS, getDaysSinceDate, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
@@ -313,7 +313,7 @@ export function hydrateActionDefinitions(
     return {
       id: def.id!,
       name: def.name,
-      tags: hydratedTags.length > 0 ? hydratedTags : undefined,
+      tags: hydratedTags.length > 0 ? hydratedTags : [],
       mind: def.mind,
       body: def.body,
       work: def.work,

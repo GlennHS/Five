@@ -24,7 +24,7 @@ export const generateHistoryFromActionDefinitions = (
   const actions: Action[] = []
   for(let i = 0; i < quantity; i++) {
     const newAction: Action = {
-      id: createRandomUUID(),
+      id: i,
       actionId: pickRandom(definitions).id,
       timestamp: convertDayJSToTimestamp(getRandomDateBetween(fromDate, toDate)),
       note: "Test Data",
