@@ -1,21 +1,42 @@
 'use client';
 
 import { calculateMetricsForRange, calculateTotal, hydrateActions } from "../../utils/helpers";
-import { Action, FiveMetric, METRIC_KEYS } from "../../types";
+import { Action, METRIC_KEYS } from "../../types";
 import MetricCardLarge from "../../components/MetricCardLarge";
 import { actionDefinitions } from "../../fixtures/AppData";
 import { getAWeekAgo, getToday } from "../../utils/dateTime";
 import BackLink from "../../components/BackLink";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActionController } from "@/app/controllers/ActionController";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function Page() {
 
   const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
-  const [metrics, setMetrics] = useState<FiveMetric | null>(null)
-  const [total, setTotal] = useState<number>(0)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const metrics = useMemo(() => {
+    if (!actionHistory) return null
+
+    return calculateMetricsForRange(
+      actionHistory,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actionHistory])
+
+  const total = useMemo(() => {
+    if (!actionHistory) return null
+
+    return calculateTotal(
+      actionHistory,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actionHistory])
+
+  const isLoading = !!actionHistory
 
   async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
 
@@ -24,10 +45,7 @@ export default function Page() {
   }, [])
   
   useEffect(() => {
-    if(actionHistory === null) return
-    setMetrics(calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
-    setTotal(calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
-    setIsLoading(false)
+    if(!actionHistory) return
   }, [actionHistory])
 
   if (isLoading) return (
@@ -51,10 +69,10 @@ export default function Page() {
 
         <section className="grid grid-cols-2 gap-4">
           {METRIC_KEYS.map(k => (
-            <MetricCardLarge key={k} metric={{name: k, value: metrics[k]}} />
+            <MetricCardLarge key={k} metric={{name: k, value: metrics ? metrics[k] : 0}} />
           ))}
           <MetricCardLarge
-            metric={{ name: "total", value: total }}
+            metric={{ name: "total", value: total ?? 0 }}
           />
         </section>
 
