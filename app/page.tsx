@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // Types
-import { Action, FiveMetric, METRIC_KEYS, type MetricKey } from './types';
+import { Action, METRIC_KEYS, type MetricKey } from './types';
 
 // Components
 import FiveBarGraph from './components/graphs/FiveBarGraph';
@@ -40,9 +40,29 @@ ChartJS.register(
 export default function Home() {
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
   const [actionHistory, setActionHistory] = useState<Action[]>([])
-  const [metrics, setMetrics] = useState<FiveMetric | null>(null)
-  const [total, setTotal] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const metrics = useMemo(() => {
+    if (!actionHistory) return null
+
+    return calculateMetricsForRange(
+      actionHistory,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actionHistory])
+
+  const total = useMemo(() => {
+    if (!actionHistory) return null
+
+    return calculateTotal(
+      actionHistory,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actionHistory])
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -52,18 +72,16 @@ export default function Home() {
     }
   };
 
-  async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
+  async function getActionHistory() {
+    ActionController.getAll().then(data => {
+      setActionHistory(hydrateActions(data))
+      setIsLoading(false)
+    })
+  }
 
   useEffect(() => {
     getActionHistory()
   }, [])
-  
-  useEffect(() => {
-    if(actionHistory === null) return
-    setMetrics(calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
-    setTotal(calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
-    setIsLoading(false)
-  }, [actionHistory])
 
   if (isLoading) return (
     <div className="p-6">
@@ -93,7 +111,7 @@ export default function Home() {
               />
             ))}
             <MetricCard
-              metric={{name: "total", value: total}}
+              metric={{name: "total", value: total ?? 0}}
               isActive={highlightedMetric === null}
               onClick={() => handleMetricCardClick('total')}
             />
