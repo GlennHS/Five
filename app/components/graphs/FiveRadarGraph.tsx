@@ -14,27 +14,27 @@ export default function FiveRadarGraph(props: FiveRadarGraphProps) {
   const chartRef = useRef<Chart | null>(null);
 
   const handleChartClick = (event: MouseEvent) => {
-    if (!chartRef.current) return;
+    // if (!chartRef.current) return;
 
-    const elements = getElementAtEvent(chartRef.current, event);
-    if (!elements.length) return;
+    // const elements = getElementAtEvent(chartRef.current, event);
+    // if (!elements.length) return;
 
-    const index = elements[0].index;
+    // const index = elements[0].index;
 
-    const colors = [
-      FIVE_COLORS.MIND,
-      FIVE_COLORS.BODY,
-      FIVE_COLORS.CASH,
-      FIVE_COLORS.WORK,
-      FIVE_COLORS.BOND,
-    ];
+    // const colors = [
+    //   FIVE_COLORS.MIND,
+    //   FIVE_COLORS.BODY,
+    //   FIVE_COLORS.CASH,
+    //   FIVE_COLORS.WORK,
+    //   FIVE_COLORS.BOND,
+    // ];
 
-    const nextColor = colors[index] ?? FIVE_COLORS.MIND;
-    setRadarColor(nextColor);
+    // const nextColor = colors[index] ?? FIVE_COLORS.MIND;
+    // setRadarColor(nextColor);
 
-    chartRef.current.data.datasets[0].borderColor = nextColor;
-    chartRef.current.data.datasets[0].backgroundColor = `${nextColor}33`;
-    chartRef.current.update();
+    // chartRef.current.data.datasets[0].borderColor = nextColor;
+    // chartRef.current.data.datasets[0].backgroundColor = `${nextColor}33`;
+    // chartRef.current.update();
   };
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function FiveRadarGraph(props: FiveRadarGraphProps) {
 
   return (
     <Radar
-      ref={chartRef}
+      // ref={chartRef}
       onClick={handleChartClick}
       data={chartData.data}
       options={chartData.options}
