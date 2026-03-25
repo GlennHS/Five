@@ -36,7 +36,7 @@ export default function Page() {
     )
   }, [actionHistory])
 
-  const isLoading = !!actionHistory
+  const isLoading = actionHistory === null
 
   async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
 
