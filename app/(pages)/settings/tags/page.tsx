@@ -166,13 +166,13 @@ export default function TagsSettingsPage() {
                   <>
                     <button
                       onClick={() => saveEdit(tag.id!)}
-                      className="text-sm px-2 py-1 rounded bg-green-600 text-white"
+                      className="text-sm px-2 py-1 rounded bg-green-500 text-white"
                     >
                       <Save strokeWidth={1}/>
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="text-sm px-2 py-1 rounded bg-gray-200"
+                      className="text-sm px-2 py-1 rounded bg-red-400"
                     >
                       <SaveOff />
                     </button>

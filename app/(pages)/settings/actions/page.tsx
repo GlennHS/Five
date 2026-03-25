@@ -5,9 +5,10 @@ import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionCo
 import { TagController } from "@/app/controllers/TagController"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Pencil, Plus, Trash } from "lucide-react"
+import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import { TagDB, ActionDefinitionDB } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
+import { NumberStepper } from "@/app/components/NumberStepper"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
 
@@ -198,7 +199,8 @@ export default function ActionsSettingsPage() {
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 gap-x-2">
+          {METRICS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
           {METRICS.map(metric => (
             <input
               key={metric}
@@ -246,27 +248,27 @@ export default function ActionsSettingsPage() {
                 )}
 
                 {isEditing ? (
-                  <>
+                  <div className="flex gap-1">
                     <button
                       onClick={() => saveEdit(action.id!)}
-                      className="bg-green-200 text-white px-2 py-1 rounded"
+                      className="bg-green-500 text-white px-2 py-1 rounded"
                     >
-                      Save
+                      <Save strokeWidth={2} />
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="bg-red-200 px-2 py-1 rounded"
+                      className="bg-red-400 px-2 py-1 rounded"
                     >
-                      Cancel
+                      <SaveOff strokeWidth={2} />
                     </button>
-                  </>
+                  </div>
                 ) : (
-                  <>
+                  <div>
                     <button
                       onClick={() => startEdit(action)}
                       className="hover:bg-red-100 rounded p-1"
                     >
-                      <Pencil size={18} />
+                      <Pencil size={18} strokeWidth={2} />
                     </button>
                     <button
                       onClick={() => handleDelete(action.id)}
@@ -274,7 +276,7 @@ export default function ActionsSettingsPage() {
                     >
                       <Trash size={18} />
                     </button>
-                  </>
+                  </div>
                 )}
                </div>
 
@@ -306,21 +308,28 @@ export default function ActionsSettingsPage() {
               </div>
 
               {/* Metrics */}
-              <div className="text-xs opacity-70">
+              <div className="text-xs opacity-70 grid grid-cols-5 gap-x-2">
+                {METRICS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
                 {METRICS.map(metric =>
                   isEditing ? (
-                    <input
+                    // <input
+                    //   key={metric}
+                    //   type="number"
+                    //   className={`border rounded px-2 py-1 text-sm text-center bg-${metric}/25`}
+                    //   value={editMetrics[metric]}
+                    //   onChange={e =>
+                    //     updateEditMetric(metric, Number(e.target.value))
+                    //   }
+                    // />
+                    <NumberStepper
                       key={metric}
-                      type="number"
-                      className="border rounded px-2 py-1 text-sm"
+                      onChange={(val: number) => updateEditMetric(metric, val)}
                       value={editMetrics[metric]}
-                      onChange={e =>
-                        updateEditMetric(metric, Number(e.target.value))
-                      }
+                      metricName={metric}
                     />
                   ) : (
-                    <div key={metric} className="text-xs">
-                      {metric}: {action[metric] ?? 0}
+                    <div key={metric} className="text-xs text-center">
+                      {action[metric] ?? 0}
                     </div>
                   )
                 )}
