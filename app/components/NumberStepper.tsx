@@ -1,4 +1,4 @@
-import { ArrowBigDown, ArrowBigUp, Minus, Plus } from "lucide-react"
+import { ArrowBigDown, ArrowBigUp } from "lucide-react"
 import React from "react"
 import { MetricKey } from "../types"
 
@@ -15,7 +15,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
   metricName,
   className = "",
 }) => {
-  const clamp = (val: number) => Math.min(Math.max(val, 0), 100)
+  const clamp = (val: number) => Math.min(Math.max(val, -100), 100)
 
   const dec = () => onChange(clamp(value - 1))
   const inc = () => onChange(clamp(value + 1))
@@ -51,7 +51,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
       <button
         type="button"
         onClick={dec}
-        disabled={value <= 0}
+        disabled={value <= -100}
         className="p-1 active:scale-95 disabled:opacity-40 border-t border-black bg-gray-200 w-full rounded-b flex items-center justify-center"
         aria-label="Decrease"
       >
