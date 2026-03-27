@@ -16,7 +16,7 @@ const links = [
   }
 ]
 
-export default function SettingsPage() {
+export default function Page() {
   return (
     <div style={{ padding: 24, maxWidth: 500 }}>
       <BackLink />

@@ -14,7 +14,7 @@ type Tag = {
   colorKey: TagColorKey
 }
 
-export default function TagsSettingsPage() {
+export default function Page() {
   const [tags, setTags] = useState<Tag[]>([])
   const [name, setName] = useState("")
   const [colorKey, setColorKey] = useState<TagColorKey>("red")

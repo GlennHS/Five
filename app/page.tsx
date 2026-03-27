@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 // Types
-import { Action, METRIC_KEYS, type MetricKey } from './types';
+import { Action, ActionDefinition, METRIC_KEYS, type MetricKey } from './types';
 
 // Components
 import FiveBarGraph from './components/graphs/FiveBarGraph';
@@ -21,12 +21,13 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { calculateMetricsForRange, calculateTotal, hydrateActions } from './utils/helpers';
-import { actionDefinitions } from './fixtures/AppData';
+import { calculateMetricsForRange, calculateTotal, hydrateActionDefinitions, hydrateActions } from './utils/helpers';
 import { getAWeekAgo, getToday } from './utils/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
 import { ActionController } from './controllers/ActionController';
 import LoadingSpinner from './components/LoadingSpinner';
+import { ActionDefinitionController } from './controllers/ActionDefinitionController';
+import { TagController } from './controllers/TagController';
 
 ChartJS.register(
   RadialLinearScale,
@@ -40,6 +41,7 @@ ChartJS.register(
 export default function Home() {
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
   const [actionHistory, setActionHistory] = useState<Action[]>([])
+  const [actionDefinitions, setActionDefinitions] = useState<ActionDefinition[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const metrics = useMemo(() => {
@@ -78,9 +80,20 @@ export default function Home() {
       setIsLoading(false)
     })
   }
+  
+  async function getActionDefinitions() {
+    await Promise.all([
+      TagController.getAll(),
+      ActionDefinitionController.getAll()
+    ]).then(([tags, defs]) => {
+      setActionDefinitions(hydrateActionDefinitions(defs, tags))
+      setIsLoading(false)
+    })
+  }
 
   useEffect(() => {
     getActionHistory()
+    getActionDefinitions()
   }, [])
 
   if (isLoading) return (
@@ -113,7 +126,6 @@ export default function Home() {
             <MetricCard
               metric={{name: "total", value: total ?? 0}}
               isActive={highlightedMetric === null}
-              onClick={() => handleMetricCardClick('total')}
             />
           </div>
         </section>

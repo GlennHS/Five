@@ -14,7 +14,7 @@ type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
 
 const METRICS: MetricKey[] = ["mind", "body", "work", "cash", "bond"]
 
-export default function ActionsSettingsPage() {
+export default function Page() {
   const [tags, setTags] = useState<TagDB[]>([])
   const [actions, setActions] = useState<ActionDefinitionDB[]>([])
   const [loading, setLoading] = useState(true)

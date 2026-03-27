@@ -1,49 +1,139 @@
-'use client';
+"use client"
 
-import { calculateMetricsForRange, calculateTotal } from "../../utils/helpers";
-import { METRIC_KEYS } from "../../types";
-import MetricCardLarge from "../../components/MetricCardLarge";
-import { actionDefinitions, actionHistory } from "../../fixtures/AppData";
-import { getAWeekAgo, getToday } from "../../utils/dateTime";
-import BackLink from "../../components/BackLink";
+import { useEffect, useMemo, useState } from "react"
+import { ActionController } from "@/app/controllers/ActionController"
+import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
+import { TagController } from "@/app/controllers/TagController"
+import TagPill from "@/app/components/TagPill"
+import LoadingSpinner from "@/app/components/LoadingSpinner"
+import { Action, ActionDefinitionDB, TagDB } from "@/app/types"
+import { hydrateActions } from "@/app/utils/helpers"
 
 export default function Page() {
+  const [definitions, setDefinitions] = useState<ActionDefinitionDB[]>([])
+  const [actions, setActions] = useState<Action[]>([])
+  const [tags, setTags] = useState<TagDB[]>([])
 
-  const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
-  const total = calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
+  useEffect(() => {
+    async function load() {
+      const [defs, acts, tags] = await Promise.all([
+        ActionDefinitionController.getAll(),
+        ActionController.getAll(),
+        TagController.getAll()
+      ])
+
+      setDefinitions(defs)
+      setActions(hydrateActions(acts))
+      setTags(tags)
+    }
+
+    load()
+  }, [])
+
+  const sortedDefinitions = useMemo(() => {
+    if (!definitions.length) return []
+
+    const latestMap = new Map<number, number>()
+
+    for (const action of actions) {
+      const current = latestMap.get(action.actionId)
+
+      if (!current || action.timestamp > current) {
+        latestMap.set(action.actionId, action.timestamp)
+      }
+    }
+
+    return [...definitions].sort((a, b) => {
+      const aTime = latestMap.get(a.id!) ?? 0
+      const bTime = latestMap.get(b.id!) ?? 0
+
+      return bTime - aTime
+    })
+  }, [definitions, actions])
+
+  function getTagsForDefinition(def: ActionDefinitionDB) {
+    return def.tagIds
+      .map(id => tags.find(t => t.id === id))
+      .filter(Boolean) as TagDB[]
+  }
+
+  async function handleLog(def: ActionDefinitionDB) {
+    const timestamp = Date.now()
+
+    console.info(`Creating a new Action in the DB...`)
+    console.debug(`Action definition is ${JSON.stringify(def)}`)
+    
+    const id = await ActionController.create({
+      actionId: def.id!,
+      timestamp,
+      note: ""
+    })
+
+    console.debug(`Action added to DB. ID is ${id}`)
+
+    // optimistic update
+    setActions(prev => [
+      ...prev,
+      {
+        actionId: def.id!,
+        timestamp,
+        note: ""
+      }
+    ])
+  }
+
+  const isLoading =
+    definitions.length === 0 && actions.length === 0 && tags.length === 0
+
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <LoadingSpinner />
+      </div>
+    )
+  }
 
   return (
-    <main className="min-h-screen w-full bg-white px-4 py-8">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
-        <BackLink />
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-xl font-semibold mb-6">Track Actions</h1>
 
-        <header className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Track your actions
-          </h1>
-          <p className="text-sm text-slate-600">
-            See your latest actions and log what you&apos;ve done
-          </p>
-        </header>
+      <div className="flex flex-col">
+        {sortedDefinitions.map((def, i) => {
+          const defTags = getTagsForDefinition(def)
 
-        <section className="grid grid-cols-2 gap-4">
-          {METRIC_KEYS.map(k => (
-            <MetricCardLarge key={k} metric={{name: k, value: metrics[k]}} />
-          ))}
-          <MetricCardLarge
-            metric={{ name: "total", value: total }}
-          />
-        </section>
+          return (
+            <div
+              key={def.id}
+              className={`flex items-center justify-between border-b px-2 py-2 ${
+                i % 2 === 0 ? "bg-gray-300" : "bg-white"
+              }`}
+            >
+              {/* Left */}
+              <div className="flex flex-col gap-1">
+                <div className="font-medium">{def.name}</div>
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-          <h2 className="mb-1 text-base font-semibold text-slate-900">
-            What are actions?
-          </h2>
-          <p>
-            Actions are the building blocks of your metrics. Each action represents something you did, like working out, studying, or spending time with friends. When you log an action, it contributes points to one or more life metrics; Mind, Body, Work, Cash, or Bond. Over time these actions build up to show patterns in how you spend your time and energy.
-          </p>
-        </section>
-      </section>
-    </main>
+                <div className="flex gap-2 flex-wrap">
+                  {defTags.map(tag => (
+                    <TagPill
+                      key={tag.id}
+                      tag={tag.name}
+                      color={tag.colorKey}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Right */}
+              <button
+                onClick={() => handleLog(def)}
+                className="px-3 py-1 rounded bg-black text-white text-sm"
+              >
+                Log
+              </button>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }
