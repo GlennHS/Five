@@ -60,21 +60,17 @@ export default function Page() {
   async function handleLog(def: ActionDefinitionDB) {
     const timestamp = Date.now()
 
-    console.info(`Creating a new Action in the DB...`)
-    console.debug(`Action definition is ${JSON.stringify(def)}`)
-    
     const id = await ActionController.create({
       actionId: def.id!,
       timestamp,
       note: ""
     })
 
-    console.debug(`Action added to DB. ID is ${id}`)
-
     // optimistic update
     setActions(prev => [
       ...prev,
       {
+        id,
         actionId: def.id!,
         timestamp,
         note: ""
