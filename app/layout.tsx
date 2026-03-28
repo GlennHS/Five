@@ -2,6 +2,7 @@ import { Nunito, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { AppProvider } from "./context/AppContext";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -29,7 +30,9 @@ export default function RootLayout({
       </head>
       <link rel="icon" href="/images/icons/five-icon.png" sizes="any" />
       <body>
-        {children}
+        <AppProvider>
+          {children}
+        </AppProvider>
         <Navbar />
         <Footer />
         <FooterSpacer />

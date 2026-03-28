@@ -11,31 +11,20 @@ import BackLink from '@/app/components/BackLink'
 import ActionCardCondensed from '@/app/components/actionCards/ActionCardCondensed'
 import { ActionController } from '@/app/controllers/ActionController'
 import LoadingSpinner from '@/app/components/LoadingSpinner'
+import { useApp } from '@/app/context/AppContext'
 
 export default function MetricPage({
   metric,
 }: {
   metric: MetricKey
 }) {
+  const { actions, actionDefinitions, loading } = useApp()
+
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
   const [timeGroup, setTimeGroup] = useState<string>("day")
-  const [actionHistory, setActionHistory] = useState<Action[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  async function getActionHistory() {
-    ActionController.getAll()
-      .then(data => setActionHistory(
-        hydrateActions(data)
-          .filter((a) => actionAffectsMetric(a, actionDefinitions, metric))
-      )).then(() => setIsLoading(false))
-    }
-
-  useEffect(() => {
-    getActionHistory()
-  }, [])
-
-  if (isLoading) return (
+  if (loading) return (
     <div className="p-6">
       <LoadingSpinner />
     </div>
@@ -54,7 +43,7 @@ export default function MetricPage({
           <p className="text-sm text-slate-600">
             Current score:
             <span className="font-semibold text-slate-900">
-              {getMetricScore(actionHistory, actionDefinitions, metric, fromDate, toDate)}
+              {getMetricScore(actions, actionDefinitions, metric, fromDate, toDate)}
             </span>
           </p>
         </header>
@@ -65,7 +54,7 @@ export default function MetricPage({
           </h2>
 
           <div className="h-64 w-full">
-            <FiveLineGraph data={getMetricSeries(actionHistory, actionDefinitions, metric, fromDate, toDate, 'day')} />
+            <FiveLineGraph data={getMetricSeries(actions, actionDefinitions, metric, fromDate, toDate, 'day')} />
           </div>
         </section>
 
@@ -82,7 +71,7 @@ export default function MetricPage({
             className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center text-slate-500"
             aria-label="Action cards container"
           >
-            {actionHistory
+            {actions
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
               .slice(0,5)

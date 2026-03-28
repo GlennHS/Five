@@ -8,30 +8,13 @@ import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { Action, ActionDefinitionDB, TagDB } from "@/app/types"
 import { hydrateActions } from "@/app/utils/helpers"
+import { AppProvider, useApp } from "@/app/context/AppContext"
 
 export default function Page() {
-  const [definitions, setDefinitions] = useState<ActionDefinitionDB[]>([])
-  const [actions, setActions] = useState<Action[]>([])
-  const [tags, setTags] = useState<TagDB[]>([])
+  const { actions, tags, actionDefinitions, loading, logAction } = useApp()
 
-  useEffect(() => {
-    async function load() {
-      const [defs, acts, tags] = await Promise.all([
-        ActionDefinitionController.getAll(),
-        ActionController.getAll(),
-        TagController.getAll()
-      ])
-
-      setDefinitions(defs)
-      setActions(hydrateActions(acts))
-      setTags(tags)
-    }
-
-    load()
-  }, [])
-
-  const sortedDefinitions = useMemo(() => {
-    if (!definitions.length) return []
+  const sortedActionDefinitions = useMemo(() => {
+    if (!actionDefinitions.length) return []
 
     const latestMap = new Map<number, number>()
 
@@ -43,45 +26,15 @@ export default function Page() {
       }
     }
 
-    return [...definitions].sort((a, b) => {
+    return [...actionDefinitions].sort((a, b) => {
       const aTime = latestMap.get(a.id!) ?? 0
       const bTime = latestMap.get(b.id!) ?? 0
 
       return bTime - aTime
     })
-  }, [definitions, actions])
+  }, [actionDefinitions, actions])
 
-  function getTagsForDefinition(def: ActionDefinitionDB) {
-    return def.tagIds
-      .map(id => tags.find(t => t.id === id))
-      .filter(Boolean) as TagDB[]
-  }
-
-  async function handleLog(def: ActionDefinitionDB) {
-    const timestamp = Date.now()
-
-    const id = await ActionController.create({
-      actionId: def.id!,
-      timestamp,
-      note: ""
-    })
-
-    // optimistic update
-    setActions(prev => [
-      ...prev,
-      {
-        id,
-        actionId: def.id!,
-        timestamp,
-        note: ""
-      }
-    ])
-  }
-
-  const isLoading =
-    definitions.length === 0 && actions.length === 0 && tags.length === 0
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="p-6">
         <LoadingSpinner />
@@ -94,8 +47,8 @@ export default function Page() {
       <h1 className="text-xl font-semibold mb-6">Track Actions</h1>
 
       <div className="flex flex-col">
-        {sortedDefinitions.map((def, i) => {
-          const defTags = getTagsForDefinition(def)
+        {sortedActionDefinitions.map((def, i) => {
+          const defTags = def.tags
 
           return (
             <div
@@ -121,7 +74,7 @@ export default function Page() {
 
               {/* Right */}
               <button
-                onClick={() => handleLog(def)}
+                onClick={() => logAction(def.id)}
                 className="px-3 py-1 rounded bg-black text-white text-sm"
               >
                 Log

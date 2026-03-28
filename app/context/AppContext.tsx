@@ -49,6 +49,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // initial load
   useEffect(() => {
     async function load() {
+      setLoading(true)
+      // await new Promise(resolve => setTimeout(resolve, 3000)) // Test loading states with this
       const [tags, defs, acts] = await Promise.all([
         TagController.getAll(),
         ActionDefinitionController.getAll(),
@@ -65,4 +67,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     load()
   }, [])
+
+    return (
+      <AppContext.Provider
+        value={{
+          actions,
+          actionDefinitions,
+          tags,
+          loading,
+          logAction
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    )
+}
+
+export function useApp() {
+  const ctx = useContext(AppContext)
+  if (!ctx) throw new Error("useApp must be used within AppProvider")
+  return ctx
 }

@@ -1,58 +1,46 @@
 'use client';
 
-import { calculateMetricsForRange, calculateTotal, hydrateActions } from "../../utils/helpers";
-import { Action, METRIC_KEYS } from "../../types";
+import { calculateMetricsForRange, calculateTotal } from "../../utils/helpers";
+import { METRIC_KEYS } from "../../types";
 import MetricCardLarge from "../../components/MetricCardLarge";
-import { actionDefinitions } from "../../fixtures/AppData";
 import { getAWeekAgo, getToday } from "../../utils/dateTime";
 import BackLink from "../../components/BackLink";
-import { useEffect, useMemo, useState } from "react";
-import { ActionController } from "@/app/controllers/ActionController";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import { useApp } from "@/app/context/AppContext";
+import { useMemo } from "react";
 
 export default function Page() {
 
-  const [actionHistory, setActionHistory] = useState<Action[] | null>(null)
+    const { actions, actionDefinitions, loading } = useApp()
 
   const metrics = useMemo(() => {
-    if (!actionHistory) return null
+    if (!actions) return null
 
     return calculateMetricsForRange(
-      actionHistory,
+      actions,
       actionDefinitions,
       getAWeekAgo(),
       getToday()
     )
-  }, [actionHistory])
+  }, [actions])
 
   const total = useMemo(() => {
-    if (!actionHistory) return null
+    if (!actions) return null
 
     return calculateTotal(
-      actionHistory,
+      actions,
       actionDefinitions,
       getAWeekAgo(),
       getToday()
     )
-  }, [actionHistory])
+  }, [actions])
 
-  const isLoading = actionHistory === null
-
-  async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
-
-  useEffect(() => {
-    getActionHistory()
-  }, [])
-  
-  useEffect(() => {
-    if(!actionHistory) return
-  }, [actionHistory])
-
-  if (isLoading) return (
+  if (loading) return (
     <div className="p-6">
       <LoadingSpinner />
     </div>
   )
+
   return (
     <main className="min-h-screen w-full bg-white px-4 py-8">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
