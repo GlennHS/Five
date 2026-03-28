@@ -101,8 +101,6 @@ export default function FiveBarGraph({data, highlightedMetric, onMetricChange}: 
     chartRef.current.update();
   }
 
-  const convertMetricsToData = (m: FiveMetric): number[] => [m.mind, m.body, m.cash, m.work, m.bond]
-
   useEffect(() => {
     if (highlightedMetric == null) {
       changeSelectedBar(-1);

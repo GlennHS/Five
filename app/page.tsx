@@ -106,11 +106,13 @@ export default function Home() {
     <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">
       <main className="flex min-h-screen w-full sm:max-w-3xl flex-col gap-6 p-4 bg-white">
         <section className="w-full rounded-2xl max-h-2/3 h-64">
-          <FiveBarGraph
-            data={metrics}
-            highlightedMetric={highlightedMetric}
-            onMetricChange={(metric) => setHighlightedMetric(metric)}
-          />
+          {!isLoading && (
+            <FiveBarGraph
+              data={metrics}
+              highlightedMetric={highlightedMetric}
+              onMetricChange={(metric) => setHighlightedMetric(metric)}
+            />
+          )}
         </section>
 
         <section className="w-full">
