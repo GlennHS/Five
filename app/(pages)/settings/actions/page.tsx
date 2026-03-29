@@ -9,15 +9,22 @@ import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import { TagDB, ActionDefinitionDB } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
 import { NumberStepper } from "@/app/components/NumberStepper"
+import { useApp } from "@/app/context/AppContext"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
 
 const METRICS: MetricKey[] = ["mind", "body", "work", "cash", "bond"]
 
 export default function Page() {
+  const {
+    loading,
+    actionDefinitions,
+    addActionDefinition,
+    updateActionDefinition,
+    archiveActionDefinition,
+    deleteActionDefinition
+  } = useApp()
   const [tags, setTags] = useState<TagDB[]>([])
-  const [actions, setActions] = useState<ActionDefinitionDB[]>([])
-  const [loading, setLoading] = useState(true)
 
   const [name, setName] = useState("")
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([])
@@ -75,14 +82,11 @@ export default function Page() {
     id,
     name: editName,
     tagIds: editTagIds,
-    ...editMetrics
+    ...editMetrics,
+    archived: false,
   }
 
-  await ActionDefinitionController.update(updated)
-
-  setActions(prev =>
-    prev.map(a => (a.id === id ? updated : a))
-  )
+  
 
   setEditingId(null)
 }
@@ -94,13 +98,13 @@ export default function Page() {
 
   useEffect(() => {
     async function load() {
-      const [tags, actions] = await Promise.all([
+      const [tags, actiondefinitions] = await Promise.all([
         TagController.getAll(),
         ActionDefinitionController.getAll()
       ])
 
       setTags(tags)
-      setActions(actions)
+      setActionDefinitions(actiondefinitions)
       setLoading(false)
     }
 
@@ -133,7 +137,7 @@ export default function Page() {
 
     const id = await ActionDefinitionController.create(newDef)
 
-    setActions(prev => [...prev, { id, ...newDef }])
+    setActionDefinitions(prev => [...prev, { id, ...newDef }])
 
     // reset form
     setName("")
@@ -153,8 +157,7 @@ export default function Page() {
     const confirmDelete = confirm("Delete this action?")
     if (!confirmDelete) return
 
-    await ActionDefinitionController.delete(id)
-    setActions(prev => prev.filter(a => a.id !== id))
+    
   }
 
   if (loading) {
@@ -168,7 +171,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-xl mx-auto">
       <BackLink />
-      <h1 className="text-xl font-semibold mb-6">Edit Actions</h1>
+      <h1 className="text-xl font-semibold mb-6">Edit ActionDefinitions</h1>
 
       {/* Create */}
       <div className="flex flex-col gap-3 mb-6 border p-4 rounded-lg">
@@ -202,13 +205,11 @@ export default function Page() {
         <div className="grid grid-cols-5 gap-x-2">
           {METRICS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
           {METRICS.map(metric => (
-            <input
+            <NumberStepper
               key={metric}
-              type="number"
-              className={`border rounded px-2 py-1 text-sm bg-${metric}/25`}
+              onChange={(val: number) => updateMetric(metric, val)}
               value={metrics[metric]}
-              onChange={e => updateMetric(metric, Number(e.target.value))}
-              placeholder={metric}
+              metricName={metric}
             />
           ))}
         </div>
@@ -223,10 +224,8 @@ export default function Page() {
 
       {/* List */}
       <div className="flex flex-col">
-        {actions.map((action, i) => {
-          const actionTags = action.tagIds
-            .map(id => tags.find(t => t.id === id))
-            .filter(Boolean) as TagDB[]
+        {actionDefinitions.map((action, i) => {
+          const actionTags = action.tags
           const isEditing = editingId === action.id
 
           return (
@@ -312,15 +311,6 @@ export default function Page() {
                 {METRICS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
                 {METRICS.map(metric =>
                   isEditing ? (
-                    // <input
-                    //   key={metric}
-                    //   type="number"
-                    //   className={`border rounded px-2 py-1 text-sm text-center bg-${metric}/25`}
-                    //   value={editMetrics[metric]}
-                    //   onChange={e =>
-                    //     updateEditMetric(metric, Number(e.target.value))
-                    //   }
-                    // />
                     <NumberStepper
                       key={metric}
                       onChange={(val: number) => updateEditMetric(metric, val)}

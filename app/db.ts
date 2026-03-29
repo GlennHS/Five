@@ -51,7 +51,8 @@ db.on("populate", async () => {
       body: def.body ?? 0,
       work: def.work ?? 0,
       cash: def.cash ?? 0,
-      bond: def.bond ?? 0
+      bond: def.bond ?? 0,
+      archived: false,
     })
   }
 
