@@ -6,7 +6,7 @@ import { TagController } from "@/app/controllers/TagController"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
-import { TagDB, ActionDefinitionDB } from "@/app/types"
+import { TagDB, ActionDefinitionDB, ActionDefinition } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
 import { NumberStepper } from "@/app/components/NumberStepper"
 import { useApp } from "@/app/context/AppContext"
@@ -18,13 +18,13 @@ const METRICS: MetricKey[] = ["mind", "body", "work", "cash", "bond"]
 export default function Page() {
   const {
     loading,
+    tags,
     actionDefinitions,
     addActionDefinition,
     updateActionDefinition,
     archiveActionDefinition,
     deleteActionDefinition
   } = useApp()
-  const [tags, setTags] = useState<TagDB[]>([])
 
   const [name, setName] = useState("")
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([])
@@ -47,16 +47,16 @@ export default function Page() {
     bond: 0
   })
 
-  function startEdit(action: ActionDefinitionDB) {
+  function startEdit(action: ActionDefinition) {
     setEditingId(action.id!)
     setEditName(action.name)
-    setEditTagIds(action.tagIds)
+    setEditTagIds(action.tags.map(t=>t.id))
     setEditMetrics({
-      mind: action.mind,
-      body: action.body,
-      work: action.work,
-      cash: action.cash,
-      bond: action.bond
+      mind: action.mind ?? 0,
+      body: action.body ?? 0,
+      work: action.work ?? 0,
+      cash: action.cash ?? 0,
+      bond: action.bond ?? 0
     })
   }
 
@@ -86,8 +86,7 @@ export default function Page() {
     archived: false,
   }
 
-  
-
+  updateActionDefinition(updated)
   setEditingId(null)
 }
 
@@ -95,21 +94,6 @@ export default function Page() {
     setEditingId(null)
     setEditName("")
   }
-
-  useEffect(() => {
-    async function load() {
-      const [tags, actiondefinitions] = await Promise.all([
-        TagController.getAll(),
-        ActionDefinitionController.getAll()
-      ])
-
-      setTags(tags)
-      setActionDefinitions(actiondefinitions)
-      setLoading(false)
-    }
-
-    load()
-  }, [])
 
   function toggleTag(id: number) {
     setSelectedTagIds(prev =>
@@ -132,12 +116,11 @@ export default function Page() {
     const newDef: Omit<ActionDefinitionDB, "id"> = {
       name,
       tagIds: selectedTagIds,
-      ...metrics
+      ...metrics,
+      archived: false,
     }
 
-    const id = await ActionDefinitionController.create(newDef)
-
-    setActionDefinitions(prev => [...prev, { id, ...newDef }])
+    const id = await addActionDefinition(newDef)
 
     // reset form
     setName("")
@@ -284,7 +267,7 @@ export default function Page() {
                 {(isEditing ? tags : actionTags).map(tag => {
                   const selected = isEditing
                     ? editTagIds.includes(tag.id!)
-                    : action.tagIds.includes(tag.id!)
+                    : action.tags.includes(tag)
 
                   return isEditing ? (
                     <button

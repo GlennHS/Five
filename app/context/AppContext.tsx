@@ -3,7 +3,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { Action, ActionDefinition, ActionDefinitionDB, Tag } from "@/app/types"
+import { Action, ActionDefinition, ActionDefinitionDB, Tag, TagDB } from "@/app/types"
 import { ActionController } from "@/app/controllers/ActionController"
 import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
 import { TagController } from "@/app/controllers/TagController"
@@ -15,11 +15,14 @@ type AppState = {
   tags: Tag[]
   loading: boolean
 
-  logAction: (actionId: number) => Promise<void>
-  addActionDefinition: (def: ActionDefinition) => Promise<void>
-  updateActionDefinition: (def: ActionDefinition) => Promise<void>
+  addAction: (actionId: number) => Promise<void>
+  addActionDefinition: (def: Omit<ActionDefinitionDB, 'id'>) => Promise<void>
+  updateActionDefinition: (def: ActionDefinitionDB) => Promise<void>
   archiveActionDefinition: (id: number) => Promise<void>
   deleteActionDefinition: (id: number) => Promise<void>
+  addTag: (def: Omit<Tag, 'id'>) => Promise<void>
+  updateTag: (def: Tag) => Promise<void>
+  deleteTag: (id: number) => Promise<void>
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -30,7 +33,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(true)
 
-  async function logAction(actionId: number) {
+  async function addAction(actionId: number) {
     const timestamp = Date.now()
 
     const id: number = await ActionController.create({
@@ -50,47 +53,56 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActions(prev => [...prev, newAction])
   }
 
-  async function addActionDefinition(def: Omit<ActionDefinition, 'id'>) {
-    const id: number = await ActionDefinitionController.create({
-      name: def.name,
-      tagIds: def.tags.map(t => t.id),
-      mind: def.mind ?? 0,
-      body: def.body ?? 0,
-      work: def.work ?? 0,
-      cash: def.cash ?? 0,
-      bond: def.bond ?? 0,
-      archived: false,
-    })
+  async function addActionDefinition(def: Omit<ActionDefinitionDB, 'id'>) {
+    const id: number = await ActionDefinitionController.create(def)
+    const defTags: Tag[] = tags.filter(t => def.tagIds.includes(t.id))
 
     const newDef: ActionDefinition = {
-      id,
       ...def,
+      id,
+      tags: defTags,
     }
 
     setActionDefinitions(prev => [...prev, newDef])
   }
 
-  async function updateActionDefinition(def: ActionDefinition) {
-    await ActionDefinitionController.update({
-      id: def.id,
-      name: def.name,
-      tagIds: def.tags.map(t => t.id),
-      mind: def.mind ?? 0,
-      body: def.body ?? 0,
-      work: def.work ?? 0,
-      cash: def.cash ?? 0,
-      bond: def.bond ?? 0,
-      archived: false,
-    })
-    setActionDefinitions(prev => [...prev.filter(d => d.id !== def.id), def])
+  async function updateActionDefinition(def: ActionDefinitionDB) {
+    await ActionDefinitionController.update(def)
+    const defTags: Tag[] = tags.filter(t => def.tagIds.includes(t.id))
+    const newDef = {
+      ...def,
+      tags: defTags
+    }
+    setActionDefinitions(prev => [...prev.filter(d => d.id !== def.id), newDef])
   }
 
   async function archiveActionDefinition(id: number) {
+    ActionDefinitionController.get(id).then(def => {
+      def && ActionDefinitionController.update({
+        ...def,
+        archived: true
+      })
+    })
 
   }
 
   async function deleteActionDefinition(id: number) {
+    ActionDefinitionController.delete(id)
+  }
 
+  async function addTag(tag: Omit<Tag, 'id'>) {
+    const id = await TagController.create(tag.name, tag.colorKey)
+    setTags(prev => [...prev, {...tag, id}])
+  }
+
+  async function updateTag(tag: Tag) {
+    await TagController.update(tag)
+    setTags(prev => [...prev.filter(t => t.id !== tag.id), tag])
+  }
+
+  async function deleteTag(id :number) {
+    TagController.delete(id)
+    setTags(prev => [...prev.filter(t => t.id !== id)])
   }
 
   // initial load
@@ -122,11 +134,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           actionDefinitions,
           tags,
           loading,
-          logAction,
+          addAction,
           addActionDefinition,
           updateActionDefinition,
           archiveActionDefinition,
           deleteActionDefinition,
+          addTag,
+          updateTag,
+          deleteTag,
         }}
       >
         {children}

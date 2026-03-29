@@ -20,5 +20,5 @@ export const ActionDefinitionController = {
 
   async delete(id: number) {
     return db.actionDefinitions.delete(id)
-  }
+  },
 }

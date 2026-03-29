@@ -11,7 +11,7 @@ import { hydrateActions } from "@/app/utils/helpers"
 import { AppProvider, useApp } from "@/app/context/AppContext"
 
 export default function Page() {
-  const { actions, tags, actionDefinitions, loading, logAction } = useApp()
+  const { actions, tags, actionDefinitions, loading, addAction } = useApp()
 
   const sortedActionDefinitions = useMemo(() => {
     if (!actionDefinitions.length) return []
@@ -74,7 +74,7 @@ export default function Page() {
 
               {/* Right */}
               <button
-                onClick={() => logAction(def.id)}
+                onClick={() => addAction(def.id)}
                 className="px-3 py-1 rounded bg-black text-white text-sm"
               >
                 Log

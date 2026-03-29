@@ -7,6 +7,7 @@ import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
 import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import BackLink from "@/app/components/BackLink"
+import { useApp } from "@/app/context/AppContext"
 
 type Tag = {
   id?: number
@@ -15,44 +16,23 @@ type Tag = {
 }
 
 export default function Page() {
-  const [tags, setTags] = useState<Tag[]>([])
+  const { tags, loading, addTag, updateTag, deleteTag } = useApp()
+
+  // add tag form
   const [name, setName] = useState("")
   const [colorKey, setColorKey] = useState<TagColorKey>("red")
-  const [loading, setLoading] = useState(true)
 
   // editing state
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState("")
   const [editColor, setEditColor] = useState<TagColorKey>("red")
 
-  async function loadTags() {
-    const data = await TagController.getAll()
-    setTags(data)
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadTags()
-  }, [])
-
-  async function handleAdd() {
-    if (!name.trim()) return
-
-    const id = await TagController.create(name, colorKey)
-
-    setTags(prev => [...prev, { id, name, colorKey }])
-    setName("")
-  }
-
-  async function handleDelete(id?: number) {
-    if (!id) return
-
-    const confirmDelete = confirm("Delete this tag?")
-    if (!confirmDelete) return
-
-    await TagController.delete(id)
-    setTags(prev => prev.filter(t => t.id !== id))
+  function handleAdd() {
+    if(name.trim()) {
+      addTag({name, colorKey})
+      setName("")
+      setColorKey("red")
+    }
   }
 
   function startEdit(tag: Tag) {
@@ -68,15 +48,11 @@ export default function Page() {
 
   async function saveEdit(id: number) {
     if (!editName.trim()) return
-
-    // NOTE: you'll implement update later
-    // temporary local update so UI feels complete
-    setTags(prev =>
-      prev.map(t =>
-        t.id === id ? { ...t, name: editName, colorKey: editColor } : t
-      )
-    )
-
+    updateTag({
+      id,
+      name: editName,
+      colorKey: editColor
+    })
     setEditingId(null)
   }
 
@@ -188,7 +164,7 @@ export default function Page() {
                     </button>
 
                     <button
-                      onClick={() => handleDelete(tag.id)}
+                      onClick={() => deleteTag(tag.id)}
                       className="text-sm px-2 py-1 rounded hover:bg-red-100"
                       title="Delete"
                     >
