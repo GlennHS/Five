@@ -44,7 +44,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
         inputMode="numeric"
         value={value}
         onChange={handleInputChange}
-        className="w-full text-xs text-center outline-none appearance-none py-1"
+        className="w-full text-xs text-center outline-none appearance-none py-1 no-spinner"
         disabled
       />
 
