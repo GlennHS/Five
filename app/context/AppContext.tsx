@@ -19,6 +19,7 @@ type AppState = {
   addActionDefinition: (def: Omit<ActionDefinitionDB, 'id'>) => Promise<void>
   updateActionDefinition: (def: ActionDefinitionDB) => Promise<void>
   archiveActionDefinition: (id: number) => Promise<void>
+  unarchiveActionDefinition: (id: number) => Promise<void>
   deleteActionDefinition: (id: number) => Promise<void>
   addTag: (def: Omit<Tag, 'id'>) => Promise<void>
   updateTag: (def: Tag) => Promise<void>
@@ -63,7 +64,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       tags: defTags,
     }
 
-    setActionDefinitions(prev => [...prev, newDef])
+    setActionDefinitions(prev => [newDef, ...prev])
   }
 
   async function updateActionDefinition(def: ActionDefinitionDB) {
@@ -73,36 +74,59 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...def,
       tags: defTags
     }
-    setActionDefinitions(prev => [...prev.filter(d => d.id !== def.id), newDef])
+    setActionDefinitions(prev => [newDef, ...prev.filter(d => d.id !== def.id)])
   }
 
   async function archiveActionDefinition(id: number) {
-    ActionDefinitionController.get(id).then(def => {
-      def && ActionDefinitionController.update({
+    setActionDefinitions(prev =>
+      prev.map(d => {
+        if(d.id === id) {
+          console.log("MATCH ", id)
+          return { ...d, archived: true }
+        } else {
+          return d
+        }
+      })
+    )
+
+    const def = await ActionDefinitionController.get(id)
+    if (def) {
+      await ActionDefinitionController.update({
         ...def,
         archived: true
       })
+    }
+  }
+  
+  async function unarchiveActionDefinition(id: number) {
+    ActionDefinitionController.get(id).then(def => {
+      def && ActionDefinitionController.update({
+        ...def,
+        archived: false
+      })
     })
-
+    setActionDefinitions(prev => [...prev.map(d=>d.id===id ? {...d, archived: false} : d)])
   }
 
   async function deleteActionDefinition(id: number) {
     ActionDefinitionController.delete(id)
+    setActionDefinitions(prev => [...prev.filter(def=>def.id !== id)])
   }
 
   async function addTag(tag: Omit<Tag, 'id'>) {
     const id = await TagController.create(tag.name, tag.colorKey)
-    setTags(prev => [...prev, {...tag, id}])
+    setTags(prev => [{...tag, id}, ...prev])
   }
 
   async function updateTag(tag: Tag) {
     await TagController.update(tag)
-    setTags(prev => [...prev.filter(t => t.id !== tag.id), tag])
+    setTags(prev => [tag, ...prev.filter(t => t.id !== tag.id)])
   }
 
   async function deleteTag(id :number) {
     TagController.delete(id)
     setTags(prev => [...prev.filter(t => t.id !== id)])
+    setActionDefinitions((prev) => prev.map((def)=>{return {...def,tags:def.tags.filter(t=>t.id!==id)}}))
   }
 
   // initial load
@@ -138,6 +162,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           addActionDefinition,
           updateActionDefinition,
           archiveActionDefinition,
+          unarchiveActionDefinition,
           deleteActionDefinition,
           addTag,
           updateTag,

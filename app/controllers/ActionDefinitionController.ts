@@ -15,6 +15,7 @@ export const ActionDefinitionController = {
   },
 
   async update(def: ActionDefinitionDB) {
+    console.log(JSON.stringify(def))
     return db.actionDefinitions.put(def)
   },
 

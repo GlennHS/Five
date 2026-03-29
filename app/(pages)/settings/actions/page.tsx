@@ -1,12 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
-import { TagController } from "@/app/controllers/TagController"
+import { useState } from "react"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
-import { TagDB, ActionDefinitionDB, ActionDefinition } from "@/app/types"
+import { Archive, ArchiveRestore, Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
+import { ActionDefinitionDB, ActionDefinition } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
 import { NumberStepper } from "@/app/components/NumberStepper"
 import { useApp } from "@/app/context/AppContext"
@@ -23,6 +21,7 @@ export default function Page() {
     addActionDefinition,
     updateActionDefinition,
     archiveActionDefinition,
+    unarchiveActionDefinition,
     deleteActionDefinition
   } = useApp()
 
@@ -140,7 +139,19 @@ export default function Page() {
     const confirmDelete = confirm("Delete this action?")
     if (!confirmDelete) return
 
-    
+    deleteActionDefinition(id)
+  }
+  
+  async function handleArchive(id?: number) {
+    if (!id) return
+
+    archiveActionDefinition(id)
+  }
+
+  async function handleUnarchive(id?: number) {
+    if (!id) return
+
+    unarchiveActionDefinition(id)
   }
 
   if (loading) {
@@ -207,7 +218,9 @@ export default function Page() {
 
       {/* List */}
       <div className="flex flex-col">
-        {actionDefinitions.map((action, i) => {
+        {actionDefinitions
+          .sort((a, b) => (a.archived === b.archived ? 0 : a.archived ? 1 : -1))
+          .map((action, i) => {
           const actionTags = action.tags
           const isEditing = editingId === action.id
 
@@ -226,7 +239,10 @@ export default function Page() {
                     onChange={e => setEditName(e.target.value)}
                   />
                 ) : (
-                  <div className="font-medium">{action.name}</div>
+                  <div className="font-medium">
+                    {action.archived && (<span className="italic font-semibold">[Archived] </span>)}
+                    {action.name}
+                  </div>
                 )}
 
                 {isEditing ? (
@@ -246,18 +262,37 @@ export default function Page() {
                   </div>
                 ) : (
                   <div>
-                    <button
-                      onClick={() => startEdit(action)}
-                      className="hover:bg-red-100 rounded p-1"
-                    >
-                      <Pencil size={18} strokeWidth={2} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(action.id)}
-                      className="hover:bg-red-100 rounded p-1"
-                    >
-                      <Trash size={18} />
-                    </button>
+                    {action.archived ? (
+                      <>
+                        <button
+                          onClick={() => handleUnarchive(action.id)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <ArchiveRestore size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(action.id)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <Trash size={18} color="#ff3434"/>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => startEdit(action)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <Pencil size={18} strokeWidth={2} />
+                        </button>
+                        <button
+                          onClick={() => handleArchive(action.id)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <Archive size={18} color="#5e5e5e" />
+                      </button>
+                      </>
+                    )}
                   </div>
                 )}
                </div>

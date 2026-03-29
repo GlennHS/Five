@@ -322,7 +322,8 @@ export function hydrateActionDefinitions(
       body: def.body,
       work: def.work,
       cash: def.cash,
-      bond: def.bond
+      bond: def.bond,
+      archived: def.archived,
     }
   })
 }
