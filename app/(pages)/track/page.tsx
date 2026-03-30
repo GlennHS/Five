@@ -6,8 +6,8 @@ import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionCo
 import { TagController } from "@/app/controllers/TagController"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Action, ActionDefinitionDB, TagDB } from "@/app/types"
-import { hydrateActions } from "@/app/utils/helpers"
+import { Action, ActionDefinitionDB, METRIC_KEYS, TagDB } from "@/app/types"
+import { hydrateActions, toSentenceCase } from "@/app/utils/helpers"
 import { AppProvider, useApp } from "@/app/context/AppContext"
 
 export default function Page() {
@@ -68,6 +68,15 @@ export default function Page() {
                       tag={tag.name}
                       color={tag.colorKey}
                     />
+                  ))}
+                </div>
+
+                <div className="flex gap-2 w-full items-center justify-between">
+                  {METRIC_KEYS.map((key) => (
+                    <div className={`flex flex-col gap-2 bg-${key} w-full`}>
+                      <span>{toSentenceCase(key)}</span>
+                      <span>{def[key]}</span>
+                    </div>
                   ))}
                 </div>
               </div>
