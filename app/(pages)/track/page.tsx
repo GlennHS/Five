@@ -12,6 +12,8 @@ import { AppProvider, useApp } from "@/app/context/AppContext"
 
 export default function Page() {
   const { actions, tags, actionDefinitions, loading, addAction } = useApp()
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 250)
 
   const sortedActionDefinitions = useMemo(() => {
     if (!actionDefinitions.length) return []
@@ -34,11 +36,39 @@ export default function Page() {
     })
   }, [actionDefinitions, actions])
 
+  
+  const filteredActionDefinitions = useMemo(() => {
+    const term = debouncedSearch.trim().toLowerCase()
+
+    if (!term) return actionDefinitions
+
+    return actionDefinitions.filter(def => {
+      const nameMatch = def.name.toLowerCase().includes(term)
+
+      const tagMatch = def.tags.some(tag =>
+        tag.name.toLowerCase().includes(term)
+      )
+
+      return nameMatch || tagMatch
+    })
+  }, [actionDefinitions, debouncedSearch])
+
   const getBGString = (key: MetricKey, def: ActionDefinition): string => {
     if (def[key] && def[key] !== 0)
       return `bg-${key}/50`
     else
       return `bg-${key}/10`
+  }
+
+  function useDebounce<T>(value: T, delay = 300) {
+    const [debounced, setDebounced] = useState(value)
+
+    useEffect(() => {
+      const id = setTimeout(() => setDebounced(value), delay)
+      return () => clearTimeout(id)
+    }, [value, delay])
+
+    return debounced
   }
 
   if (loading) {
@@ -55,12 +85,18 @@ export default function Page() {
 
       <div>
         {/* Search Bar */}
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search actions..."
+          className="border px-3 py-2 rounded w-full mb-4"
+        />
         {/* Tag Filtering */}
         {/* Order by Metric / Alpha [asc/desc] */}
       </div>
 
       <div className="flex flex-col">
-        {sortedActionDefinitions.map((def, i) => {
+        {filteredActionDefinitions.map((def, i) => {
           return (
             <div
               key={def.id}
