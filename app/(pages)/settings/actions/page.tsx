@@ -4,14 +4,12 @@ import { useState } from "react"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { Archive, ArchiveRestore, Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
-import { ActionDefinitionDB, ActionDefinition } from "@/app/types"
+import { ActionDefinitionDB, ActionDefinition, METRIC_KEYS } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
 import { NumberStepper } from "@/app/components/NumberStepper"
 import { useApp } from "@/app/context/AppContext"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
-
-const METRICS: MetricKey[] = ["mind", "body", "work", "cash", "bond"]
 
 export default function Page() {
   const {
@@ -197,8 +195,8 @@ export default function Page() {
 
         {/* Metrics */}
         <div className="grid grid-cols-5 gap-x-2">
-          {METRICS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
-          {METRICS.map(metric => (
+          {METRIC_KEYS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
+          {METRIC_KEYS.map(metric => (
             <NumberStepper
               key={metric}
               onChange={(val: number) => updateMetric(metric, val)}
@@ -326,8 +324,8 @@ export default function Page() {
 
               {/* Metrics */}
               <div className="text-xs opacity-70 grid grid-cols-5 gap-x-2">
-                {METRICS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
-                {METRICS.map(metric =>
+                {METRIC_KEYS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
+                {METRIC_KEYS.map(metric =>
                   isEditing ? (
                     <NumberStepper
                       key={metric}
