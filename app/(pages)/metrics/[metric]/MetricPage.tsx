@@ -1,15 +1,13 @@
 'use client'
 
-import { actionAffectsMetric, getMetricScore, getMetricSeries, hydrateActions } from '@/app/utils/helpers'
+import { actionAffectsMetric, getMetricScore, getMetricSeries } from '@/app/utils/helpers'
 import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
 import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
 import { Dayjs } from 'dayjs'
-import { actionDefinitions } from '@/app/fixtures/AppData'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Action, MetricKey } from '@/app/types'
 import BackLink from '@/app/components/BackLink'
 import ActionCardCondensed from '@/app/components/actionCards/ActionCardCondensed'
-import { ActionController } from '@/app/controllers/ActionController'
 import LoadingSpinner from '@/app/components/LoadingSpinner'
 import { useApp } from '@/app/context/AppContext'
 
@@ -19,6 +17,10 @@ export default function MetricPage({
   metric: MetricKey
 }) {
   const { actions, actionDefinitions, loading } = useApp()
+
+  const filteredActions: Action[] = useMemo<Action[]>((): Action[] => {
+    return actions.filter(action => actionAffectsMetric(action, actionDefinitions, metric))
+  }, [actions])
 
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
@@ -71,7 +73,7 @@ export default function MetricPage({
             className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center text-slate-500"
             aria-label="Action cards container"
           >
-            {actions
+            {filteredActions
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
               .slice(0,5)
