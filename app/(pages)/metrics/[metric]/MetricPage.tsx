@@ -1,15 +1,15 @@
 'use client'
 
-import { actionAffectsMetric, getMetricScore, getMetricSeries } from '@/app/utils/helpers'
+import { actionAffectsMetric, getMetricScore, getMetricSeries, toSentenceCase } from '@/app/utils/helpers'
 import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
 import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
 import { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
-import { Action, MetricKey } from '@/app/types'
+import { Action, MetricKey, TIME_GROUPS } from '@/app/types'
 import BackLink from '@/app/components/BackLink'
-import ActionCardCondensed from '@/app/components/actionCards/ActionCardCondensed'
 import LoadingSpinner from '@/app/components/LoadingSpinner'
 import { useApp } from '@/app/context/AppContext'
+import ActionCard from '@/app/components/actionCards/ActionCard'
 
 export default function MetricPage({
   metric,
@@ -24,7 +24,7 @@ export default function MetricPage({
 
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
-  const [timeGroup, setTimeGroup] = useState<string>("day")
+  const [timeGroup, setTimeGroup] = useState<string>("week")
 
   if (loading) return (
     <div className="p-6">
@@ -60,17 +60,25 @@ export default function MetricPage({
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          { /* Put week/month/6 months toggle buttons here */ }
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex gap-2 items-center justify-between">
+          {TIME_GROUPS.map(group => (
+            <button
+              key={group}
+              className={`rounded-lg border border-gray-600 px-3 py-1 transition-colors duration-500 ${timeGroup === group ? 'bg-gray-400' : 'bg-white'}`}
+              onClick={() => setTimeGroup(group)}
+            >
+              Past {toSentenceCase(group)}
+            </button>
+          ))}
         </section>
 
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-semibold text-slate-700">
-            Actions
+            Recent Actions
           </h2>
 
           <div
-            className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center text-slate-500"
+            className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-2 text-slate-500 flex flex-col gap-2"
             aria-label="Action cards container"
           >
             {filteredActions
@@ -78,7 +86,7 @@ export default function MetricPage({
               .sort((a,b) => b.timestamp - a.timestamp)
               .slice(0,5)
               .map(action => (
-                <ActionCardCondensed
+                <ActionCard
                   key={action.id}
                   action={action}
                   definitions={actionDefinitions}

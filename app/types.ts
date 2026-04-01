@@ -8,6 +8,8 @@ export const METRIC_LETTERS = {
   cash: "C",
   bond: "R"
 } as const
+
+export const TIME_GROUPS = ["week", "month", "6 months"] as const
 export type TimeGroup = "day" | "week" | "month"
 export type MetricKey = typeof METRIC_KEYS[number]
 export type FiveMetric = Record<MetricKey, number>
