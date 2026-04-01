@@ -1,19 +1,51 @@
 'use client';
 
-import { calculateMetricsForRange, calculateTotal } from "../utils/helpers";
-import { METRIC_KEYS } from "../types";
-import MetricCardLarge from "../components/MetricCardLarge";
-import { actionDefinitions, actionHistory } from "../fixtures/AppData";
-import { getAWeekAgo, getToday } from "../utils/dateTime";
+import { calculateMetricsForRange, calculateTotal } from "../../utils/helpers";
+import { METRIC_KEYS } from "../../types";
+import MetricCardLarge from "../../components/MetricCardLarge";
+import { getAWeekAgo, getToday } from "../../utils/dateTime";
+import BackLink from "../../components/BackLink";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+import { useApp } from "@/app/context/AppContext";
+import { useMemo } from "react";
 
 export default function Page() {
 
-  const metrics = calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday());
-  const total = calculateTotal(metrics);
+    const { actions, actionDefinitions, loading } = useApp()
+
+  const metrics = useMemo(() => {
+    if (!actions) return null
+
+    return calculateMetricsForRange(
+      actions,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actions])
+
+  const total = useMemo(() => {
+    if (!actions) return null
+
+    return calculateTotal(
+      actions,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actions])
+
+  if (loading) return (
+    <div className="p-6">
+      <LoadingSpinner />
+    </div>
+  )
 
   return (
     <main className="min-h-screen w-full bg-white px-4 py-8">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+        <BackLink />
+
         <header className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             Your metrics overview
@@ -25,10 +57,10 @@ export default function Page() {
 
         <section className="grid grid-cols-2 gap-4">
           {METRIC_KEYS.map(k => (
-            <MetricCardLarge key={k} metric={{name: k, value: metrics[k]}} />
+            <MetricCardLarge key={k} metric={{name: k, value: metrics ? metrics[k] : 0}} />
           ))}
           <MetricCardLarge
-            metric={{ name: "total", value: total }}
+            metric={{ name: "total", value: total ?? 0 }}
           />
         </section>
 

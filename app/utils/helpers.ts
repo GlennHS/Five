@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Action, ActionDefinition, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, TimeGroup } from '../types'
-import { convertTimestampToDayJS, isDateBetween } from './dateTime'
+import { Action, ActionDB, ActionDefinition, ActionDefinitionDB, ActionDetails, FiveMetric, Metric, METRIC_KEYS, MetricKey, MetricSnapshot, MetricSnapshotHistory, Tag, TagDB, TimeGroup } from '../types'
+import { convertTimestampToDayJS, getDaysSinceDate, isDateBetween } from './dateTime'
 import { Dayjs } from 'dayjs'
 
 
@@ -13,10 +13,6 @@ export const days = [
   "Sat",
   "Sun",
 ]
-
-export const calculateTotal = (five: FiveMetric) : number => {
-    return Object.values(five).reduce((a,b) => a + b) / 5
-}
 
 export const createLineChartData = (labels: string[] = days, values: number[][]) : object => {
   return {
@@ -63,7 +59,6 @@ export const pickRandom = <T>(a: T[]): T => {
 
 export const createRandomUUID = () => uuidv4()
 
-// #region Metric Helpers
 export const calculateMetricValueFromHistory = (metricName: string, history: Partial<MetricSnapshotHistory>): number => {
   let totalValue = 0;
 
@@ -140,6 +135,8 @@ export const getMetricSeries = (
   const actions = actionHistory
   const defs = actionDefinitions
 
+  let accumulator = 0
+
   let cursor = from.startOf(groupBy)
 
   while (cursor.isBefore(to) || cursor.isSame(to)) {
@@ -154,7 +151,9 @@ export const getMetricSeries = (
       bucketEnd
     )
 
-    values.push(metrics[metricKey])
+    accumulator += metrics[metricKey]
+
+    values.push(accumulator)
 
     cursor = cursor.add(1, groupBy)
   }
@@ -172,18 +171,19 @@ export const buildActionMap = (
 
 export const actionToMetrics = (
   action: Action,
-  actionMap: Record<string, ActionDefinition>
+  actionMap: Record<string, ActionDefinition>,
+  decay?: number,
 ): Partial<FiveMetric> => {
 
   const def = actionMap[action.actionId]
   if (!def) return {}
 
   return {
-    mind: def.mind,
-    body: def.body,
-    work: def.work,
-    cash: def.cash,
-    bond: def.bond
+    mind: def.mind ? applyDecayToMetric(def.mind, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    body: def.body ? applyDecayToMetric(def.body, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    work: def.work ? applyDecayToMetric(def.work, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    cash: def.cash ? applyDecayToMetric(def.cash, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
+    bond: def.bond ? applyDecayToMetric(def.bond, decay ?? 1, getDaysSinceDate(convertTimestampToDayJS(action.timestamp))) : 0,
   }
 }
 
@@ -199,8 +199,12 @@ export const sumMetrics = (
     })
   })
 
+  METRIC_KEYS.forEach(k => r[k] = Math.floor(r[k]))
+
   return r
 }
+
+const applyDecayToMetric = (m: number, decay: number, days: number): number => m * Math.pow(decay, days)
 
 export const calculateMetricsForRange = (
   actions: Action[],
@@ -212,12 +216,147 @@ export const calculateMetricsForRange = (
   const actionMap = buildActionMap(defs)
 
   const filtered = filterActionsByRange(actions, from, to)
-  console.log(filtered)
 
   const deltas = filtered.map(a =>
-    actionToMetrics(a, actionMap)
+    actionToMetrics(a, actionMap, 0.9)
   )
 
   return sumMetrics(deltas)
 }
-// #endregion
+
+export const actionAffectsMetric = (
+  action: Action,
+  defs: ActionDefinition[],
+  metric: MetricKey
+): boolean => {
+
+  const def = defs.find(d => d.id === action.actionId)
+  if (!def) return false
+
+  return (def[metric] ?? 0) !== 0
+}
+
+export const getNonZeroMetrics = (metrics: FiveMetric) => {
+  return METRIC_KEYS
+    .filter(k => metrics[k] !== 0)
+    .map(k => ({
+      key: k,
+      value: metrics[k]
+    }))
+}
+
+export const calculateTotal = (
+  actions: Action[],
+  defs: ActionDefinition[],
+  from: Dayjs,
+  to: Dayjs
+) : number => {
+  const totals = calculateMetricsForRange(actions, defs, from, to)
+  return Math.floor(Object.values(totals).reduce((a,b) => a + b) / 5)
+}
+
+export const resolveActionDetails = (
+  action: Action,
+  defs: ActionDefinition[]
+): ActionDetails | null => {
+
+  const def = defs.find(d => d.id === action.actionId)
+  if (!def) return null
+
+  return {
+    id: action.id,
+    name: def.name,
+    tags: def.tags ?? [],
+    timestamp: action.timestamp,
+    note: action.note,
+    metrics: {
+      mind: def.mind ?? 0,
+      body: def.body ?? 0,
+      work: def.work ?? 0,
+      cash: def.cash ?? 0,
+      bond: def.bond ?? 0
+    }
+  }
+}
+
+export const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
+
+  let best: MetricKey | null = null
+  let bestValue = 0
+
+  METRIC_KEYS.forEach(k => {
+    const value = Math.abs(metrics[k])
+
+    if (value > bestValue) {
+      best = k
+      bestValue = value
+    }
+  })
+
+  return best
+}
+
+export const metricToCardClasses = (metric: MetricKey | null) => {
+  let className = ""
+  if (!metric) className += "border-total bg-total/10"
+  else className += `border-${metric} bg-${metric}/10`
+  return className
+}
+
+export function hydrateActionDefinitions(
+  defs: ActionDefinitionDB[],
+  tags: TagDB[]
+): ActionDefinition[] {
+  const tagMap = new Map(tags.map(t => [t.id, t]))
+
+  return defs.map(def => {
+    const hydratedTags = def.tagIds
+      .map(id => tagMap.get(id))
+      .filter(Boolean) as Tag[]
+
+    return {
+      id: def.id!,
+      name: def.name,
+      tags: hydratedTags.length > 0 ? hydratedTags : [],
+      mind: def.mind,
+      body: def.body,
+      work: def.work,
+      cash: def.cash,
+      bond: def.bond,
+      archived: def.archived,
+    }
+  })
+}
+
+// For completeness' sake, in case one definition changes in future
+export function hydrateActions(
+  defs: ActionDB[],
+): Action[] {
+    return defs.map(d => {
+      return {
+        ...d
+      }
+    })
+}
+
+export function sortDefinitionsByRecentUse(
+  defs: ActionDefinitionDB[],
+  actions: Action[]
+) {
+  const latestMap = new Map<number, number>()
+
+  for (const action of actions) {
+    const current = latestMap.get(action.actionId)
+
+    if (!current || action.timestamp > current) {
+      latestMap.set(action.actionId, action.timestamp)
+    }
+  }
+
+  return [...defs].sort((a, b) => {
+    const aTime = latestMap.get(a.id!) ?? 0
+    const bTime = latestMap.get(b.id!) ?? 0
+
+    return bTime - aTime // newest first
+  })
+}
