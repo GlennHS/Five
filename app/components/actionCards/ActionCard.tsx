@@ -28,7 +28,7 @@ export default function ActionCard({ action, definitions }: Props) {
     <div className={`border-l-8 rounded-r-lg p-3 flex flex-col gap-1.5 ${cardClasses}`}>
       <div className="flex gap-2 min-w-0">
         {visibleTags.map((t: Tag) => (
-          <TagPill key={t.id} tag={t.name} color={t.colorClass} />
+          <TagPill key={t.id} tag={t.name} color={t.colorKey} />
         ))}
 
         {extraTagCount > 0 && (

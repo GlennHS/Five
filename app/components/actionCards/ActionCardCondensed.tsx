@@ -39,7 +39,7 @@ export default function ActionCardCondensed({ action, definitions }: Props) {
 
     <div className="flex gap-1 shrink-0">
       {visibleTags.map((t: Tag) => (
-        <TagPill key={t.id} tag={t.name} color={t.colorClass} />
+        <TagPill key={t.id} tag={t.name} color={t.colorKey} />
       ))}
 
       {extraTagCount > 0 && (

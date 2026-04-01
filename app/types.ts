@@ -8,6 +8,8 @@ export const METRIC_LETTERS = {
   cash: "C",
   bond: "R"
 } as const
+
+export const TIME_GROUPS = ["week", "month", "6 months"] as const
 export type TimeGroup = "day" | "week" | "month"
 export type MetricKey = typeof METRIC_KEYS[number]
 export type FiveMetric = Record<MetricKey, number>
@@ -28,7 +30,8 @@ export type Action = {
 export type ActionDefinition = {
   id: number
   name: string,
-  tags: Tag[]
+  tags: Tag[],
+  archived: boolean
 } & Partial<FiveMetric>
 
 export type ActionDetails = {
@@ -73,6 +76,7 @@ export interface ActionDefinitionDB {
   work: number
   cash: number
   bond: number
+  archived: boolean
 }
 
 export type ActionDB = {

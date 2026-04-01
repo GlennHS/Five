@@ -1,22 +1,27 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
-import { TagController } from "@/app/controllers/TagController"
+import { useState } from "react"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Pencil, Plus, Trash } from "lucide-react"
-import { TagDB, ActionDefinitionDB } from "@/app/types"
+import { Archive, ArchiveRestore, Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
+import { ActionDefinitionDB, ActionDefinition, METRIC_KEYS } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
+import { NumberStepper } from "@/app/components/NumberStepper"
+import { useApp } from "@/app/context/AppContext"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
 
-const METRICS: MetricKey[] = ["mind", "body", "work", "cash", "bond"]
-
-export default function ActionsSettingsPage() {
-  const [tags, setTags] = useState<TagDB[]>([])
-  const [actions, setActions] = useState<ActionDefinitionDB[]>([])
-  const [loading, setLoading] = useState(true)
+export default function Page() {
+  const {
+    loading,
+    tags,
+    actionDefinitions,
+    addActionDefinition,
+    updateActionDefinition,
+    archiveActionDefinition,
+    unarchiveActionDefinition,
+    deleteActionDefinition
+  } = useApp()
 
   const [name, setName] = useState("")
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([])
@@ -39,16 +44,16 @@ export default function ActionsSettingsPage() {
     bond: 0
   })
 
-  function startEdit(action: ActionDefinitionDB) {
+  function startEdit(action: ActionDefinition) {
     setEditingId(action.id!)
     setEditName(action.name)
-    setEditTagIds(action.tagIds)
+    setEditTagIds(action.tags.map(t=>t.id))
     setEditMetrics({
-      mind: action.mind,
-      body: action.body,
-      work: action.work,
-      cash: action.cash,
-      bond: action.bond
+      mind: action.mind ?? 0,
+      body: action.body ?? 0,
+      work: action.work ?? 0,
+      cash: action.cash ?? 0,
+      bond: action.bond ?? 0
     })
   }
 
@@ -74,15 +79,11 @@ export default function ActionsSettingsPage() {
     id,
     name: editName,
     tagIds: editTagIds,
-    ...editMetrics
+    ...editMetrics,
+    archived: false,
   }
 
-  await ActionDefinitionController.update(updated)
-
-  setActions(prev =>
-    prev.map(a => (a.id === id ? updated : a))
-  )
-
+  updateActionDefinition(updated)
   setEditingId(null)
 }
 
@@ -90,21 +91,6 @@ export default function ActionsSettingsPage() {
     setEditingId(null)
     setEditName("")
   }
-
-  useEffect(() => {
-    async function load() {
-      const [tags, actions] = await Promise.all([
-        TagController.getAll(),
-        ActionDefinitionController.getAll()
-      ])
-
-      setTags(tags)
-      setActions(actions)
-      setLoading(false)
-    }
-
-    load()
-  }, [])
 
   function toggleTag(id: number) {
     setSelectedTagIds(prev =>
@@ -127,12 +113,11 @@ export default function ActionsSettingsPage() {
     const newDef: Omit<ActionDefinitionDB, "id"> = {
       name,
       tagIds: selectedTagIds,
-      ...metrics
+      ...metrics,
+      archived: false,
     }
 
-    const id = await ActionDefinitionController.create(newDef)
-
-    setActions(prev => [...prev, { id, ...newDef }])
+    const id = await addActionDefinition(newDef)
 
     // reset form
     setName("")
@@ -152,8 +137,19 @@ export default function ActionsSettingsPage() {
     const confirmDelete = confirm("Delete this action?")
     if (!confirmDelete) return
 
-    await ActionDefinitionController.delete(id)
-    setActions(prev => prev.filter(a => a.id !== id))
+    deleteActionDefinition(id)
+  }
+  
+  async function handleArchive(id?: number) {
+    if (!id) return
+
+    archiveActionDefinition(id)
+  }
+
+  async function handleUnarchive(id?: number) {
+    if (!id) return
+
+    unarchiveActionDefinition(id)
   }
 
   if (loading) {
@@ -167,7 +163,7 @@ export default function ActionsSettingsPage() {
   return (
     <div className="p-6 max-w-xl mx-auto">
       <BackLink />
-      <h1 className="text-xl font-semibold mb-6">Edit Actions</h1>
+      <h1 className="text-xl font-semibold mb-6">Edit ActionDefinitions</h1>
 
       {/* Create */}
       <div className="flex flex-col gap-3 mb-6 border p-4 rounded-lg">
@@ -198,15 +194,14 @@ export default function ActionsSettingsPage() {
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-5 gap-2">
-          {METRICS.map(metric => (
-            <input
+        <div className="grid grid-cols-5 gap-x-2">
+          {METRIC_KEYS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
+          {METRIC_KEYS.map(metric => (
+            <NumberStepper
               key={metric}
-              type="number"
-              className={`border rounded px-2 py-1 text-sm bg-${metric}/25`}
+              onChange={(val: number) => updateMetric(metric, val)}
               value={metrics[metric]}
-              onChange={e => updateMetric(metric, Number(e.target.value))}
-              placeholder={metric}
+              metricName={metric}
             />
           ))}
         </div>
@@ -221,10 +216,10 @@ export default function ActionsSettingsPage() {
 
       {/* List */}
       <div className="flex flex-col">
-        {actions.map((action, i) => {
-          const actionTags = action.tagIds
-            .map(id => tags.find(t => t.id === id))
-            .filter(Boolean) as TagDB[]
+        {actionDefinitions
+          .sort((a, b) => (a.archived === b.archived ? 0 : a.archived ? 1 : -1))
+          .map((action, i) => {
+          const actionTags = action.tags
           const isEditing = editingId === action.id
 
           return (
@@ -242,39 +237,61 @@ export default function ActionsSettingsPage() {
                     onChange={e => setEditName(e.target.value)}
                   />
                 ) : (
-                  <div className="font-medium">{action.name}</div>
+                  <div className="font-medium">
+                    {action.archived && (<span className="italic font-semibold">[Archived] </span>)}
+                    {action.name}
+                  </div>
                 )}
 
                 {isEditing ? (
-                  <>
+                  <div className="flex gap-1">
                     <button
                       onClick={() => saveEdit(action.id!)}
-                      className="bg-green-200 text-white px-2 py-1 rounded"
+                      className="bg-green-500 text-white px-2 py-1 rounded"
                     >
-                      Save
+                      <Save strokeWidth={2} />
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="bg-red-200 px-2 py-1 rounded"
+                      className="bg-red-400 px-2 py-1 rounded"
                     >
-                      Cancel
+                      <SaveOff strokeWidth={2} />
                     </button>
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    <button
-                      onClick={() => startEdit(action)}
-                      className="hover:bg-red-100 rounded p-1"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(action.id)}
-                      className="hover:bg-red-100 rounded p-1"
-                    >
-                      <Trash size={18} />
-                    </button>
-                  </>
+                  <div>
+                    {action.archived ? (
+                      <>
+                        <button
+                          onClick={() => handleUnarchive(action.id)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <ArchiveRestore size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(action.id)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <Trash size={18} color="#ff3434"/>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => startEdit(action)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <Pencil size={18} strokeWidth={2} />
+                        </button>
+                        <button
+                          onClick={() => handleArchive(action.id)}
+                          className="hover:bg-red-100 rounded p-1"
+                        >
+                          <Archive size={18} color="#5e5e5e" />
+                      </button>
+                      </>
+                    )}
+                  </div>
                 )}
                </div>
 
@@ -283,7 +300,7 @@ export default function ActionsSettingsPage() {
                 {(isEditing ? tags : actionTags).map(tag => {
                   const selected = isEditing
                     ? editTagIds.includes(tag.id!)
-                    : action.tagIds.includes(tag.id!)
+                    : action.tags.includes(tag)
 
                   return isEditing ? (
                     <button
@@ -306,21 +323,19 @@ export default function ActionsSettingsPage() {
               </div>
 
               {/* Metrics */}
-              <div className="text-xs opacity-70">
-                {METRICS.map(metric =>
+              <div className="text-xs opacity-70 grid grid-cols-5 gap-x-2">
+                {METRIC_KEYS.map(m => (<span className="text-center text-xs" key={m}>{m.toUpperCase()}</span>))}
+                {METRIC_KEYS.map(metric =>
                   isEditing ? (
-                    <input
+                    <NumberStepper
                       key={metric}
-                      type="number"
-                      className="border rounded px-2 py-1 text-sm"
+                      onChange={(val: number) => updateEditMetric(metric, val)}
                       value={editMetrics[metric]}
-                      onChange={e =>
-                        updateEditMetric(metric, Number(e.target.value))
-                      }
+                      metricName={metric}
                     />
                   ) : (
-                    <div key={metric} className="text-xs">
-                      {metric}: {action[metric] ?? 0}
+                    <div key={metric} className="text-xs text-center">
+                      {action[metric] ?? 0}
                     </div>
                   )
                 )}

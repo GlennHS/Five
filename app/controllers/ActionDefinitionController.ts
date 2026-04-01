@@ -15,10 +15,11 @@ export const ActionDefinitionController = {
   },
 
   async update(def: ActionDefinitionDB) {
+    console.log(JSON.stringify(def))
     return db.actionDefinitions.put(def)
   },
 
   async delete(id: number) {
     return db.actionDefinitions.delete(id)
-  }
+  },
 }

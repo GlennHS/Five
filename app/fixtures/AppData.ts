@@ -58,6 +58,7 @@ export const actionDefinitions: ActionDefinition[] = [
       negativeTag,
       otherTag,
     ],
+    archived: false,
   },
   {
     id: 1,
@@ -66,6 +67,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 2,
@@ -75,6 +77,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 3,
@@ -85,6 +88,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       negativeTag
     ],
+    archived: false,
   },
   {
     id: 4,
@@ -94,6 +98,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       negativeTag
     ],
+    archived: false,
   },
 
   {
@@ -104,6 +109,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 6,
@@ -113,6 +119,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 7,
@@ -122,6 +129,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 8,
@@ -130,6 +138,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 9,
@@ -138,6 +147,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
 
   {
@@ -148,6 +158,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 11,
@@ -155,6 +166,7 @@ export const actionDefinitions: ActionDefinition[] = [
     bond: 4,
     cash: -1,
     tags: [],
+    archived: false,
   },
   {
     id: 12,
@@ -164,6 +176,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 13,
@@ -171,6 +184,7 @@ export const actionDefinitions: ActionDefinition[] = [
     bond: 5,
     cash: -2,
     tags: [],
+    archived: false,
   },
 
   {
@@ -181,6 +195,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 15,
@@ -190,6 +205,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 16,
@@ -199,6 +215,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
 
   {
@@ -207,6 +224,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 2,
     cash: -4,
     tags: [],
+    archived: false,
   },
   {
     id: 18,
@@ -216,6 +234,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       negativeTag
     ],
+    archived: false,
   },
   {
     id: 19,
@@ -225,6 +244,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
 
   {
@@ -235,6 +255,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       negativeTag
     ],
+    archived: false,
   },
   {
     id: 21,
@@ -244,6 +265,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       negativeTag
     ],
+    archived: false,
   },
   {
     id: 22,
@@ -253,6 +275,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       negativeTag
     ],
+    archived: false,
   },
 
   {
@@ -263,6 +286,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 24,
@@ -272,6 +296,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   },
   {
     id: 25,
@@ -281,6 +306,7 @@ export const actionDefinitions: ActionDefinition[] = [
     tags: [
       positiveTag
     ],
+    archived: false,
   }
 ]
 

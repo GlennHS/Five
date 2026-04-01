@@ -17,6 +17,7 @@ export default function MetricCard({ className, metric, isActive, onClick }: Met
    * If we're on desktop, hover selects (highlights) and click navigates.
    */
   const handleClick = () => {
+    if (metric.name === "total") return
     const target = `/metrics/${metric.name.toLowerCase()}`;
 
     if (isTouch) {

@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // Types
-import { Action, FiveMetric, METRIC_KEYS, type MetricKey } from './types';
+import { Action, ActionDefinition, METRIC_KEYS, type MetricKey } from './types';
 
 // Components
 import FiveBarGraph from './components/graphs/FiveBarGraph';
@@ -21,12 +21,14 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { calculateMetricsForRange, calculateTotal, hydrateActions } from './utils/helpers';
-import { actionDefinitions } from './fixtures/AppData';
+import { calculateMetricsForRange, calculateTotal, hydrateActionDefinitions, hydrateActions } from './utils/helpers';
 import { getAWeekAgo, getToday } from './utils/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
 import { ActionController } from './controllers/ActionController';
 import LoadingSpinner from './components/LoadingSpinner';
+import { ActionDefinitionController } from './controllers/ActionDefinitionController';
+import { TagController } from './controllers/TagController';
+import { useApp } from './context/AppContext';
 
 ChartJS.register(
   RadialLinearScale,
@@ -38,11 +40,30 @@ ChartJS.register(
 );
 
 export default function Home() {
+  const { actions, actionDefinitions, loading } = useApp()
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
-  const [actionHistory, setActionHistory] = useState<Action[]>([])
-  const [metrics, setMetrics] = useState<FiveMetric | null>(null)
-  const [total, setTotal] = useState<number>(0)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const metrics = useMemo(() => {
+    if (!actions) return null
+
+    return calculateMetricsForRange(
+      actions,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actions])
+
+  const total = useMemo(() => {
+    if (!actions) return null
+
+    return calculateTotal(
+      actions,
+      actionDefinitions,
+      getAWeekAgo(),
+      getToday()
+    )
+  }, [actions])
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -52,20 +73,7 @@ export default function Home() {
     }
   };
 
-  async function getActionHistory() { ActionController.getAll().then(data => setActionHistory(hydrateActions(data))) }
-
-  useEffect(() => {
-    getActionHistory()
-  }, [])
-  
-  useEffect(() => {
-    if(actionHistory === null) return
-    setMetrics(calculateMetricsForRange(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
-    setTotal(calculateTotal(actionHistory, actionDefinitions, getAWeekAgo(), getToday()))
-    setIsLoading(false)
-  }, [actionHistory])
-
-  if (isLoading) return (
+  if (loading) return (
     <div className="p-6">
       <LoadingSpinner />
     </div>
@@ -93,14 +101,13 @@ export default function Home() {
               />
             ))}
             <MetricCard
-              metric={{name: "total", value: total}}
+              metric={{name: "total", value: total ?? 0}}
               isActive={highlightedMetric === null}
-              onClick={() => handleMetricCardClick('total')}
             />
           </div>
         </section>
         <section className="flex flex-col w-full rounded-2xl py-4 max-h-2/3 gap-y-4">
-          {actionHistory!
+          {actions!
             .slice()
             .sort((a,b) => b.timestamp - a.timestamp)
             .slice(0,5)

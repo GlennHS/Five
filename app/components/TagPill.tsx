@@ -1,4 +1,5 @@
 import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
+import { Circle } from "lucide-react"
 
 type TagPillProps = {
   tag: string,
@@ -10,7 +11,10 @@ export default function TagPill({ tag, color }: TagPillProps) {
 
   return (
     <div className={`w-fit px-2 py-0.5 text-xs font-medium tracking-wide rounded-full border border-black ${tagClass}`}>
-      <span>{ tag }</span>
+      <span className="flex items-center gap-x-1">
+        <Circle strokeWidth={0} fill={color} size={8}/>
+        { tag }
+      </span>
     </div>
   )
 }
