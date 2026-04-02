@@ -22,13 +22,14 @@ import {
 
 // Helpers
 import { calculateMetricsForRange, calculateTotal, hydrateActionDefinitions, hydrateActions } from './utils/helpers';
-import { convertTimestampToDayJS, getAWeekAgo, getToday } from './utils/dateTime';
+import { convertTimestampToDayJS, getAWeekAgo, getDaysSinceDate, getToday } from './utils/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
 import { ActionController } from './controllers/ActionController';
 import LoadingSpinner from './components/LoadingSpinner';
 import { ActionDefinitionController } from './controllers/ActionDefinitionController';
 import { TagController } from './controllers/TagController';
 import { useApp } from './context/AppContext';
+import Image from 'next/image';
 
 ChartJS.register(
   RadialLinearScale,
@@ -86,6 +87,19 @@ export default function Home() {
     return daysBack - 1
   }
 
+  function daysSinceLastLog() {
+    let dayHasNoLog = true
+    let daysBack = 0
+    while (dayHasNoLog) {
+      daysBack++
+      const matchingDays = actions.filter(a => {
+        return convertTimestampToDayJS(a.timestamp).isSame(getToday().subtract(daysBack, 'days'), 'day')
+      })
+      dayHasNoLog = matchingDays.length === 0
+    }
+    return daysBack - 1
+  }
+
   if (loading) return (
     <div className="p-6">
       <LoadingSpinner />
@@ -95,18 +109,28 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">
       <main className="flex min-h-screen w-full sm:max-w-3xl flex-col gap-6 p-4 bg-white">
-        <section className='w-full rounded-2xl bg-gray-200'>
-          <div>
-            {getStreak() > 0 ? `You're on a ${getStreak()} day log streak!` : "Great to see you!"}
-          </div>
-        </section>
-
         <section className="w-full rounded-2xl max-h-2/3 h-64">
           <FiveBarGraph
             data={metrics}
             highlightedMetric={highlightedMetric}
             onMetricChange={(metric) => setHighlightedMetric(metric)}
           />
+        </section>
+
+        <section className='w-full'>
+          { getStreak() > 7 ? (
+            <div
+              className="animate-background block rounded-full bg-linear-to-r from-mind via-work to-bond bg-size-[400%_400%] p-1 [animation-duration:3s]"
+            >
+              <span className="block rounded-full bg-white px-10 py-2 text-center text-base font-semibold">{getStreak() > 0 ? `You're on a ${getStreak()} day log streak! 🔥` : "Great to see you!"}</span>
+            </div>
+          ) : (
+            <div
+              className="w-full bg-gray-200 border border-gray-400 rounded-xl py-2 flex items-center justify-center"
+            >
+              <span className="text-center text-base font-semibold">{getStreak() > 0 ? "Welcome back!" : daysSinceLastLog() > 3 ? "So glad you came back!" : "Great to see you again!"}</span>
+            </div>
+          )}
         </section>
 
         <section className="w-full">

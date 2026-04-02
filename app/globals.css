@@ -44,4 +44,19 @@ body {
   }
 }
 
+@theme {
+  --animate-background: background-move ease infinite;
+
+  @keyframes background-move {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
 @source inline("{bg,border,text}-{mind,body,work,cash,bond,total}{/10,/25,/50,}");
