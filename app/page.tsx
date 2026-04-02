@@ -139,13 +139,15 @@ export default function Home() {
               <MetricCard
                 key={key}
                 metric={{ name: key, value: metrics![key] }}
+                delta={0}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
               />
             ))}
             <MetricCard
               metric={{name: "total", value: total ?? 0}}
-              isActive={highlightedMetric === null}
+              isTotal={true}
+              isActive={false}
             />
           </div>
         </section>
