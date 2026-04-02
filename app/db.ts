@@ -58,7 +58,7 @@ db.on("populate", async () => {
 
   const defs = await db.actionDefinitions.toArray()
 
-  const quantity = 100 // tweak as needed
+  const quantity = 500 // tweak as needed
   const now = Date.now()
   const oneMonthAgo = now - 1000 * 60 * 60 * 24 * 30
 
