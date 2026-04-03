@@ -1,9 +1,14 @@
 "use client"
 
-import { Action, ActionDefinition, Tag } from "@/app/types"
-import { resolveActionDetails, getNonZeroMetrics, toSentenceCase, getDominantMetric, metricToCardClasses } from "@/app/utils/helpers"
-import { convertTimestampToDayJS, formatSmartDate } from "@/app/utils/dateTime"
+import { Action, ActionDefinition, MetricKey, Tag } from "@/app/types"
+
 import TagPill from "../TagPill"
+
+import { convertTimestampToDayJS, formatSmartDate } from "@/app/lib/dateTime"
+import { toSentenceCase } from "@/app/lib/utils"
+import getActionDetails from "@/app/lib/actions/getActionDetails"
+import getDominantMetric from "@/app/lib/metrics/getDominantMetric"
+import getNonZeroMetrics from "@/app/lib/metrics/getNonZeroMetrics"
 
 type Props = {
   action: Action
@@ -12,7 +17,14 @@ type Props = {
 
 export default function ActionCard({ action, definitions }: Props) {
 
-  const details = resolveActionDetails(action, definitions)
+  const details = getActionDetails(action, definitions)
+
+  const metricToCardClasses = (metric: MetricKey | null) => {
+    let className = ""
+    if (!metric) className += "border-total bg-total/10"
+    else className += `border-${metric} bg-${metric}/10`
+    return className
+  }
 
   const dominant = details ? getDominantMetric(details.metrics) : "mind"
   const cardClasses = metricToCardClasses(dominant)
@@ -23,6 +35,7 @@ export default function ActionCard({ action, definitions }: Props) {
   const date = formatSmartDate(convertTimestampToDayJS(details.timestamp))
   const visibleTags = details.tags.slice(0, 3)
   const extraTagCount = details.tags.length - visibleTags.length
+
 
   return (
     <div className={`border-l-8 rounded-r-lg p-3 flex flex-col gap-1.5 ${cardClasses}`}>

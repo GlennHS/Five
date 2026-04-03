@@ -7,6 +7,16 @@ dayjs.extend(advancedFormat)
 dayjs.extend(isBetween)
 dayjs.extend(isoWeek)
 
+export const days = [
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat",
+  "Sun",
+]
+
 export const convertTimestampToDayJS = (ts: number): Dayjs => dayjs(ts)
 export const convertDayJSToTimestamp = (d: Dayjs): number => d.valueOf()
 export const DateToTimestamp = (d: Date): number => d.getTime()

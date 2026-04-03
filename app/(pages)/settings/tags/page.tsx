@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { TagController } from "@/app/controllers/TagController"
+import { useState } from "react"
 import TagPill from "@/app/components/TagPill"
 import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
 import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"

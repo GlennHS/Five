@@ -1,15 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-// Types
-import { Action, ActionDefinition, METRIC_KEYS, type MetricKey } from './types';
+import { METRIC_KEYS, type MetricKey } from './types';
 
-// Components
 import FiveBarGraph from './components/graphs/FiveBarGraph';
 import MetricCard from './components/MetricCard';
 
-// ChartJS
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -21,15 +18,12 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { calculateMetricsForRange, calculateTotal, hydrateActionDefinitions, hydrateActions } from './utils/helpers';
-import { convertTimestampToDayJS, getAWeekAgo, getDaysSinceDate, getToday, getYesterday } from './utils/dateTime';
+import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
-import { ActionController } from './controllers/ActionController';
 import LoadingSpinner from './components/LoadingSpinner';
-import { ActionDefinitionController } from './controllers/ActionDefinitionController';
-import { TagController } from './controllers/TagController';
 import { useApp } from './context/AppContext';
-import Image from 'next/image';
+import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange';
+import calculateTotal from './lib/metrics/calculateTotal';
 
 ChartJS.register(
   RadialLinearScale,

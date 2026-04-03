@@ -1,15 +1,22 @@
 'use client'
 
-import { actionAffectsMetric, getMetricScore, getMetricSeries, toSentenceCase } from '@/app/utils/helpers'
-import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
-import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
-import { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
+
 import { Action, MetricKey, TIME_GROUPS } from '@/app/types'
-import BackLink from '@/app/components/BackLink'
-import LoadingSpinner from '@/app/components/LoadingSpinner'
+import { Dayjs } from 'dayjs'
+
 import { useApp } from '@/app/context/AppContext'
+
 import ActionCard from '@/app/components/actionCards/ActionCard'
+import BackLink from '@/app/components/BackLink'
+import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
+import LoadingSpinner from '@/app/components/LoadingSpinner'
+
+import actionAffectsMetric from '@/app/lib/actions/actionAffectsMetric'
+import getMetricScore from '@/app/lib/metrics/getMetricScore'
+import getMetricSeries from '@/app/lib/metrics/getMetricSeries'
+import { getAWeekAgo, getToday } from '@/app/lib/dateTime'
+import { toSentenceCase } from '@/app/lib/utils'
 
 export default function MetricPage({
   metric,
