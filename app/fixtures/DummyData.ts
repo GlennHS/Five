@@ -1,8 +1,4 @@
-import dayjs from 'dayjs'
-
-import { Action, ActionDefinition, MetricSnapshotHistory, Tag } from "../types";
-import { generateHistoryFromActionDefinitions } from "../utils/factories";
-import { getToday } from '../utils/dateTime';
+import { ActionDefinition, MetricSnapshotHistory, Tag } from "../types";
 
 const positiveTag: Tag = {
   id: 0,
@@ -309,13 +305,3 @@ export const actionDefinitions: ActionDefinition[] = [
     archived: false,
   }
 ]
-
-const getActionHistory = (): Action[] =>
-  generateHistoryFromActionDefinitions(
-    actionDefinitions,
-    50,
-    getToday(),
-    dayjs(getToday()).subtract(14, "days")
-  )
-  
-export const actionHistory = getActionHistory()

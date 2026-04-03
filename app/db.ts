@@ -1,8 +1,8 @@
 // db.ts
 import { Dexie, type EntityTable } from "dexie"
 import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
-import { actionDefinitions, tags } from "./fixtures/AppData"
-import { pickRandom } from "./utils/helpers"
+import { actionDefinitions, tags } from "./fixtures/DummyData"
+import { pickRandom } from "./lib/utils"
 
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<
