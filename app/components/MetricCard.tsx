@@ -40,6 +40,17 @@ export default function MetricCard({ className, metric, delta, isActive, isTotal
     }
   };
 
+  const icon = () => {
+    if (delta === undefined) return
+
+    if (delta > 0) 
+      return <ArrowBigUp size={14} strokeWidth={1} stroke="#007b2a" fill="#009b39" />
+    if (delta === 0)
+      return <Equal size={14} strokeWidth={3} stroke="#dedede" />
+    if (delta < 0)
+      return <ArrowBigDown size={14} strokeWidth={1} stroke="darkred" fill="red" />
+  }
+
   return (
     <div
       onClick={handleClick}
@@ -56,19 +67,19 @@ export default function MetricCard({ className, metric, delta, isActive, isTotal
       <h3 className="text-lg font-semibold tracking-wide uppercase">
         {metric.name}
       </h3>
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-4">
         <p className="text-lg font-medium">
           {metric.value}
         </p>
-        {delta != undefined && delta > 0 && (
-          <ArrowBigUp size={20} strokeWidth={1} stroke="#007b2a" fill="#009b39" />
-        )}
-        {delta != undefined && delta === 0 && (
-          <Equal size={20} strokeWidth={3} stroke="#dedede" />
-        )}
-        {delta != undefined && delta < 0 && (
-          <ArrowBigDown size={20} strokeWidth={1} stroke="darkred" fill="red" />
-        )}
+        <div className="flex items-center justify-center text-sm">
+          {icon !== null && (
+            <>
+              { delta !== undefined && delta > 0 && `(+${Math.abs(delta)})` }
+              { delta !== undefined && delta < 0 && `(-${Math.abs(delta)})` }
+              { icon() }
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

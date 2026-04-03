@@ -14,6 +14,7 @@ export const DateToTimestamp = (d: Date): number => d.getTime()
 export const isDateBetween = (date: Dayjs, from: Dayjs, to: Dayjs): boolean => date.isBetween(from, to)
 
 export const getToday = (): Dayjs => dayjs()
+export const getYesterday = (): Dayjs => dayjs().subtract(1, 'days')
 export const getAWeekAgo = (): Dayjs => dayjs().subtract(6, 'days')
 
 export const getRandomDateBetween = (from: Dayjs, to: Dayjs): Dayjs => {
