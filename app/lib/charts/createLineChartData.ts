@@ -1,3 +1,5 @@
+import { days } from "../dateTime"
+
 const createLineChartData = (labels: string[] = days, values: number[][]) : object => {
   return {
     type: 'line',
