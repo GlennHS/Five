@@ -1,14 +1,17 @@
+import { ArrowBigDown, ArrowBigUp, Equal } from "lucide-react";
 import { Metric } from "../types"
 import { useRouter } from "next/navigation";
 
 type MetricCardProps = {
-  className?: string;
-  metric: Metric,
-  isActive?: boolean;
-  onClick?: () => void;
+  className?: string
+  metric: Metric
+  delta?: number
+  isActive?: boolean
+  isTotal?: boolean
+  onClick?: () => void
 }
 
-export default function MetricCard({ className, metric, isActive, onClick }: MetricCardProps) {
+export default function MetricCard({ className, metric, delta, isActive, isTotal, onClick }: MetricCardProps) {
   const router = useRouter();
   const isTouch = typeof window !== "undefined" && "ontouchstart" in window;
 
@@ -37,25 +40,47 @@ export default function MetricCard({ className, metric, isActive, onClick }: Met
     }
   };
 
+  const icon = () => {
+    if (delta === undefined) return
+
+    if (delta > 0) 
+      return <ArrowBigUp size={14} strokeWidth={1} stroke="#007b2a" fill="#009b39" />
+    if (delta === 0)
+      return <Equal size={14} strokeWidth={3} stroke="#dedede" />
+    if (delta < 0)
+      return <ArrowBigDown size={14} strokeWidth={1} stroke="darkred" fill="red" />
+  }
+
   return (
     <div
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       className={`
         rounded-2xl p-4 shadow-sm text-white flex flex-col justify-between items-center
-        bg-${metric.name.toLowerCase()}
+        bg-${metric.name.toLowerCase()}${isActive || isTotal ? "" : "/50"}
         cursor-pointer select-none transition
         hover:-translate-y-0.5 hover:shadow-md
-        ${isActive ? "opacity-100 ring-2 ring-offset-2 ring-slate-900 ring-offset-white" : "opacity-50"}
+        ${isActive ? "ring-2 ring-offset-2 ring-slate-900 ring-offset-white" : ""}
         ${className ? className : ""}
       `}
     >
       <h3 className="text-lg font-semibold tracking-wide uppercase">
         {metric.name}
       </h3>
-      <p className="mt-2 text-lg font-medium">
-        {metric.value}
-      </p>
+      <div className="flex items-center justify-center gap-4">
+        <p className="text-lg font-medium">
+          {metric.value}
+        </p>
+        <div className="flex items-center justify-center text-sm">
+          {icon !== null && (
+            <>
+              { delta !== undefined && delta > 0 && `(+${Math.abs(delta)})` }
+              { delta !== undefined && delta < 0 && `(-${Math.abs(delta)})` }
+              { icon() }
+            </>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -22,7 +22,7 @@ import {
 
 // Helpers
 import { calculateMetricsForRange, calculateTotal, hydrateActionDefinitions, hydrateActions } from './utils/helpers';
-import { convertTimestampToDayJS, getAWeekAgo, getDaysSinceDate, getToday } from './utils/dateTime';
+import { convertTimestampToDayJS, getAWeekAgo, getDaysSinceDate, getToday, getYesterday } from './utils/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
 import { ActionController } from './controllers/ActionController';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -65,6 +65,29 @@ export default function Home() {
       getToday()
     )
   }, [actions])
+
+  const dailyDeltas = useMemo(() => {
+    if (!actions) return null
+
+    return calculateMetricsForRange(
+      actions,
+      actionDefinitions,
+      getYesterday(),
+      getToday()
+    )
+  }, [actions])
+
+  const totalDelta = useMemo(() => {
+    if (!actions) return null
+
+    let d = 0
+    METRIC_KEYS.forEach(key => {
+      if (dailyDeltas !== null)
+        d += dailyDeltas[key]
+    })
+
+    return d / METRIC_KEYS.length
+  }, [dailyDeltas])
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -139,13 +162,16 @@ export default function Home() {
               <MetricCard
                 key={key}
                 metric={{ name: key, value: metrics![key] }}
+                delta={dailyDeltas !== null ? dailyDeltas[key] : undefined}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
               />
             ))}
             <MetricCard
               metric={{name: "total", value: total ?? 0}}
-              isActive={highlightedMetric === null}
+              delta={totalDelta !== null ? totalDelta : undefined}
+              isTotal={true}
+              isActive={false}
             />
           </div>
         </section>
