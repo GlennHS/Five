@@ -22,13 +22,14 @@ import {
 
 // Helpers
 import { calculateMetricsForRange, calculateTotal, hydrateActionDefinitions, hydrateActions } from './utils/helpers';
-import { getAWeekAgo, getToday } from './utils/dateTime';
+import { convertTimestampToDayJS, getAWeekAgo, getDaysSinceDate, getToday, getYesterday } from './utils/dateTime';
 import ActionCard from './components/actionCards/ActionCard';
 import { ActionController } from './controllers/ActionController';
 import LoadingSpinner from './components/LoadingSpinner';
 import { ActionDefinitionController } from './controllers/ActionDefinitionController';
 import { TagController } from './controllers/TagController';
 import { useApp } from './context/AppContext';
+import Image from 'next/image';
 
 ChartJS.register(
   RadialLinearScale,
@@ -65,6 +66,29 @@ export default function Home() {
     )
   }, [actions])
 
+  const dailyDeltas = useMemo(() => {
+    if (!actions) return null
+
+    return calculateMetricsForRange(
+      actions,
+      actionDefinitions,
+      getYesterday(),
+      getToday()
+    )
+  }, [actions])
+
+  const totalDelta = useMemo(() => {
+    if (!actions) return null
+
+    let d = 0
+    METRIC_KEYS.forEach(key => {
+      if (dailyDeltas !== null)
+        d += dailyDeltas[key]
+    })
+
+    return d / METRIC_KEYS.length
+  }, [dailyDeltas])
+
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
       setHighlightedMetric(null);
@@ -72,6 +96,32 @@ export default function Home() {
       setHighlightedMetric(metricName);
     }
   };
+
+  function getStreak() {
+    let dayHasLog = true
+    let daysBack = 0
+    while (dayHasLog) {
+      daysBack++
+      const matchingDays = actions.filter(a => {
+        return convertTimestampToDayJS(a.timestamp).isSame(getToday().subtract(daysBack, 'days'), 'day')
+      })
+      dayHasLog = matchingDays.length > 0
+    }
+    return daysBack - 1
+  }
+
+  function daysSinceLastLog() {
+    let dayHasNoLog = true
+    let daysBack = 0
+    while (dayHasNoLog) {
+      daysBack++
+      const matchingDays = actions.filter(a => {
+        return convertTimestampToDayJS(a.timestamp).isSame(getToday().subtract(daysBack, 'days'), 'day')
+      })
+      dayHasNoLog = matchingDays.length === 0
+    }
+    return daysBack - 1
+  }
 
   if (loading) return (
     <div className="p-6">
@@ -90,19 +140,38 @@ export default function Home() {
           />
         </section>
 
+        <section className='w-full'>
+          { getStreak() > 7 ? (
+            <div
+              className="animate-background block rounded-full bg-linear-to-r from-mind via-work to-bond bg-size-[400%_400%] p-1 [animation-duration:3s]"
+            >
+              <span className="block rounded-full bg-white px-10 py-2 text-center text-base font-semibold">{getStreak() > 0 ? `You're on a ${getStreak()} day log streak! 🔥` : "Great to see you!"}</span>
+            </div>
+          ) : (
+            <div
+              className="w-full bg-gray-200 border border-gray-400 rounded-xl py-2 flex items-center justify-center"
+            >
+              <span className="text-center text-base font-semibold">{getStreak() > 0 ? "Welcome back!" : daysSinceLastLog() > 3 ? "So glad you came back!" : "Great to see you again!"}</span>
+            </div>
+          )}
+        </section>
+
         <section className="w-full">
           <div className="grid grid-cols-3 grid-rows-2 gap-4">
             {METRIC_KEYS.map((key) => (
               <MetricCard
                 key={key}
                 metric={{ name: key, value: metrics![key] }}
+                delta={dailyDeltas !== null ? dailyDeltas[key] : undefined}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
               />
             ))}
             <MetricCard
               metric={{name: "total", value: total ?? 0}}
-              isActive={highlightedMetric === null}
+              delta={totalDelta !== null ? totalDelta : undefined}
+              isTotal={true}
+              isActive={false}
             />
           </div>
         </section>
@@ -110,7 +179,7 @@ export default function Home() {
           {actions!
             .slice()
             .sort((a,b) => b.timestamp - a.timestamp)
-            .slice(0,5)
+            .slice(0,20)
             .map(action => (
               <ActionCard
                 key={action.id}
