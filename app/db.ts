@@ -60,7 +60,7 @@ db.on("populate", async () => {
 
   const quantity = 500 // tweak as needed
   const now = Date.now()
-  const oneMonthAgo = now - 1000 * 60 * 60 * 24 * 30
+  const startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 12
 
   const actionsToInsert = []
 
@@ -70,7 +70,7 @@ db.on("populate", async () => {
     actionsToInsert.push({
       actionId: def.id!,
       timestamp:
-        oneMonthAgo + Math.random() * (now - oneMonthAgo),
+        startOfLogs + Math.random() * (now - startOfLogs),
       note: "Test Data"
     })
   }

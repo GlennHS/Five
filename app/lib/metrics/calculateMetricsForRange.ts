@@ -1,9 +1,10 @@
 import { Dayjs } from "dayjs"
-import { Action, ActionDefinition, FiveMetric } from "@/app/types"
+import { Action, ActionDefinition, FiveMetric, METRIC_KEYS } from "@/app/types"
 import sumMetrics from "./sumMetrics"
 import filterActionsByRange from "../actions/filterActionsByRange"
 import actionToMetrics from "../actions/actionToMetrics"
 import buildActionMap from "../actions/buildActionMap"
+import getBoundedMetric from "./getBoundedMetric"
 
 export const calculateMetricsForRange = (
   actions: Action[],
@@ -17,8 +18,13 @@ export const calculateMetricsForRange = (
   const filtered = filterActionsByRange(actions, from, to)
 
   const deltas = filtered.map(a =>
-    actionToMetrics(a, actionMap, 0.9)
+    actionToMetrics(a, actionMap, 0.6)
   )
 
-  return sumMetrics(deltas)
+  // return sumMetrics(deltas)
+  const summedMetrics = sumMetrics(deltas)
+
+  METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))
+
+  return summedMetrics
 }
