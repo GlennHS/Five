@@ -1,4 +1,4 @@
-import { ActionDefinition, MetricSnapshotHistory, Tag } from "../types";
+import { ActionDefinition, Tag } from "../types";
 
 const positiveTag: Tag = {
   id: 0,
@@ -20,7 +20,7 @@ const importantTag: Tag = {
 
 const otherTag: Tag = {
   id: 3,
-  name: 'other',
+  name: 'relaxing',
   colorKey: 'blue',
 }
 
@@ -30,17 +30,6 @@ export const tags = [
   importantTag,
   otherTag,
 ]
-
-export const metricSnapshots: Partial<MetricSnapshotHistory> = {
-  day: {
-    timestamp: new Date().getTime(),
-    mind: 80,
-    body: 70,
-    cash: 45,
-    work: 23,
-    bond: 34,
-  },
-}
 
 export const actionDefinitions: ActionDefinition[] = [
   {
@@ -67,7 +56,7 @@ export const actionDefinitions: ActionDefinition[] = [
   },
   {
     id: 2,
-    name: "Work on portfolio (1 hour)",
+    name: "Work on a personal project (1 hour)",
     mind: 2,
     work: 4,
     tags: [
@@ -77,12 +66,13 @@ export const actionDefinitions: ActionDefinition[] = [
   },
   {
     id: 3,
-    name: "Go clubbing",
-    mind: -1,
-    body: -4,
+    name: "Go out with friends",
+    mind: 1,
+    body: 2,
+    cash: -2,
     bond: 3,
     tags: [
-      negativeTag
+      positiveTag
     ],
     archived: false,
   },
@@ -121,6 +111,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 7,
     name: "Cook a healthy meal",
     body: 3,
+    mind: 1,
     cash: 1,
     tags: [
       positiveTag
@@ -132,7 +123,8 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Meditate",
     mind: 4,
     tags: [
-      positiveTag
+      positiveTag,
+      otherTag,
     ],
     archived: false,
   },
@@ -141,7 +133,8 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Read a book",
     mind: 3,
     tags: [
-      positiveTag
+      positiveTag,
+      otherTag,
     ],
     archived: false,
   },
@@ -150,7 +143,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 10,
     name: "Call a friend",
     mind: 2,
-    bond: 4,
+    bond: 2,
     tags: [
       positiveTag
     ],
@@ -161,28 +154,21 @@ export const actionDefinitions: ActionDefinition[] = [
     name: "Go for a coffee with someone",
     bond: 4,
     cash: -1,
-    tags: [],
-    archived: false,
-  },
-  {
-    id: 12,
-    name: "Help someone out",
-    mind: 2,
-    bond: 3,
     tags: [
       positiveTag
     ],
     archived: false,
   },
   {
-    id: 13,
-    name: "Go on a date",
-    bond: 5,
-    cash: -2,
-    tags: [],
+    id: 12,
+    name: "Help a friend out",
+    mind: 1,
+    bond: 3,
+    tags: [
+      positiveTag
+    ],
     archived: false,
   },
-
   {
     id: 14,
     name: "Deep work session (2 hours)",
@@ -207,7 +193,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 16,
     name: "Plan the week",
     mind: 2,
-    work: 3,
+    work: 2,
     tags: [
       positiveTag
     ],
@@ -234,15 +220,34 @@ export const actionDefinitions: ActionDefinition[] = [
   },
   {
     id: 19,
-    name: "Put money into savings",
+    name: "Put a littlw into savings",
     mind: 2,
-    cash: 4,
+    cash: 3,
     tags: [
       positiveTag
     ],
     archived: false,
   },
-
+  {
+    id: 26,
+    name: "Put some money into savings",
+    mind: 3,
+    cash: 5,
+    tags: [
+      positiveTag
+    ],
+    archived: false,
+  },
+  {
+    id: 27,
+    name: "Put a lot into savings",
+    mind: 4,
+    cash: 8,
+    tags: [
+      positiveTag
+    ],
+    archived: false,
+  },
   {
     id: 20,
     name: "Scroll social media for an hour",

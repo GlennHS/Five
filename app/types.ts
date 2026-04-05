@@ -43,17 +43,6 @@ export type ActionDetails = {
   metrics: FiveMetric
 }
 
-export type MetricSnapshot = {
-  timestamp: number
-} & FiveMetric
-
-export type MetricSnapshotHistory = {
-  day: MetricSnapshot
-  week: MetricSnapshot
-  month: MetricSnapshot
-  year: MetricSnapshot
-}
-
 export type Tag = {
   id: number,
   name: string,
