@@ -17,6 +17,7 @@ import getMetricScore from '@/app/lib/metrics/getMetricScore'
 import getMetricSeries from '@/app/lib/metrics/getMetricSeries'
 import { getAWeekAgo, getToday } from '@/app/lib/dateTime'
 import { toSentenceCase } from '@/app/lib/utils'
+import ActionCardList from '@/app/components/actionCards/ActionCardList'
 
 export default function MetricPage({
   metric,
@@ -84,10 +85,7 @@ export default function MetricPage({
             Recent Actions
           </h2>
 
-          <div
-            className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-2 text-slate-500 flex flex-col gap-2"
-            aria-label="Action cards container"
-          >
+          <ActionCardList>
             {filteredActions
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
@@ -99,7 +97,7 @@ export default function MetricPage({
                   definitions={actionDefinitions}
                 />
             ))}
-          </div>
+          </ActionCardList>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">

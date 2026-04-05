@@ -24,6 +24,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import { useApp } from './context/AppContext';
 import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange';
 import calculateTotal from './lib/metrics/calculateTotal';
+import ActionCardList from './components/actionCards/ActionCardList';
 
 ChartJS.register(
   RadialLinearScale,
@@ -169,18 +170,21 @@ export default function Home() {
             />
           </div>
         </section>
-        <section className="flex flex-col w-full rounded-2xl py-4 max-h-2/3 gap-y-4">
-          {actions!
-            .slice()
-            .sort((a,b) => b.timestamp - a.timestamp)
-            .slice(0,20)
-            .map(action => (
-              <ActionCard
-                key={action.id}
-                action={action}
-                definitions={actionDefinitions}
-              />
-          ))}
+        <section className="w-full">
+          <h2 className='mb-2 text-lg font-semibold'>Recent Actions</h2>
+          <ActionCardList>
+            {actions!
+              .slice()
+              .sort((a,b) => b.timestamp - a.timestamp)
+              .slice(0,20)
+              .map(action => (
+                <ActionCard
+                  key={action.id}
+                  action={action}
+                  definitions={actionDefinitions}
+                />
+            ))}
+          </ActionCardList>
         </section>
       </main>
     </div>
