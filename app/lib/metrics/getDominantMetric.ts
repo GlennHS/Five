@@ -1,12 +1,12 @@
-import { FiveMetric, MetricKey, METRIC_KEYS } from "@/app/types"
+import { MetricKey, METRIC_KEYS, ActionDefinition } from "@/app/types"
 
-const getDominantMetric = (metrics: FiveMetric): MetricKey | null => {
+const getDominantMetric = (def: ActionDefinition): MetricKey | null => {
 
-  let best: MetricKey | null = null
+  let best: MetricKey = 'mind'
   let bestValue = 0
 
   METRIC_KEYS.forEach(k => {
-    const value = Math.abs(metrics[k])
+    const value = Math.abs(def[k] ?? 0)
 
     if (value > bestValue) {
       best = k

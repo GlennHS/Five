@@ -12,7 +12,7 @@ import calculateTotal from "@/app/lib/metrics/calculateTotal";
 
 export default function Page() {
 
-    const { actions, actionDefinitions, loading } = useApp()
+  const { actions, actionDefinitions, loading } = useApp()
 
   const metrics = useMemo(() => {
     if (!actions) return null

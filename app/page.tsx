@@ -177,13 +177,21 @@ export default function Home() {
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
               .slice(0,20)
-              .map(action => (
-                <ActionCard
-                  key={action.id}
-                  action={action}
-                  definitions={actionDefinitions}
-                />
-            ))}
+              .map(action => {
+                const def = actionDefinitions.find(def => def.id === action.actionId)
+
+                if (def)
+                  return (
+                    <ActionCard
+                      key={action.id}
+                      action={action}
+                      definition={def}
+                    />
+                  )
+                else
+                  return
+              }
+            )}
           </ActionCardList>
         </section>
       </main>
