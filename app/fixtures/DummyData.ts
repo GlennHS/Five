@@ -220,7 +220,7 @@ export const actionDefinitions: ActionDefinition[] = [
   },
   {
     id: 19,
-    name: "Put a littlw into savings",
+    name: "Put a little into savings",
     mind: 2,
     cash: 3,
     tags: [

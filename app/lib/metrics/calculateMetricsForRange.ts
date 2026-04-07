@@ -21,7 +21,7 @@ export const calculateMetricsForRange = (
     actionToMetrics(a, actionMap, 0.6)
   )
 
-  // return sumMetrics(deltas)
+  return sumMetrics(deltas)
   const summedMetrics = sumMetrics(deltas)
 
   METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))

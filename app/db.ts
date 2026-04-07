@@ -60,7 +60,7 @@ db.on("populate", async () => {
 
   const quantity = 500 // tweak as needed
   const now = Date.now()
-  const startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 12
+  const startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 2
 
   const actionsToInsert = []
 

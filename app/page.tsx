@@ -176,7 +176,7 @@ export default function Home() {
             {actions!
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
-              .slice(0,20)
+              .slice(0,50)
               .map(action => {
                 const def = actionDefinitions.find(def => def.id === action.actionId)
 
