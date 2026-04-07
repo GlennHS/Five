@@ -58,7 +58,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 2,
     name: "Work on a personal project (1 hour)",
     mind: 2,
-    work: 4,
+    work: 5,
     tags: [
       positiveTag
     ],
@@ -70,7 +70,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 1,
     body: 2,
     cash: -2,
-    bond: 3,
+    bond: 4,
     tags: [
       positiveTag
     ],
@@ -80,7 +80,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 4,
     name: "Get a takeaway",
     body: -3,
-    cash: -3,
+    cash: -2,
     tags: [
       negativeTag
     ],
@@ -143,7 +143,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 10,
     name: "Call a friend",
     mind: 2,
-    bond: 2,
+    bond: 3,
     tags: [
       positiveTag
     ],
@@ -163,7 +163,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 12,
     name: "Help a friend out",
     mind: 1,
-    bond: 3,
+    bond: 4,
     tags: [
       positiveTag
     ],
@@ -173,7 +173,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 14,
     name: "Deep work session (2 hours)",
     mind: 2,
-    work: 5,
+    work: 7,
     tags: [
       positiveTag
     ],
@@ -183,7 +183,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 15,
     name: "Learn something new",
     mind: 4,
-    work: 2,
+    work: 3,
     tags: [
       positiveTag
     ],
@@ -193,7 +193,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 16,
     name: "Plan the week",
     mind: 2,
-    work: 2,
+    work: 3,
     tags: [
       positiveTag
     ],
@@ -212,7 +212,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 18,
     name: "Impulse online shopping",
     mind: -2,
-    cash: -5,
+    cash: -3,
     tags: [
       negativeTag
     ],
@@ -222,7 +222,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 19,
     name: "Put a little into savings",
     mind: 2,
-    cash: 3,
+    cash: 4,
     tags: [
       positiveTag
     ],
@@ -232,7 +232,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 26,
     name: "Put some money into savings",
     mind: 3,
-    cash: 5,
+    cash: 8,
     tags: [
       positiveTag
     ],
@@ -242,7 +242,7 @@ export const actionDefinitions: ActionDefinition[] = [
     id: 27,
     name: "Put a lot into savings",
     mind: 4,
-    cash: 8,
+    cash: 12,
     tags: [
       positiveTag
     ],
@@ -302,8 +302,18 @@ export const actionDefinitions: ActionDefinition[] = [
   {
     id: 25,
     name: "Tidy workspace",
+    mind: 3,
+    work: 3,
+    tags: [
+      positiveTag
+    ],
+    archived: false,
+  },
+  {
+    id: 28,
+    name: "Spend nothing today",
     mind: 2,
-    work: 2,
+    cash: 8,
     tags: [
       positiveTag
     ],

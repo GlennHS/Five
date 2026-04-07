@@ -4,6 +4,8 @@ import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
 import { actionDefinitions, tags } from "./fixtures/DummyData"
 import { pickRandom } from "./lib/utils"
 
+const SIMULATE_LOG_TYPE = "good" // good, bad, random, empty
+
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<
     TagDB,
@@ -40,6 +42,7 @@ db.on("populate", async () => {
   }
 
   // 2. Insert action definitions
+  // Somehow these get inserted in the correct order and that scares me slightly.
   for (const def of actionDefinitions) {
     const tagIds =
       def.tags?.map(t => tagIdMap.get(t.name)!).filter(Boolean) ?? []
@@ -55,27 +58,89 @@ db.on("populate", async () => {
       archived: false,
     })
   }
-
+  
   const defs = await db.actionDefinitions.toArray()
-
-  const quantity = 500 // tweak as needed
-  const now = Date.now()
-  const startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 2
-
   const actionsToInsert = []
+  let actionIDs = []
+  const now = Date.now()
+  let startOfLogs = now
 
-  for (let i = 0; i < quantity; i++) {
-    const def = pickRandom(defs)
+  switch (SIMULATE_LOG_TYPE) {
+    case "random":
+      const quantity = 500 // tweak as needed
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 2
 
-    actionsToInsert.push({
-      actionId: def.id!,
-      timestamp:
-        startOfLogs + Math.random() * (now - startOfLogs),
-      note: "Test Data"
-    })
+      for (let i = 0; i < quantity; i++) {
+        const def = pickRandom(defs)
+    
+        actionsToInsert.push({
+          actionId: def.id!,
+          timestamp:
+            startOfLogs + Math.random() * (now - startOfLogs),
+          note: "Test Data"
+        })
+      }
+      break;
+    case "good":
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 7
+      actionIDs = [
+        0, 1, 1, 1, 2, 3, 5, 8, 9, 28,
+        0, 1, 1, 1, 2, 3, 6, 7, 9,
+        0, 1, 1, 1, 2, 3, 28,
+        0, 1, 2, 3, 5, 6, 8, 9, 10, 14,
+        0, 1, 1, 2, 3, 7,
+        0, 1, 1, 1, 3, 14, 28,
+        0, 1, 1, 1, 2, 3, 5, 7, 8, 16,
+      ]
+
+      actionIDs.forEach(id => {
+        const action = defs.find(d => d.id === id + 1)
+        if (action)
+          actionsToInsert.push({
+            actionId: action.id,
+            timestamp:
+              startOfLogs + Math.random() * (now - startOfLogs),
+            note: "Test Data - Good"
+          })
+      })
+      break;
+
+    case "bad":
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 7
+      actionIDs = [
+        1, 21, 20, 20, 22, 12, 10, 5, 18,
+        0, 1, 2, 3, 5, 6, 8, 9, 10, 14,
+        1, 21, 20, 20, 22, 12, 10, 5, 18,
+        1, 21, 20, 20, 22, 12, 10, 5, 18, 26,
+        1, 21, 20, 20, 22, 12, 10, 5, 18,
+        0, 1, 2, 3, 5, 6, 8, 9, 10, 14,
+        1, 21, 20, 20, 22, 12, 10, 5, 18, 26,
+      ]
+
+      actionIDs.forEach(id => {
+        const action = defs.find(d => d.id === id + 1)
+        if (action)
+          actionsToInsert.push({
+            actionId: action.id,
+            timestamp:
+              startOfLogs + Math.random() * (now - startOfLogs),
+            note: "Test Data - Bad"
+          })
+      })
+      break;
+
+    default:
+      break;
   }
+
+  console.log("Insertion time")
 
   await db.actions.bulkAdd(actionsToInsert)
 })
+
+// Expose DB in console for debugging
+// if (typeof window !== "undefined") {
+//   (window as any).db = db
+// }
 
 export { db }
