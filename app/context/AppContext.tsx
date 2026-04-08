@@ -138,7 +138,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const [tags, defs, acts] = await Promise.all([
         TagController.getAll(),
         ActionDefinitionController.getAll(),
-        ActionController.getAll()
+        ActionController.getAllYear()
       ])
 
       // hydrate here once

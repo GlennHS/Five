@@ -1,10 +1,11 @@
 // db.ts
-import { Dexie, type EntityTable } from "dexie"
+import { Dexie, InsertType, type EntityTable } from "dexie"
 import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
 import { actionDefinitions, tags } from "./fixtures/DummyData"
 import { pickRandom } from "./lib/utils"
 
-const SIMULATE_LOG_TYPE = "good" // good, bad, random, empty
+const SIMULATE_LOG_TYPE = "random" // good, bad, random, empty
+const QUANTITY = 50000
 
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<
@@ -25,7 +26,7 @@ const db = new Dexie("Main") as Dexie & {
 db.version(1).stores({
   tags: "++id, name, colorKey", // primary key "id" (for the runtime!)
   actionDefinitions: "++id, name, *tagIds",
-  actions: "++id, name, actionId",
+  actions: "++id, name, actionId, timestamp",
 })
 
 db.on("populate", async () => {
@@ -60,17 +61,16 @@ db.on("populate", async () => {
   }
   
   const defs = await db.actionDefinitions.toArray()
-  const actionsToInsert = []
+  const actionsToInsert: InsertType<ActionDB, 'id'>[] = []
   let actionIDs = []
   const now = Date.now()
   let startOfLogs = now
 
   switch (SIMULATE_LOG_TYPE) {
     case "random":
-      const quantity = 500 // tweak as needed
-      startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 2
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 12 * 20
 
-      for (let i = 0; i < quantity; i++) {
+      for (let i = 0; i < QUANTITY; i++) {
         const def = pickRandom(defs)
     
         actionsToInsert.push({
@@ -133,9 +133,14 @@ db.on("populate", async () => {
       break;
   }
 
-  console.log("Insertion time")
+  await db.transaction('rw', db.actions, async () => {
+    const CHUNK_SIZE = 200
 
-  await db.actions.bulkAdd(actionsToInsert)
+    for (let i = 0; i < actionsToInsert.length; i += CHUNK_SIZE) {
+      await db.actions.bulkAdd(actionsToInsert.slice(i, i + CHUNK_SIZE))
+      console.log("Chunk Added")
+    }
+  })
 })
 
 // Expose DB in console for debugging
