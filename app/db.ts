@@ -4,7 +4,7 @@ import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
 import { actionDefinitions, tags } from "./fixtures/DummyData"
 import { pickRandom } from "./lib/utils"
 
-const SIMULATE_LOG_TYPE = "random" // good, bad, random, empty
+let SIMULATE_LOG_TYPE = "random" // Have to use let or TypeScript has a little cry about it
 const QUANTITY = 50000
 
 const db = new Dexie("Main") as Dexie & {
