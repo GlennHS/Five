@@ -6,6 +6,7 @@ import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
 import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
+import { Plus, Sliders } from "lucide-react"
 
 export default function Page() {
   const { actionDefinitions, loading, addAction } = useApp()
@@ -83,13 +84,20 @@ export default function Page() {
               {/* Top */}
               <div className="flex w-full justify-between gap-1">
                 <div className="font-medium">{def.name}</div>
-
-                <button
-                  onClick={() => addAction(def.id)}
-                  className="px-3 py-1 rounded bg-black text-white text-sm"
-                >
-                  Log
-                </button>
+                <div className="rounded-2xl border-2 border-black flex flex-center overflow-hidden">
+                  <button
+                    onClick={() => addAction(def.id)}
+                    className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
+                  >
+                    <Sliders />
+                  </button>
+                  <button
+                    onClick={() => addAction(def.id)}
+                    className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
+                  >
+                    <Plus />
+                  </button>
+                </div>
               </div>
 
               <div className="flex gap-x-2 flex-wrap w-full">
