@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Flatpickr from "react-flatpickr";
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
@@ -13,7 +14,14 @@ export default function Page() {
   const [search, setSearch] = useState("")
   const debouncedSearch = useDebounce(search, 250)
 
-  
+  const [logModalShowing, setLogModalShowing] = useState(false)
+  const [actionId, setActionId] = useState(-1)
+
+  const showLogModal = (id: number) => {
+    setActionId(id)
+    setLogModalShowing(true)
+  }
+
   const filteredActionDefinitions = useMemo(() => {
     const term = debouncedSearch.trim().toLowerCase()
 
@@ -48,6 +56,106 @@ export default function Page() {
     return debounced
   }
 
+  function LogModal({
+    isOpen,
+    onClose,
+    onSubmit
+  } : {
+    isOpen: boolean,
+    onClose: () => void,
+    onSubmit: (data: {id: number, timestamp: number, note: string}) => void
+  }) {
+    const [formData, setFormData] = useState({
+      id: -1,
+      timestamp: Date.now(),
+      note: "",
+    });
+
+    const [chosenDate, setChosenDate] = useState<Date>(new Date())
+
+    if (!isOpen) return null;
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    };
+
+    const handleDateChange = (newDate: Date) => {
+      setChosenDate(newDate)
+      setFormData({
+        ...formData,
+        timestamp: newDate.valueOf()
+      })
+    }
+
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      addAction(formData.id, formData.timestamp, formData.note);
+      onClose(); // close after submit
+    };
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={onClose}
+        />
+
+        {/* Modal */}
+        <div className="relative bg-white rounded-2xl shadow-lg w-full max-w-md p-6 z-10">
+          <h2 className="text-xl font-semibold mb-4">Log an Action</h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="hidden"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            
+            <input
+              type="text"
+              name="note"
+              value={formData.note}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+
+            <Flatpickr
+              value={chosenDate}
+              onChange={(v: Date[]) => handleDateChange(v[0])}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="p-6">
@@ -58,6 +166,7 @@ export default function Page() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
+      <LogModal isOpen={logModalShowing} onClose={() => setLogModalShowing(false)} onSubmit={(data) => { addAction(data.id, data.timestamp, data.note); setLogModalShowing(false)}} />
       <h1 className="text-xl font-semibold mb-6">Track Actions</h1>
 
       <div>
@@ -86,7 +195,7 @@ export default function Page() {
                 <div className="font-medium">{def.name}</div>
                 <div className="rounded-2xl border-2 border-black flex flex-center overflow-hidden">
                   <button
-                    onClick={() => addAction(def.id)}
+                    onClick={() => showLogModal(def.id)}
                     className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
                   >
                     <Sliders />

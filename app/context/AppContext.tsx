@@ -16,7 +16,7 @@ type AppState = {
   tags: Tag[]
   loading: boolean
 
-  addAction: (actionId: number) => Promise<void>
+  addAction: (actionId: number, timestamp?: number, note?: string) => Promise<void>
   addActionDefinition: (def: Omit<ActionDefinitionDB, 'id'>) => Promise<void>
   updateActionDefinition: (def: ActionDefinitionDB) => Promise<void>
   archiveActionDefinition: (id: number) => Promise<void>
@@ -35,13 +35,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(true)
 
-  async function addAction(actionId: number) {
-    const timestamp = Date.now()
-
+  async function addAction(actionId: number, timestamp = Date.now(), note = "") {
     const id: number = await ActionController.create({
       actionId,
       timestamp,
-      note: ""
+      note
     })
 
     const newAction: Action = {
