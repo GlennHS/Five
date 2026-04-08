@@ -1,40 +1,16 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { ActionController } from "@/app/controllers/ActionController"
-import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
-import { TagController } from "@/app/controllers/TagController"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Action, ActionDefinition, ActionDefinitionDB, METRIC_KEYS, MetricKey, TagDB } from "@/app/types"
-import { hydrateActions, toSentenceCase } from "@/app/utils/helpers"
-import { AppProvider, useApp } from "@/app/context/AppContext"
+import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
+import { toSentenceCase } from "@/app/lib/utils"
+import { useApp } from "@/app/context/AppContext"
 
 export default function Page() {
-  const { actions, tags, actionDefinitions, loading, addAction } = useApp()
+  const { actionDefinitions, loading, addAction } = useApp()
   const [search, setSearch] = useState("")
   const debouncedSearch = useDebounce(search, 250)
-
-  const sortedActionDefinitions = useMemo(() => {
-    if (!actionDefinitions.length) return []
-
-    const latestMap = new Map<number, number>()
-
-    for (const action of actions) {
-      const current = latestMap.get(action.actionId)
-
-      if (!current || action.timestamp > current) {
-        latestMap.set(action.actionId, action.timestamp)
-      }
-    }
-
-    return [...actionDefinitions].sort((a, b) => {
-      const aTime = latestMap.get(a.id!) ?? 0
-      const bTime = latestMap.get(b.id!) ?? 0
-
-      return bTime - aTime
-    })
-  }, [actionDefinitions, actions])
 
   
   const filteredActionDefinitions = useMemo(() => {

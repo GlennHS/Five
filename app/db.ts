@@ -1,8 +1,11 @@
 // db.ts
-import { Dexie, type EntityTable } from "dexie"
+import { Dexie, InsertType, type EntityTable } from "dexie"
 import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
-import { actionDefinitions, tags } from "./fixtures/AppData"
-import { pickRandom } from "./utils/helpers"
+import { actionDefinitions, tags } from "./fixtures/DummyData"
+import { pickRandom } from "./lib/utils"
+
+let SIMULATE_LOG_TYPE = "random" // Have to use let or TypeScript has a little cry about it
+const QUANTITY = 50000
 
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<
@@ -23,7 +26,7 @@ const db = new Dexie("Main") as Dexie & {
 db.version(1).stores({
   tags: "++id, name, colorKey", // primary key "id" (for the runtime!)
   actionDefinitions: "++id, name, *tagIds",
-  actions: "++id, name, actionId",
+  actions: "++id, name, actionId, timestamp",
 })
 
 db.on("populate", async () => {
@@ -40,6 +43,7 @@ db.on("populate", async () => {
   }
 
   // 2. Insert action definitions
+  // Somehow these get inserted in the correct order and that scares me slightly.
   for (const def of actionDefinitions) {
     const tagIds =
       def.tags?.map(t => tagIdMap.get(t.name)!).filter(Boolean) ?? []
@@ -55,27 +59,93 @@ db.on("populate", async () => {
       archived: false,
     })
   }
-
+  
   const defs = await db.actionDefinitions.toArray()
-
-  const quantity = 500 // tweak as needed
+  const actionsToInsert: InsertType<ActionDB, 'id'>[] = []
+  let actionIDs = []
   const now = Date.now()
-  const oneMonthAgo = now - 1000 * 60 * 60 * 24 * 30
+  let startOfLogs = now
 
-  const actionsToInsert = []
+  switch (SIMULATE_LOG_TYPE) {
+    case "random":
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 12 * 20
 
-  for (let i = 0; i < quantity; i++) {
-    const def = pickRandom(defs)
+      for (let i = 0; i < QUANTITY; i++) {
+        const def = pickRandom(defs)
+    
+        actionsToInsert.push({
+          actionId: def.id!,
+          timestamp:
+            startOfLogs + Math.random() * (now - startOfLogs),
+          note: "Test Data"
+        })
+      }
+      break;
+    case "good":
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 7
+      actionIDs = [
+        0, 1, 1, 1, 2, 3, 5, 8, 9, 28,
+        0, 1, 1, 1, 2, 3, 6, 7, 9,
+        0, 1, 1, 1, 2, 3, 28,
+        0, 1, 2, 3, 5, 6, 8, 9, 10, 14,
+        0, 1, 1, 2, 3, 7,
+        0, 1, 1, 1, 3, 14, 28,
+        0, 1, 1, 1, 2, 3, 5, 7, 8, 16,
+      ]
 
-    actionsToInsert.push({
-      actionId: def.id!,
-      timestamp:
-        oneMonthAgo + Math.random() * (now - oneMonthAgo),
-      note: "Test Data"
-    })
+      actionIDs.forEach(id => {
+        const action = defs.find(d => d.id === id + 1)
+        if (action)
+          actionsToInsert.push({
+            actionId: action.id,
+            timestamp:
+              startOfLogs + Math.random() * (now - startOfLogs),
+            note: "Test Data - Good"
+          })
+      })
+      break;
+
+    case "bad":
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 7
+      actionIDs = [
+        1, 21, 20, 20, 22, 12, 10, 5, 18,
+        0, 1, 2, 3, 5, 6, 8, 9, 10, 14,
+        1, 21, 20, 20, 22, 12, 10, 5, 18,
+        1, 21, 20, 20, 22, 12, 10, 5, 18, 26,
+        1, 21, 20, 20, 22, 12, 10, 5, 18,
+        0, 1, 2, 3, 5, 6, 8, 9, 10, 14,
+        1, 21, 20, 20, 22, 12, 10, 5, 18, 26,
+      ]
+
+      actionIDs.forEach(id => {
+        const action = defs.find(d => d.id === id + 1)
+        if (action)
+          actionsToInsert.push({
+            actionId: action.id,
+            timestamp:
+              startOfLogs + Math.random() * (now - startOfLogs),
+            note: "Test Data - Bad"
+          })
+      })
+      break;
+
+    default:
+      break;
   }
 
-  await db.actions.bulkAdd(actionsToInsert)
+  await db.transaction('rw', db.actions, async () => {
+    const CHUNK_SIZE = 200
+
+    for (let i = 0; i < actionsToInsert.length; i += CHUNK_SIZE) {
+      await db.actions.bulkAdd(actionsToInsert.slice(i, i + CHUNK_SIZE))
+      console.log("Chunk Added")
+    }
+  })
 })
+
+// Expose DB in console for debugging
+// if (typeof window !== "undefined") {
+//   (window as any).db = db
+// }
 
 export { db }

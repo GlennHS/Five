@@ -1,17 +1,18 @@
 'use client';
 
-import { calculateMetricsForRange, calculateTotal } from "../../utils/helpers";
 import { METRIC_KEYS } from "../../types";
 import MetricCardLarge from "../../components/MetricCardLarge";
-import { getAWeekAgo, getToday } from "../../utils/dateTime";
+import { getAWeekAgo, getToday } from "../../lib/dateTime";
 import BackLink from "../../components/BackLink";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import { useApp } from "@/app/context/AppContext";
 import { useMemo } from "react";
+import { calculateMetricsForRange } from "@/app/lib/metrics/calculateMetricsForRange";
+import calculateTotal from "@/app/lib/metrics/calculateTotal";
 
 export default function Page() {
 
-    const { actions, actionDefinitions, loading } = useApp()
+  const { actions, actionDefinitions, loading } = useApp()
 
   const metrics = useMemo(() => {
     if (!actions) return null

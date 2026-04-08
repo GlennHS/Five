@@ -1,15 +1,23 @@
 'use client'
 
-import { actionAffectsMetric, getMetricScore, getMetricSeries, toSentenceCase } from '@/app/utils/helpers'
-import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
-import { getAWeekAgo, getToday } from '@/app/utils/dateTime'
-import { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
+
 import { Action, MetricKey, TIME_GROUPS } from '@/app/types'
-import BackLink from '@/app/components/BackLink'
-import LoadingSpinner from '@/app/components/LoadingSpinner'
+import { Dayjs } from 'dayjs'
+
 import { useApp } from '@/app/context/AppContext'
+
 import ActionCard from '@/app/components/actionCards/ActionCard'
+import BackLink from '@/app/components/BackLink'
+import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
+import LoadingSpinner from '@/app/components/LoadingSpinner'
+
+import actionAffectsMetric from '@/app/lib/actions/actionAffectsMetric'
+import getMetricScore from '@/app/lib/metrics/getMetricScore'
+import getMetricSeries from '@/app/lib/metrics/getMetricSeries'
+import { getAWeekAgo, getToday } from '@/app/lib/dateTime'
+import { toSentenceCase } from '@/app/lib/utils'
+import ActionCardList from '@/app/components/actionCards/ActionCardList'
 
 export default function MetricPage({
   metric,
@@ -77,22 +85,27 @@ export default function MetricPage({
             Recent Actions
           </h2>
 
-          <div
-            className="min-h-50 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-2 text-slate-500 flex flex-col gap-2"
-            aria-label="Action cards container"
-          >
+          <ActionCardList>
             {filteredActions
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
               .slice(0,5)
-              .map(action => (
-                <ActionCard
-                  key={action.id}
-                  action={action}
-                  definitions={actionDefinitions}
-                />
-            ))}
-          </div>
+              .map(action => {
+                const def = actionDefinitions.find(def => def.id === action.actionId)
+
+                if (def)
+                  return (
+                    <ActionCard
+                      key={action.id}
+                      action={action}
+                      definition={def}
+                    />
+                  )
+                else
+                  return
+              }
+            )}
+          </ActionCardList>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">

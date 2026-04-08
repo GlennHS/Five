@@ -7,10 +7,10 @@ export const METRIC_COLORS = {
 }
 
 export const TAG_COLOR_CLASSES = {
-  green: "bg-green-700/10 text-green-700 border-green-700",
-  red: "bg-red-500/10 text-red-500 border-red-500",
-  yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500",
-  blue: "bg-blue-500/10 text-blue-500 border-blue-500",
+  green: "bg-green-300/10 text-green-700 border-green-700",
+  red: "bg-red-300/10 text-red-500 border-red-500",
+  yellow: "bg-yellow-200/10 text-yellow-600 border-yellow-500",
+  blue: "bg-blue-300/10 text-blue-500 border-blue-500",
 } as const
 
 export type TagColorKey = keyof typeof TAG_COLOR_CLASSES

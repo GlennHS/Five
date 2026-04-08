@@ -1,31 +1,40 @@
 "use client"
 
-import { Action, ActionDefinition, Tag } from "@/app/types"
-import { resolveActionDetails, getNonZeroMetrics, toSentenceCase, getDominantMetric, metricToCardClasses } from "@/app/utils/helpers"
-import { convertTimestampToDayJS, formatSmartDate } from "@/app/utils/dateTime"
+import { Action, ActionDefinition, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
+
 import TagPill from "../TagPill"
+
+import { convertTimestampToDayJS, formatSmartDate } from "@/app/lib/dateTime"
+import { toSentenceCase } from "@/app/lib/utils"
+import getDominantMetric from "@/app/lib/metrics/getDominantMetric"
+import isActionNegative from "@/app/lib/actionDefinitions/isActionNegative"
 
 type Props = {
   action: Action
-  definitions: ActionDefinition[]
+  definition: ActionDefinition
 }
 
-export default function ActionCard({ action, definitions }: Props) {
+export default function ActionCard({ action, definition }: Props) {
+  const metricToCardClasses = (metric: MetricKey | null) => {
+    let className = ""
+    if (!metric) className += "border-total bg-total/10"
+    else className += `border-${metric} bg-${metric}/10`
+    return className
+  }
 
-  const details = resolveActionDetails(action, definitions)
-
-  const dominant = details ? getDominantMetric(details.metrics) : "mind"
+  const dominant = getDominantMetric(definition)
+  const isNegative = isActionNegative(definition)
   const cardClasses = metricToCardClasses(dominant)
-  
-  if (!details) return null
-  
-  const metrics = getNonZeroMetrics(details.metrics)
-  const date = formatSmartDate(convertTimestampToDayJS(details.timestamp))
-  const visibleTags = details.tags.slice(0, 3)
-  const extraTagCount = details.tags.length - visibleTags.length
+
+  const date = formatSmartDate(convertTimestampToDayJS(action.timestamp))
+  const visibleTags = definition.tags.slice(0, 3)
+  const extraTagCount = definition.tags.length - visibleTags.length
+
 
   return (
-    <div className={`border-l-8 rounded-r-lg p-3 flex flex-col gap-1.5 ${cardClasses}`}>
+    <div
+      className={`border-l-8 border rounded-r-lg p-3 mx-2 flex flex-col gap-1.5 ${cardClasses} ${isNegative && 'border-dashed'}`}
+      >
       <div className="flex gap-2 min-w-0">
         {visibleTags.map((t: Tag) => (
           <TagPill key={t.id} tag={t.name} color={t.colorKey} />
@@ -39,23 +48,26 @@ export default function ActionCard({ action, definitions }: Props) {
       </div>
     <div className="flex justify-between items-center gap-4 whitespace-nowrap">
       <span className="truncate font-bold flex-1">
-        {details.name}
+        {definition.name}
       </span>
       <span className="text-sm opacity-70">{date}</span>
     </div>
 
-      {details.note && (
+      {action.note && (
         <div className="text-sm italic opacity-80">
-          {details.note}
+          {action.note}
         </div>
       )}
 
       <div className="flex gap-3 text-sm">
-        {metrics.map(m => (
-          <span key={m.key} className={`font-semibold text-${m.key} text-shadow-lg`}>
-            {toSentenceCase(m.key)} {m.value > 0 ? "+" : ""}{m.value}
-          </span>
-        ))}
+        {METRIC_KEYS.map(m => {
+          if (definition[m])
+          return (
+            <span key={m} className={`font-semibold text-${m} text-shadow-lg`}>
+              {toSentenceCase(m)} {definition[m] ? definition[m] > 0 ? "+" : "" : ""}{definition[m] ?? 0}
+            </span>
+          )}
+        )}
 
       </div>
 

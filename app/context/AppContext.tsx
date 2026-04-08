@@ -3,11 +3,12 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { Action, ActionDefinition, ActionDefinitionDB, Tag, TagDB } from "@/app/types"
+import { Action, ActionDefinition, ActionDefinitionDB, Tag } from "@/app/types"
 import { ActionController } from "@/app/controllers/ActionController"
 import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
 import { TagController } from "@/app/controllers/TagController"
-import { hydrateActionDefinitions, hydrateActions } from "../utils/helpers"
+import hydrateActionDefinitions from "../lib/actionDefinitions/hydrateActionDefinitions"
+import hydrateActions from "../lib/actions/hydrateActions"
 
 type AppState = {
   actions: Action[]
@@ -137,7 +138,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const [tags, defs, acts] = await Promise.all([
         TagController.getAll(),
         ActionDefinitionController.getAll(),
-        ActionController.getAll()
+        ActionController.getAllYear()
       ])
 
       // hydrate here once

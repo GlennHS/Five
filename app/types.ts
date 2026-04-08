@@ -34,26 +34,6 @@ export type ActionDefinition = {
   archived: boolean
 } & Partial<FiveMetric>
 
-export type ActionDetails = {
-  id: number
-  name: string
-  tags: Tag[]
-  timestamp: number
-  note?: string
-  metrics: FiveMetric
-}
-
-export type MetricSnapshot = {
-  timestamp: number
-} & FiveMetric
-
-export type MetricSnapshotHistory = {
-  day: MetricSnapshot
-  week: MetricSnapshot
-  month: MetricSnapshot
-  year: MetricSnapshot
-}
-
 export type Tag = {
   id: number,
   name: string,
