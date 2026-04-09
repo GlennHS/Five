@@ -46,7 +46,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       id,
       actionId,
       timestamp,
-      note: ""
+      note,
     }
 
     // optimistic update
@@ -80,7 +80,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActionDefinitions(prev =>
       prev.map(d => {
         if(d.id === id) {
-          console.log("MATCH ", id)
           return { ...d, archived: true }
         } else {
           return d

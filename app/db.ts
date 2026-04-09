@@ -138,7 +138,6 @@ db.on("populate", async () => {
 
     for (let i = 0; i < actionsToInsert.length; i += CHUNK_SIZE) {
       await db.actions.bulkAdd(actionsToInsert.slice(i, i + CHUNK_SIZE))
-      console.log("Chunk Added")
     }
   })
 })
