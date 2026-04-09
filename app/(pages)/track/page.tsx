@@ -1,18 +1,42 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import TagPill from "@/app/components/TagPill"
+
+import DatePicker from "react-datepicker"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
+import { Plus, Sliders } from "lucide-react"
+import TagPill from "@/app/components/TagPill"
+
 import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
 import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
+import DefinitionCard from "@/app/components/DefinitionCard"
+import Toast from "@/app/components/Toast"
+import LogModal from "@/app/components/LogModal"
 
 export default function Page() {
   const { actionDefinitions, loading, addAction } = useApp()
   const [search, setSearch] = useState("")
   const debouncedSearch = useDebounce(search, 250)
 
-  
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastText, setToastText] = useState("")
+  const [toastTimeout, setToastTimeout] = useState(2000)
+
+  const [logModalShowing, setLogModalShowing] = useState(false)
+  const [actionToAdvancedLog, setActionToAdvancedLog] = useState<ActionDefinition | null>(null)
+
+  const showLogModal = (def: ActionDefinition) => {
+    setActionToAdvancedLog(def)
+    setLogModalShowing(true)
+  }
+
+  const toggleToast = (text: string) => {
+    setToastText(text)
+    setToastVisible(true)
+    setTimeout(() => setToastVisible(false), toastTimeout)
+  }
+
   const filteredActionDefinitions = useMemo(() => {
     const term = debouncedSearch.trim().toLowerCase()
 
@@ -47,6 +71,16 @@ export default function Page() {
     return debounced
   }
 
+  const handleModalSubmit = (data: {
+    id: number,
+    timestamp: number,
+    note: string,
+  }) => {
+    addAction(data.id, data.timestamp, data.note);
+    setLogModalShowing(false)
+    toggleToast("Action successfully logged!")
+  };
+
   if (loading) {
     return (
       <div className="p-6">
@@ -57,6 +91,11 @@ export default function Page() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
+      <LogModal
+        def={actionToAdvancedLog}
+        isOpen={logModalShowing}
+        onClose={() => setLogModalShowing(false)}
+        onSubmit={handleModalSubmit} />
       <h1 className="text-xl font-semibold mb-6">Track Actions</h1>
 
       <div>
@@ -83,13 +122,20 @@ export default function Page() {
               {/* Top */}
               <div className="flex w-full justify-between gap-1">
                 <div className="font-medium">{def.name}</div>
-
-                <button
-                  onClick={() => addAction(def.id)}
-                  className="px-3 py-1 rounded bg-black text-white text-sm"
-                >
-                  Log
-                </button>
+                <div className="rounded-2xl border-2 border-black flex flex-center overflow-hidden">
+                  <button
+                    onClick={() => showLogModal(def)}
+                    className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
+                  >
+                    <Sliders />
+                  </button>
+                  <button
+                    onClick={() => addAction(def.id)}
+                    className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
+                  >
+                    <Plus />
+                  </button>
+                </div>
               </div>
 
               <div className="flex gap-x-2 flex-wrap w-full">
@@ -114,6 +160,7 @@ export default function Page() {
           )
         })}
       </div>
+      <Toast show={toastVisible} text={toastText} duration={toastTimeout} />
     </div>
   )
 }
