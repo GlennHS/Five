@@ -11,11 +11,16 @@ import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
 import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
 import DefinitionCard from "@/app/components/DefinitionCard"
+import Toast from "@/app/components/Toast"
 
 export default function Page() {
   const { actionDefinitions, loading, addAction } = useApp()
   const [search, setSearch] = useState("")
   const debouncedSearch = useDebounce(search, 250)
+
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastText, setToastText] = useState("")
+  const [toastTimeout, setToastTimeout] = useState(2000)
 
   const [logModalShowing, setLogModalShowing] = useState(false)
   const [actionToAdvancedLog, setActionToAdvancedLog] = useState<ActionDefinition | null>(null)
@@ -23,6 +28,12 @@ export default function Page() {
   const showLogModal = (def: ActionDefinition) => {
     setActionToAdvancedLog(def)
     setLogModalShowing(true)
+  }
+
+  const toggleToast = (text: string) => {
+    setToastText(text)
+    setToastVisible(true)
+    setTimeout(() => setToastVisible(false), toastTimeout)
   }
 
   const filteredActionDefinitions = useMemo(() => {
@@ -98,6 +109,7 @@ export default function Page() {
       e.preventDefault();
       addAction(actionToAdvancedLog!.id, formData.timestamp, formData.note);
       onClose(); // close after submit
+      toggleToast("Action successfully logged!")
     };
 
     return (
@@ -109,7 +121,7 @@ export default function Page() {
         />
 
         {/* Modal / Bottom Sheet */}
-        <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-xl p-5 z-10 animate-slide-up">
+        <div className={`relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-xl p-5 z-10 animate-slide-up ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
           {/* Grab handle (mobile affordance) */}
           <div className="w-10 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 sm:hidden" />
 
@@ -251,6 +263,7 @@ export default function Page() {
           )
         })}
       </div>
+      <Toast show={toastVisible} text={toastText} duration={toastTimeout} />
     </div>
   )
 }
