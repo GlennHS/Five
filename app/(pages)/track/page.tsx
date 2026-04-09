@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react"
 
-import DatePicker from "react-datepicker"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { Plus, Sliders } from "lucide-react"
 import TagPill from "@/app/components/TagPill"
@@ -10,21 +9,25 @@ import TagPill from "@/app/components/TagPill"
 import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
 import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
-import DefinitionCard from "@/app/components/DefinitionCard"
 import Toast from "@/app/components/Toast"
 import LogModal from "@/app/components/LogModal"
 
 export default function Page() {
   const { actionDefinitions, loading, addAction } = useApp()
   const [search, setSearch] = useState("")
+  const [filterMetrics, setFilterMetrics] = useState<MetricKey[]>([])
+  const [filterTags, setFilterTags] = useState<string[]>([])
+  const [sortType, setSortType] = useState<string>("")
   const debouncedSearch = useDebounce(search, 250)
-
+  
   const [toastVisible, setToastVisible] = useState(false)
   const [toastText, setToastText] = useState("")
   const [toastTimeout, setToastTimeout] = useState(2000)
-
+  
   const [logModalShowing, setLogModalShowing] = useState(false)
   const [actionToAdvancedLog, setActionToAdvancedLog] = useState<ActionDefinition | null>(null)
+
+  const [filteredActionDefinitions, setFilteredActionDefinitions] = useState<ActionDefinition[]>([])
 
   const showLogModal = (def: ActionDefinition) => {
     setActionToAdvancedLog(def)
@@ -36,22 +39,6 @@ export default function Page() {
     setToastVisible(true)
     setTimeout(() => setToastVisible(false), toastTimeout)
   }
-
-  const filteredActionDefinitions = useMemo(() => {
-    const term = debouncedSearch.trim().toLowerCase()
-
-    if (!term) return actionDefinitions
-
-    return actionDefinitions.filter(def => {
-      const nameMatch = def.name.toLowerCase().includes(term)
-
-      const tagMatch = def.tags.some(tag =>
-        tag.name.toLowerCase().includes(term)
-      )
-
-      return nameMatch || tagMatch
-    })
-  }, [actionDefinitions, debouncedSearch])
 
   const getBGString = (key: MetricKey, def: ActionDefinition): string => {
     if (def[key] && def[key] !== 0)
@@ -81,6 +68,29 @@ export default function Page() {
     toggleToast("Action successfully logged!")
   };
 
+  useEffect(() => {
+    const term = debouncedSearch.trim().toLowerCase()
+    console.log(`Checking...\nsearched: ${term},\ntags: ${filterTags}\nmetrics: ${filterMetrics}`)
+    
+    setFilteredActionDefinitions(
+      actionDefinitions.filter(def => {
+        // search
+        const nameMatch = term ? def.name.toLowerCase().includes(term) : true
+
+        // tag matching
+        let tagMatch = true
+        filterTags.forEach(t => { tagMatch = tagMatch && !def.tags.find(tag => tag.name == t) })
+
+        // metric matching
+        let metricMatch = true
+        filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
+        // sort
+
+        return nameMatch && tagMatch && metricMatch
+      })
+    )
+  }, [actionDefinitions, debouncedSearch, filterMetrics, filterTags, sortType])
+
   if (loading) {
     return (
       <div className="p-6">
@@ -107,6 +117,16 @@ export default function Page() {
           className="border px-3 py-2 rounded w-full mb-4"
         />
         {/* Tag Filtering */}
+        {/* Metric Filtering */}
+        <div className="w-full flex gap-x-2 items-center justify-between rounded-xl py-1 text-sm my-2">
+          {METRIC_KEYS.map(k => (
+            <button
+              key={k}
+              onClick={() => setFilterMetrics((prev) => prev.includes(k) ? prev.filter(m => m !== k) : [...prev, k])}
+              className={`rounded-lg border border-${k} px-4 py-0.5 ${filterMetrics.includes(k) ? `bg-${k}/50` : `bg-${k}/10`}`}
+            >{k}</button>
+          ))}
+        </div>
         {/* Order by Metric / Alpha [asc/desc] */}
       </div>
 
