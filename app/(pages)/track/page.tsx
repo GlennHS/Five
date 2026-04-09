@@ -1,22 +1,24 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Plus, Sliders } from "lucide-react"
+import { Plus, Search, Sliders } from "lucide-react"
 import TagPill from "@/app/components/TagPill"
 
-import { ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
+import { ActionDefinition, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
 import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
 import Toast from "@/app/components/Toast"
 import LogModal from "@/app/components/LogModal"
+import { TAG_COLOR_CLASSES } from "@/app/fixtures/Colors"
 
 export default function Page() {
-  const { actionDefinitions, loading, addAction } = useApp()
+  const { actionDefinitions, tags, loading, addAction } = useApp()
   const [search, setSearch] = useState("")
+  const searchBar = useRef<HTMLInputElement>(null)
   const [filterMetrics, setFilterMetrics] = useState<MetricKey[]>([])
-  const [filterTags, setFilterTags] = useState<string[]>([])
+  const [filterTags, setFilterTags] = useState<Tag[]>([])
   const [sortType, setSortType] = useState<string>("")
   const debouncedSearch = useDebounce(search, 250)
   
@@ -70,7 +72,6 @@ export default function Page() {
 
   useEffect(() => {
     const term = debouncedSearch.trim().toLowerCase()
-    console.log(`Checking...\nsearched: ${term},\ntags: ${filterTags}\nmetrics: ${filterMetrics}`)
     
     setFilteredActionDefinitions(
       actionDefinitions.filter(def => {
@@ -79,7 +80,7 @@ export default function Page() {
 
         // tag matching
         let tagMatch = true
-        filterTags.forEach(t => { tagMatch = tagMatch && !def.tags.find(tag => tag.name == t) })
+        filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
 
         // metric matching
         let metricMatch = true
@@ -110,27 +111,41 @@ export default function Page() {
 
       <div>
         {/* Search Bar */}
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search actions..."
-          className="border px-3 py-2 rounded w-full mb-4"
-        />
+        <div className="w-full flex gap-2 items-center justify-center mb-4">
+          <Search strokeWidth={2} size={32} onClick={() => searchBar.current && searchBar.current.focus()} />
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search actions..."
+            className="border rounded w-full px-3 py-2"
+            ref={searchBar}
+          />
+        </div>
+        <span className="italic text-sm tracking-wide">Press a tag/metric to filter actions:</span>
         {/* Tag Filtering */}
+        <div className="w-full flex flex-wrap gap-x-2 items-center justify-between rounded-xl pb-1 text-sm my-2">
+          {tags.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setFilterTags((prev) => prev.includes(t) ? prev.filter(tag => tag !== t) : [...prev, t])}
+              className={`rounded-lg border px-4 py-0.5 ${TAG_COLOR_CLASSES[t.colorKey]} ${filterTags.includes(t) ? "opacity-100" : "opacity-50"}`}
+            >{t.name}</button>
+          ))}
+        </div>
         {/* Metric Filtering */}
         <div className="w-full flex gap-x-2 items-center justify-between rounded-xl py-1 text-sm my-2">
           {METRIC_KEYS.map(k => (
             <button
               key={k}
               onClick={() => setFilterMetrics((prev) => prev.includes(k) ? prev.filter(m => m !== k) : [...prev, k])}
-              className={`rounded-lg border border-${k} px-4 py-0.5 ${filterMetrics.includes(k) ? `bg-${k}/50` : `bg-${k}/10`}`}
+              className={`rounded-lg bg-${k}/10 border border-${k} px-4 py-0.5 ${filterMetrics.includes(k) ? "opacity-100" : "opacity-50"}`}
             >{k}</button>
           ))}
         </div>
         {/* Order by Metric / Alpha [asc/desc] */}
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mt-4">
         {filteredActionDefinitions.map((def, i) => {
           return (
             <div
