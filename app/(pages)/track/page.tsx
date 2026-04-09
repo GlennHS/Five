@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Plus, Search, Sliders } from "lucide-react"
+import { AArrowDown, AArrowUp, ClockArrowDown, ClockArrowUp, Plus, Search, Sliders } from "lucide-react"
 import TagPill from "@/app/components/TagPill"
 
 import { ActionDefinition, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
@@ -14,12 +14,12 @@ import LogModal from "@/app/components/LogModal"
 import { TAG_COLOR_CLASSES } from "@/app/fixtures/Colors"
 
 export default function Page() {
-  const { actionDefinitions, tags, loading, addAction } = useApp()
+  const { actions, actionDefinitions, tags, loading, addAction } = useApp()
   const [search, setSearch] = useState("")
   const searchBar = useRef<HTMLInputElement>(null)
   const [filterMetrics, setFilterMetrics] = useState<MetricKey[]>([])
   const [filterTags, setFilterTags] = useState<Tag[]>([])
-  const [sortType, setSortType] = useState<string>("")
+  const [sortType, setSortType] = useState<string>("chrono")
   const debouncedSearch = useDebounce(search, 250)
   
   const [toastVisible, setToastVisible] = useState(false)
@@ -70,27 +70,69 @@ export default function Page() {
     toggleToast("Action successfully logged!")
   };
 
+  const lastUsedMap = useMemo(() => {
+    const map = new Map<number, number>() // defId -> latest timestamp
+
+    actions.forEach(a => {
+      const current = map.get(a.actionId)
+      if (!current || a.timestamp > current) {
+        map.set(a.actionId, a.timestamp)
+      }
+    })
+
+    return map
+  }, [actions])
+
   useEffect(() => {
     const term = debouncedSearch.trim().toLowerCase()
     
-    setFilteredActionDefinitions(
-      actionDefinitions.filter(def => {
-        // search
-        const nameMatch = term ? def.name.toLowerCase().includes(term) : true
+    const filteredDefs = actionDefinitions.filter(def => {
+      // search
+      const nameMatch = term ? def.name.toLowerCase().includes(term) : true
 
-        // tag matching
-        let tagMatch = true
-        filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
+      // tag matching
+      let tagMatch = true
+      filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
 
-        // metric matching
-        let metricMatch = true
-        filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
-        // sort
+      // metric matching
+      let metricMatch = true
+      filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
+      // sort
 
-        return nameMatch && tagMatch && metricMatch
-      })
-    )
-  }, [actionDefinitions, debouncedSearch, filterMetrics, filterTags, sortType])
+      return nameMatch && tagMatch && metricMatch
+    })
+
+    let sortedDefs = filteredDefs
+
+    switch (sortType) {
+      case 'alpha':
+        sortedDefs = filteredDefs.sort((a,b) => a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0)
+        break;
+      case 'alpha-reverse':
+        sortedDefs = filteredDefs.sort((a,b) => a.name.toUpperCase() < b.name.toUpperCase() ? 1 : a.name.toUpperCase() > b.name.toUpperCase() ? -1 : 0)
+        break;
+      case 'chrono':
+        sortedDefs = [...filteredDefs].sort((a, b) => {
+          const aTime = lastUsedMap.get(a.id) ?? 0
+          const bTime = lastUsedMap.get(b.id) ?? 0
+          return bTime - aTime // most recent first
+        })
+        break;
+
+      case 'chrono-reverse':
+        sortedDefs = [...filteredDefs].sort((a, b) => {
+          const aTime = lastUsedMap.get(a.id) ?? 0
+          const bTime = lastUsedMap.get(b.id) ?? 0
+          return aTime - bTime
+        })
+        break;
+      default:
+        break;
+    }
+
+    setFilteredActionDefinitions(sortedDefs)
+
+  }, [actions, actionDefinitions, debouncedSearch, filterMetrics, filterTags, sortType])
 
   if (loading) {
     return (
@@ -143,6 +185,32 @@ export default function Page() {
           ))}
         </div>
         {/* Order by Metric / Alpha [asc/desc] */}
+        <div className="w-full flex items-center justify-end gap-x-4">
+          <button
+            className={`border-2 rounded-xl p-2 ${sortType === 'alpha' ? "opacity-100" : "opacity-50"}`}
+            onClick={() => setSortType('alpha')}
+          >
+            <AArrowDown />
+          </button>
+          <button
+            className={`border-2 rounded-xl p-2 ${sortType === 'alpha-reverse' ? "opacity-100" : "opacity-50"}`}
+            onClick={() => setSortType('alpha-reverse')}
+          >
+            <AArrowUp />
+          </button>
+          <button
+            className={`border-2 rounded-xl p-2 ${sortType === 'chrono' ? "opacity-100" : "opacity-50"}`}
+            onClick={() => setSortType('chrono')}
+          >
+            <ClockArrowDown />
+          </button>
+          <button
+            className={`border-2 rounded-xl p-2 ${sortType === 'chrono-reverse' ? "opacity-100" : "opacity-50"}`}
+            onClick={() => setSortType('chrono-reverse')}
+          >
+            <ClockArrowUp />
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col mt-4">
