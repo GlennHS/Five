@@ -1,5 +1,5 @@
 import { db } from "../db"
-import { TAG_COLOR_CLASSES } from "../fixtures/Colors"
+import { TAG_COLOR_CLASSES } from "../constants/Colors"
 import { TagDB } from "../types"
 
 export const TagController = {

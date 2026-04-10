@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import TagPill from "@/app/components/TagPill"
-import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
+import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/constants/Colors"
 import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import BackLink from "@/app/components/BackLink"

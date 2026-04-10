@@ -1,4 +1,4 @@
-import { TAG_COLOR_CLASSES } from "./fixtures/Colors"
+import { TAG_COLOR_CLASSES } from "./constants/Colors"
 
 export const METRIC_KEYS = ["mind", "body", "work", "cash", "bond"] as const
 export const METRIC_LETTERS = {

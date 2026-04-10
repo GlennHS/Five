@@ -1,4 +1,4 @@
-import { METRIC_DAMPENING_FACTOR, METRIC_HARD_CAP, METRIC_HARD_FLOOR, METRIC_SOFT_CAP, METRIC_SOFT_FLOOR } from "@/app/fixtures/Constants"
+import { METRIC_DAMPENING_FACTOR, METRIC_HARD_CAP, METRIC_HARD_FLOOR, METRIC_SOFT_CAP, METRIC_SOFT_FLOOR } from "@/app/constants/Constants"
 
 const getBoundedMetric = (m: number): number => {
   let adjustedValue = m

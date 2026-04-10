@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { LINE_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
+import { LINE_DEFAULT_CONFIG } from "../../constants/DefaultChartConfig";
 import { CategoryScale, Chart, LinearScale, LineElement, PointElement } from "chart.js";
 
 type FiveLineGraphProps = {

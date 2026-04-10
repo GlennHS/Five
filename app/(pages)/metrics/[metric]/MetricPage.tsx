@@ -18,6 +18,7 @@ import getMetricSeries from '@/app/lib/metrics/getMetricSeries'
 import { getAWeekAgo, getToday } from '@/app/lib/dateTime'
 import { toSentenceCase } from '@/app/lib/utils'
 import ActionCardList from '@/app/components/actionCards/ActionCardList'
+import { METRIC_INFO_TEXT } from '@/app/constants/Constants'
 
 export default function MetricPage({
   metric,
@@ -114,9 +115,7 @@ export default function MetricPage({
           </h2>
 
           <p>
-            Track and improve this area with small, consistent actions. Use the
-            graph above to spot patterns and the action cards to choose what to
-            do next.
+            {METRIC_INFO_TEXT[metric]}
           </p>
         </section>
       </section>
