@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { METRIC_KEYS, type MetricKey } from './types';
+import { Action, METRIC_KEYS, type MetricKey } from './types';
 
 import FiveBarGraph from './components/graphs/FiveBarGraph';
 import MetricCard from './components/MetricCard';
@@ -97,6 +97,34 @@ export default function Home() {
 
     return map
   }, [actions])
+
+  const actionsToShow = useMemo(() => {
+    if (!actions) return []
+
+    const sorted = actions
+      .slice()
+      .sort((a, b) => {
+        if (sortType === 'quantity') {
+          const aCount = actionCountMap.get(a.actionId) ?? 0
+          const bCount = actionCountMap.get(b.actionId) ?? 0
+          return bCount - aCount
+        }
+
+        return b.timestamp - a.timestamp
+      })
+
+    if (sortType === 'quantity') {
+      const seen = new Set<number>()
+
+      return sorted.filter(a => {
+        if (seen.has(a.actionId)) return false
+        seen.add(a.actionId)
+        return true
+      }).slice(0, 50)
+    }
+
+    return sorted.slice(0, 50)
+  }, [actions, sortType, actionCountMap])
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -207,16 +235,7 @@ export default function Home() {
             </div>
           </div>
           <ActionCardList>
-            {actions!
-              .slice()
-              .sort((a,b) => {
-                if (sortType === 'quantity') {
-                  if (actionCountMap.get(a.actionId) === undefined || actionCountMap.get(b.actionId) === undefined) return 0
-                  if (actionCountMap.get(a.actionId) > actionCountMap.get(b.actionId))
-                }
-                else return b.timestamp - a.timestamp // return chrono sort by default
-              })
-              .slice(0,50)
+            {actionsToShow
               .map(action => {
                 const def = actionDefinitions.find(def => def.id === action.actionId)
 
@@ -226,6 +245,7 @@ export default function Home() {
                       key={action.id}
                       action={action}
                       definition={def}
+                      quantity={sortType === 'quantity' ? actionCountMap.get(def.id) : -1}
                     />
                   )
                 else
