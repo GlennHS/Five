@@ -184,7 +184,7 @@ export default function Page() {
             >{k}</button>
           ))}
         </div>
-        {/* Order by Metric / Alpha [asc/desc] */}
+        {/* Order by Chrono / Alpha [asc/desc] */}
         <div className="w-full flex items-center justify-end gap-x-4">
           <button
             className={`border-2 rounded-xl p-2 ${sortType === 'alpha' ? "opacity-100" : "opacity-50"}`}

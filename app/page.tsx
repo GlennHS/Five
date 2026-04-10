@@ -26,6 +26,7 @@ import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange
 import calculateTotal from './lib/metrics/calculateTotal';
 import ActionCardList from './components/actionCards/ActionCardList';
 import { ActionController } from './controllers/ActionController';
+import { Clock, Hash } from 'lucide-react';
 
 ChartJS.register(
   RadialLinearScale,
@@ -40,6 +41,7 @@ export default function Home() {
   const { actions, actionDefinitions, loading } = useApp()
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
   const [streak, setStreak] = useState<number | null>(null)
+  const [sortType, setSortType] = useState<string>("chrono")
 
   const metrics = useMemo(() => {
     if (!actions) return null
@@ -85,6 +87,16 @@ export default function Home() {
 
     return d / METRIC_KEYS.length
   }, [dailyDeltas])
+
+  const actionCountMap = useMemo(() => {
+    const map = new Map<number, number>() // actionId -> count
+
+    actions.forEach(a => {
+      map.set(a.actionId, (map.get(a.actionId) ?? 0) + 1)
+    })
+
+    return map
+  }, [actions])
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
@@ -177,11 +189,33 @@ export default function Home() {
           </div>
         </section>
         <section className="w-full">
-          <h2 className='mb-2 text-lg font-semibold'>Recent Actions</h2>
+          <div className='w-full flex items-center justify-between mb-2'>
+            <h2 className='w-full mb-2 text-lg font-semibold'>Recent Actions</h2>
+            <div className="w-full flex items-center justify-end gap-x-4">
+              <button
+                className={`border-2 rounded-xl p-2 ${sortType === 'chrono' ? "opacity-100" : "opacity-50"}`}
+                onClick={() => setSortType('chrono')}
+              >
+                <Clock />
+              </button>
+              <button
+                className={`border-2 rounded-xl p-2 ${sortType === 'quantity' ? "opacity-100" : "opacity-50"}`}
+                onClick={() => setSortType('quantity')}
+              >
+                <Hash />
+              </button>
+            </div>
+          </div>
           <ActionCardList>
             {actions!
               .slice()
-              .sort((a,b) => b.timestamp - a.timestamp)
+              .sort((a,b) => {
+                if (sortType === 'quantity') {
+                  if (actionCountMap.get(a.actionId) === undefined || actionCountMap.get(b.actionId) === undefined) return 0
+                  if (actionCountMap.get(a.actionId) > actionCountMap.get(b.actionId))
+                }
+                else return b.timestamp - a.timestamp // return chrono sort by default
+              })
               .slice(0,50)
               .map(action => {
                 const def = actionDefinitions.find(def => def.id === action.actionId)
