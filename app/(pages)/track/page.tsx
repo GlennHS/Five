@@ -233,7 +233,7 @@ export default function Page() {
                     <Sliders />
                   </button>
                   <button
-                    onClick={() => addAction(def.id)}
+                    onClick={() => {addAction(def.id); toggleToast("Action successfully logged!")}}
                     className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
                   >
                     <Plus />
