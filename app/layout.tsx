@@ -28,6 +28,9 @@ export default function RootLayout({
       <head>
         <title>FIVE! Love Yourself</title>
       </head>
+      <link rel="apple-touch-icon" sizes="256x256" href="/images/icons/five-icon-256.png" />
+      <link rel="apple-touch-icon" sizes="128x128" href="/images/icons/five-icon-128.png" />
+      <link rel="apple-touch-icon" sizes="64x64" href="/images/icons/five-icon-64.png" />
       <link rel="icon" href="/images/icons/five-icon.png" sizes="any" />
       <body>
         <AppProvider>
