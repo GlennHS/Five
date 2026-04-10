@@ -5,7 +5,8 @@ import { actionDefinitions, tags } from "./fixtures/DummyData"
 import { pickRandom } from "./lib/utils"
 
 let SIMULATE_LOG_TYPE = "random" // Have to use let or TypeScript has a little cry about it
-const QUANTITY = 50000
+const QUANTITY = 0
+const MONTHS_OF_ACTIONS = 0.25
 
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<
@@ -68,7 +69,7 @@ db.on("populate", async () => {
 
   switch (SIMULATE_LOG_TYPE) {
     case "random":
-      startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * 12 * 20
+      startOfLogs = now - 1000 * 60 * 60 * 24 * 30 * MONTHS_OF_ACTIONS
 
       for (let i = 0; i < QUANTITY; i++) {
         const def = pickRandom(defs)

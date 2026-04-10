@@ -12,9 +12,10 @@ import isActionNegative from "@/app/lib/actionDefinitions/isActionNegative"
 type Props = {
   action: Action
   definition: ActionDefinition
+  quantity?: number
 }
 
-export default function ActionCard({ action, definition }: Props) {
+export default function ActionCard({ action, definition, quantity }: Props) {
   const metricToCardClasses = (metric: MetricKey | null) => {
     let className = ""
     if (!metric) className += "border-total bg-total/10"
@@ -47,9 +48,12 @@ export default function ActionCard({ action, definition }: Props) {
         )}
       </div>
     <div className="flex justify-between items-center gap-4 whitespace-nowrap">
-      <span className="truncate font-bold flex-1">
-        {definition.name}
-      </span>
+      <div className="flex items-center justify-baseline gap-x-2">
+        <span className="truncate font-bold flex-1">
+          {definition.name}
+        </span>
+        { quantity !== undefined && quantity !== -1 && (<span className="italic">{`x${quantity}`}</span>)}
+      </div>
       <span className="text-sm opacity-70">{date}</span>
     </div>
 

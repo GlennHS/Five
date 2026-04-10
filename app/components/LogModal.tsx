@@ -15,8 +15,6 @@ export default function LogModal({
   onClose: () => void,
   onSubmit: (data: {id: number, timestamp: number, note: string}) => void
 }) {
-  const { addAction } = useApp()
-
   const [formData, setFormData] = useState({
     id: -1,
     timestamp: new Date(),
@@ -25,11 +23,15 @@ export default function LogModal({
 
   const [chosenDate, setChosenDate] = useState<Date>(new Date())
 
-  const resetFormData = () => setFormData({
-    id: -1,
-    timestamp: new Date(),
-    note: "",
-  })
+  const resetFormData = () => {
+    setChosenDate(new Date())
+
+    setFormData({
+      id: -1,
+      timestamp: new Date(),
+      note: "",
+    })
+  }
 
   if (!isOpen) return null;
 
