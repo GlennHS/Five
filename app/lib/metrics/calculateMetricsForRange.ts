@@ -12,6 +12,13 @@ export const calculateMetricsForRange = (
   from: Dayjs,
   to: Dayjs
 ): FiveMetric => {
+  if (actions.length === 0) return {
+    body: 0,
+    mind: 0,
+    cash: 0,
+    work: 0,
+    bond: 0,
+  }
 
   const actionMap = buildActionMap(defs)
 

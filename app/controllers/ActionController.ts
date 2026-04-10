@@ -47,6 +47,8 @@ export const ActionController = {
       .reverse()
       .limit(10000) // safety cap
       .toArray()
+    
+    if (timestamps.length === 0) return 0
 
     const days = new Set(timestamps.map(a => toDay(a.timestamp)))
 
