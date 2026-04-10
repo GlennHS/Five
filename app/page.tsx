@@ -95,6 +95,7 @@ export default function Home() {
   };
 
   function daysSinceLastLog() {
+    if (actions.length === 0) return 0
     let dayHasNoLog = true
     let daysBack = 0
     while (dayHasNoLog) {
