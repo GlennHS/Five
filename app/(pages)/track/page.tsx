@@ -11,7 +11,7 @@ import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
 import Toast from "@/app/components/Toast"
 import LogModal from "@/app/components/LogModal"
-import { TAG_COLOR_CLASSES } from "@/app/fixtures/Colors"
+import { TAG_COLOR_CLASSES } from "@/app/constants/Colors"
 
 export default function Page() {
   const { actions, actionDefinitions, tags, loading, addAction } = useApp()

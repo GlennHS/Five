@@ -1,4 +1,4 @@
-import { DECAY_CUTOFF } from "@/app/fixtures/Constants"
+import { DECAY_CUTOFF } from "@/app/constants/Constants"
 
 const applyDecayToMetric = (m: number, days: number): number => {
   if (days === 0) return m

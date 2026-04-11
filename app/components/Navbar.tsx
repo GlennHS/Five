@@ -51,9 +51,9 @@ export default function Navbar() {
             <li>
             <Link href="/" aria-label="Go to home">
               <Image
-                src="/images/icons/five-icon.png"
-                width={30}
-                height={60}
+                src="/images/icons/five-icon-64.png"
+                width={64}
+                height={64}
                 alt="App logo"
                 className="h-10 w-auto block object-cover"
               />
