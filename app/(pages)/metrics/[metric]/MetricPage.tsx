@@ -19,6 +19,7 @@ import { getAWeekAgo, getToday } from '@/app/lib/dateTime'
 import { toSentenceCase } from '@/app/lib/utils'
 import ActionCardList from '@/app/components/actionCards/ActionCardList'
 import { METRIC_INFO_TEXT } from '@/app/constants/Constants'
+import { calculateMetricsForRange } from '@/app/lib/metrics/calculateMetricsForRange'
 
 export default function MetricPage({
   metric,
@@ -30,6 +31,11 @@ export default function MetricPage({
   const filteredActions: Action[] = useMemo<Action[]>((): Action[] => {
     return actions.filter(action => actionAffectsMetric(action, actionDefinitions, metric))
   }, [actions])
+
+  const totalDelta = useMemo(() => {
+    const metricsForWeek = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), false)
+    return metricsForWeek[metric]
+  }, [actions, actionDefinitions])
 
   const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
   const [toDate, setToDate] = useState<Dayjs>(getToday())
@@ -57,6 +63,12 @@ export default function MetricPage({
               {getMetricScore(actions, actionDefinitions, metric, fromDate, toDate)}
             </span>
           </p>
+
+          {totalDelta > 0 ? (
+            <span>Great work, this week your metric changed by +{totalDelta}!</span>
+          ) : (
+            <span>This week your metric changed by {totalDelta}</span>
+          )}
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -90,7 +102,7 @@ export default function MetricPage({
             {filteredActions
               .slice()
               .sort((a,b) => b.timestamp - a.timestamp)
-              .slice(0,5)
+              .slice(0,50)
               .map(action => {
                 const def = actionDefinitions.find(def => def.id === action.actionId)
 
