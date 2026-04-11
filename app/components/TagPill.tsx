@@ -1,4 +1,4 @@
-import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/fixtures/Colors"
+import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/constants/Colors"
 import { Circle } from "lucide-react"
 
 type TagPillProps = {

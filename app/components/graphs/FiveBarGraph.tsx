@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import { BAR_DEFAULT_CONFIG } from "../../fixtures/DefaultChartConfig";
+import { BAR_DEFAULT_CONFIG } from "../../constants/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
-import { METRIC_COLORS } from "../../fixtures/Colors";
+import { METRIC_COLORS } from "../../constants/Colors";
 import type { FiveMetric, MetricKey } from "../../types";
 
 type FiveBarGraphProps = {

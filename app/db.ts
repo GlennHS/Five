@@ -1,7 +1,7 @@
 // db.ts
 import { Dexie, InsertType, type EntityTable } from "dexie"
 import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
-import { actionDefinitions, tags } from "./fixtures/DummyData"
+import { actionDefinitions, tags } from "./constants/DummyData"
 import { pickRandom } from "./lib/utils"
 
 let SIMULATE_LOG_TYPE = "random" // Have to use let or TypeScript has a little cry about it
