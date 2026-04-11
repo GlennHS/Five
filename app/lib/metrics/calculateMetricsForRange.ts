@@ -10,7 +10,8 @@ export const calculateMetricsForRange = (
   actions: Action[],
   defs: ActionDefinition[],
   from: Dayjs,
-  to: Dayjs
+  to: Dayjs,
+  manipulateMetrics: boolean = true,
 ): FiveMetric => {
   if (actions.length === 0) return {
     body: 0,
@@ -29,6 +30,10 @@ export const calculateMetricsForRange = (
   )
 
   const summedMetrics = sumMetrics(deltas)
+
+  console.log(JSON.stringify(summedMetrics))
+
+  if (!manipulateMetrics) return summedMetrics
 
   METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))
 
