@@ -1,8 +1,12 @@
+'use client';
+
 import { Nunito, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
+import { useEffect } from "react";
+import Settings from "./lib/settings";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -23,6 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => Settings.setup(), [])
   return (
     <html lang="en" className={nunito.className}>
       <head>
