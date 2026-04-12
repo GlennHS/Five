@@ -29,7 +29,10 @@ export default function MetricPage({
   const { actions, actionDefinitions, loading } = useApp()
 
   const filteredActions: Action[] = useMemo<Action[]>((): Action[] => {
-    return actions.filter(action => actionAffectsMetric(action, actionDefinitions, metric))
+    return actions.filter(action => {
+      const def = actionDefinitions.find(d => d.id === action.id) 
+      return def ? actionAffectsMetric(def, metric) : false
+    })
   }, [actions])
 
   const totalDelta = useMemo(() => {

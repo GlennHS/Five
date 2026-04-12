@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { ChartColumnIncreasing, Cog, House, ListChecks } from 'lucide-react'
+import { ChartColumnIncreasing, ChevronUp, Cog, House, ListChecks } from 'lucide-react'
 import Image from 'next/image';
+import { useState } from 'react';
 
 type NavLinkProps = {
   href?: string;
@@ -23,66 +24,83 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
 }
 
 export default function Navbar() {
+  const [isShowing, setIsShowing] = useState<boolean>(false)
+
   return (
-    <nav className="w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center">
-      <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
-        <div className="w-full">
-          <ul className="h-full flex items-center justify-between text-base gap-4">
-            <li>
-              <NavLink
-                href="/"
-                aria-label="Go to home"
-              >
-                <House />
-                <span>Home</span>
-              </NavLink>
-            </li>
+    <>
+      <nav className={`w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center transition-opacity duration-300 ${isShowing ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+        <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
+          <div className="w-full">
+            <ul className="h-full flex items-center justify-between text-base gap-4">
+              <li>
+                <NavLink
+                  href="/"
+                  aria-label="Go to home"
+                >
+                  <House />
+                  <span>Home</span>
+                </NavLink>
+              </li>
 
-            <li>
-              <NavLink
-                href="/track"
-                aria-label="Go to track"
-              >
-                <ListChecks />
-                <span>Track</span>
-              </NavLink>
-            </li>
+              <li>
+                <NavLink
+                  href="/track"
+                  aria-label="Go to track"
+                >
+                  <ListChecks />
+                  <span>Track</span>
+                </NavLink>
+              </li>
 
-            <li>
-            <Link href="/" aria-label="Go to home">
-              <Image
-                src="/images/icons/five-icon-64.png"
-                width={64}
-                height={64}
-                alt="App logo"
-                className="h-10 w-auto block object-cover"
-              />
-            </Link>
-            </li>
+              <li>
+                <Image
+                  src="/images/icons/five-icon-64.png"
+                  width={64}
+                  height={64}
+                  alt="App logo"
+                  className="h-10 w-auto block object-cover"
+                  onClick={() => setIsShowing(false)}
+                />
+              </li>
 
-            <li>
-              <NavLink
-                href="/metrics"
-                aria-label="Go to metrics"
-              >
-                <ChartColumnIncreasing />
-                <span>Metrics</span>
-              </NavLink>
-            </li>
+              <li>
+                <NavLink
+                  href="/metrics"
+                  aria-label="Go to metrics"
+                >
+                  <ChartColumnIncreasing />
+                  <span>Metrics</span>
+                </NavLink>
+              </li>
 
-            <li>
-              <NavLink
-                href="/settings"
-                aria-label="Go to settings"
-              >
-                <Cog />
-                <span>Settings</span>
-              </NavLink>
-            </li>
-          </ul>
+              <li>
+                <NavLink
+                  href="/settings"
+                  aria-label="Go to settings"
+                >
+                  <Cog />
+                  <span>Settings</span>
+                </NavLink>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <nav
+        className={`w-full fixed bottom-0 left-0 flex flex-col justify-center items-center transition-opacity duration-300 ${isShowing ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}`}
+        onClick={() => setIsShowing(true)}
+      >
+        <div className='bg-white border border-gray-400 px-2 py-1 flex flex-col justify-center items-center'>
+          <ChevronUp size={12} strokeWidth={4}/>
+          <Image
+            src='/images/icons/five-icon-128.png'
+            alt='Navigation icon'
+            width={24}
+            height={24}
+          />
+        </div>
+      </nav>
+    </>
   );
 }
 
