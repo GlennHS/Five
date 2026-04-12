@@ -18,25 +18,19 @@ const links = [
 
 export default function Page() {
   return (
-    <div style={{ padding: 24, maxWidth: 500 }}>
+    <div>
       <BackLink />
       <h1 style={{ marginBottom: 20 }}>Settings</h1>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div className="flex flex-col gap-y-4 w-full">
         {links.map(link => (
           <Link
             key={link.href}
             href={link.href}
-            style={{
-              padding: 16,
-              borderRadius: 12,
-              border: "1px solid #ccc",
-              textDecoration: "none",
-              color: "inherit"
-            }}
+            className="p-4 rounded-2xl border border-gray-300 w-full"
           >
-            <div style={{ fontWeight: 600 }}>{link.title}</div>
-            <div style={{ fontSize: 14, opacity: 0.7 }}>
+            <div className="font-semibold">{link.title}</div>
+            <div className="opacity-60 text-sm">
               {link.description}
             </div>
           </Link>
