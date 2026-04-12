@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
 import { useEffect } from "react";
 import Settings from "./lib/settings";
+import { ToastProvider } from "./context/ToastContext";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -39,7 +40,9 @@ export default function RootLayout({
       <link rel="icon" href="/images/icons/five-icon-256.png" sizes="any" />
       <body>
         <AppProvider>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </AppProvider>
         <Navbar />
         <Footer />

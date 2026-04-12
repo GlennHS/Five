@@ -27,6 +27,8 @@ import calculateTotal from './lib/metrics/calculateTotal';
 import ActionCardList from './components/actionCards/ActionCardList';
 import { ActionController } from './controllers/ActionController';
 import { Clock, Hash } from 'lucide-react';
+import TrackCard from './components/TrackCard';
+import { useTracking } from './hooks/useTracking';
 
 ChartJS.register(
   RadialLinearScale,
@@ -38,7 +40,8 @@ ChartJS.register(
 );
 
 export default function Home() {
-  const { actions, actionDefinitions, loading } = useApp()
+  const { actions, actionDefinitions, loading, addAction } = useApp()
+  const {trackingMethods, modal} = useTracking(addAction)
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
   const [streak, setStreak] = useState<number | null>(null)
   const [sortType, setSortType] = useState<string>("chrono")
@@ -160,8 +163,8 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">
-      <main className="flex min-h-screen w-full sm:max-w-3xl flex-col gap-6 p-4 bg-white">
-        <section className="w-full rounded-2xl max-h-2/3 h-64">
+      <main className="flex min-h-screen w-full flex-col gap-6 p-4 bg-white">
+        <section className="w-full rounded-2xl max-h-32">
           <FiveBarGraph
             data={metrics}
             highlightedMetric={highlightedMetric}
@@ -182,7 +185,7 @@ export default function Home() {
                 <div
                   className="w-full bg-gray-200 border border-gray-400 rounded-xl py-2 flex items-center justify-center"
                 >
-                  <span className="text-center text-base font-semibold">{streak > 0 ? "Welcome back!" : daysSinceLastLog() > 3 ? "So glad you came back!" : "Great to see you again!"}</span>
+                  <span className="text-center text-base font-semibold">{streak > 0 ? "Welcome back!" : daysSinceLastLog() > 3 ? "So glad you came back!" : "Great to see you!"}</span>
                 </div>
               )}
             </>
@@ -197,7 +200,7 @@ export default function Home() {
           )}
         </section>
 
-        <section className="w-full">
+        <section className="w-full max-h-32">
           <div className="grid grid-cols-3 grid-rows-2 gap-4">
             {METRIC_KEYS.map((key) => (
               <MetricCard
@@ -216,6 +219,26 @@ export default function Home() {
             />
           </div>
         </section>
+
+        <section>
+          {
+            Array.from(actionCountMap.entries())
+              .sort((a, b) => b[1] - a[1]) // sort by count desc
+              .slice(0, 5)
+              .map(m => actionDefinitions.find(d => d.id === m[0]))
+              .filter(d => d !== undefined)
+              .map(def => (
+                <TrackCard
+                  key={def.id}
+                  def={def}
+                  onLog={trackingMethods.handleQuickLog}
+                  onAdvancedLog={trackingMethods.handleAdvancedLog}
+                  simple
+                />
+              ))
+          }
+        </section>
+
         <section className="w-full">
           <div className='w-full flex items-center justify-between mb-2'>
             <h2 className='w-full mb-2 text-lg font-semibold'>Recent Actions</h2>
