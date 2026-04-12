@@ -33,11 +33,15 @@ export default function RootLayout({
     <html lang="en" className={nunito.className}>
       <head>
         <title>FIVE! Love Yourself</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+        <link rel="apple-touch-icon" sizes="256x256" href="/images/icons/five-app-icon-256.png" />
+        <link rel="apple-touch-icon" sizes="128x128" href="/images/icons/five-app-icon-128.png" />
+        <link rel="apple-touch-icon" sizes="64x64" href="/images/icons/five-app-icon-64.png" />
+        <link rel="icon" href="/images/icons/five-icon-256.png" sizes="any" />
       </head>
-      <link rel="apple-touch-icon" sizes="256x256" href="/images/icons/five-app-icon-256.png" />
-      <link rel="apple-touch-icon" sizes="128x128" href="/images/icons/five-app-icon-128.png" />
-      <link rel="apple-touch-icon" sizes="64x64" href="/images/icons/five-app-icon-64.png" />
-      <link rel="icon" href="/images/icons/five-icon-256.png" sizes="any" />
       <body>
         <div className="w-full flex flex-col justify-baseline items-center">
           <div className="max-w-3xl w-full p-4">
