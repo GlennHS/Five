@@ -3,18 +3,19 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { AArrowDown, AArrowUp, ClockArrowDown, ClockArrowUp, Plus, Search, Sliders } from "lucide-react"
-import TagPill from "@/app/components/TagPill"
+import { AArrowDown, AArrowUp, ClockArrowDown, ClockArrowUp, Search } from "lucide-react"
 
 import { ActionDefinition, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
-import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
 import Toast from "@/app/components/Toast"
 import LogModal from "@/app/components/LogModal"
 import { TAG_COLOR_CLASSES } from "@/app/constants/Colors"
+import TrackCard from "@/app/components/TrackCard"
+import { useTracking } from "@/app/hooks/useTracking"
 
 export default function Page() {
   const { actions, actionDefinitions, tags, loading, addAction } = useApp()
+  const { trackingMethods, modal } = useTracking(addAction)
   const [search, setSearch] = useState("")
   const searchBar = useRef<HTMLInputElement>(null)
   const [filterMetrics, setFilterMetrics] = useState<MetricKey[]>([])
@@ -30,11 +31,6 @@ export default function Page() {
   const [actionToAdvancedLog, setActionToAdvancedLog] = useState<ActionDefinition | null>(null)
 
   const [filteredActionDefinitions, setFilteredActionDefinitions] = useState<ActionDefinition[]>([])
-
-  const showLogModal = (def: ActionDefinition) => {
-    setActionToAdvancedLog(def)
-    setLogModalShowing(true)
-  }
 
   const toggleToast = (text: string) => {
     setToastText(text)
@@ -163,9 +159,10 @@ export default function Page() {
             ref={searchBar}
           />
         </div>
+
         <span className="italic text-sm tracking-wide">Press a tag/metric to filter actions:</span>
         {/* Tag Filtering */}
-        <div className="w-full flex flex-wrap gap-x-2 items-center justify-between rounded-xl pb-1 text-sm my-2">
+        <div className="w-full flex flex-wrap gap-2 items-center rounded-xl pb-1 text-sm my-2">
           {tags.map(t => (
             <button
               key={t.id}
@@ -174,6 +171,7 @@ export default function Page() {
             >{t.name}</button>
           ))}
         </div>
+
         {/* Metric Filtering */}
         <div className="w-full flex gap-x-2 items-center justify-between rounded-xl py-1 text-sm my-2">
           {METRIC_KEYS.map(k => (
@@ -184,6 +182,7 @@ export default function Page() {
             >{k}</button>
           ))}
         </div>
+
         {/* Order by Chrono / Alpha [asc/desc] */}
         <div className="w-full flex items-center justify-end gap-x-4">
           <button
@@ -214,55 +213,23 @@ export default function Page() {
       </div>
 
       <div className="flex flex-col mt-4">
-        {filteredActionDefinitions.map((def, i) => {
-          return (
-            <div
-              key={def.id}
-              className={`flex flex-col items-baseline justify-center gap-2 border-b p-2 ${
-                i % 2 === 0 ? "bg-gray-300" : "bg-white"
-              }`}
-            >
-              {/* Top */}
-              <div className="flex w-full justify-between gap-1">
-                <div className="font-medium">{def.name}</div>
-                <div className="rounded-2xl border-2 border-black flex flex-center overflow-hidden">
-                  <button
-                    onClick={() => showLogModal(def)}
-                    className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
-                  >
-                    <Sliders />
-                  </button>
-                  <button
-                    onClick={() => {addAction(def.id); toggleToast("Action successfully logged!")}}
-                    className="px-3 py-1 bg-gray-400 text-white text-sm border-r border-gray-700 active:bg-gray-600"
-                  >
-                    <Plus />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex gap-x-2 flex-wrap w-full">
-                {def.tags.map(tag => (
-                  <TagPill
-                    key={tag.id}
-                    tag={tag.name}
-                    color={tag.colorKey}
-                  />
-                ))}
-              </div>
-
-              <div className="flex rounded-xl border-black border-2 overflow-hidden w-full">
-                {METRIC_KEYS.map((key, i) => (
-                  <div key={key} className={`flex flex-col gap-0.5 px-1 py-0.5 ${getBGString(key, def)} w-full ${i === 0 ? "rounded-l-xl" : ""} ${i === METRIC_KEYS.length - 1 ? "rounded-r-l" : ""}`}>
-                    <span className="text-center text-sm">{toSentenceCase(key)}</span>
-                    <span className="text-center text-sm">{def[key]}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )
-        })}
+        {filteredActionDefinitions.map((def, i) => (
+          <TrackCard
+            key={def.id}
+            def={def}
+            onLog={trackingMethods.handleQuickLog}
+            onAdvancedLog={trackingMethods.handleAdvancedLog}
+            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'}`}
+          />
+        ))}
       </div>
+
+      <LogModal
+        def={modal.actionToAdvancedLog}
+        isOpen={modal.logModalShowing}
+        onClose={() => trackingMethods.setLogModalShowing(false)}
+        onSubmit={trackingMethods.handleModalSubmit}
+      />
       <Toast show={toastVisible} text={toastText} duration={toastTimeout} />
     </div>
   )

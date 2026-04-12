@@ -43,6 +43,10 @@ body {
   .no-spinner {
     -moz-appearance: textfield;
   }
+
+  .section-header {
+    @apply w-full mb-2 text-lg font-semibold border-l-8 border-bond pl-4 bg-gray-100 px-1;
+  }
 }
 
 @theme {

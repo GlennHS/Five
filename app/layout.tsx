@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
 import { useEffect } from "react";
 import Settings from "./lib/settings";
+import { ToastProvider } from "./context/ToastContext";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -38,9 +39,15 @@ export default function RootLayout({
       <link rel="apple-touch-icon" sizes="64x64" href="/images/icons/five-app-icon-64.png" />
       <link rel="icon" href="/images/icons/five-icon-256.png" sizes="any" />
       <body>
-        <AppProvider>
-          {children}
-        </AppProvider>
+        <div className="w-full flex flex-col justify-baseline items-center">
+          <div className="max-w-3xl w-full p-4">
+            <AppProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </AppProvider>
+          </div>
+        </div>
         <Navbar />
         <Footer />
         <FooterSpacer />
