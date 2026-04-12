@@ -20,6 +20,7 @@ FIVE is based off of a few founding principles:
 - **Any effort, however small, is still effort**: *As long as you're actively trying to better yourself, however small, that should be praised and celebrated.*
 - **No shame, only encouragement**: *You should always be able to look at FIVE and be proud of what you've achieved or feel inspired to do more for yourself.*
 - **No paywalls**: *Why the heck would I want to price people out of self-care? If I had to pay for hosting or something, sure, maybe then. But not now.*
+- **Privacy-First**: *All data is stored on your device and your device only using localStorage and IndexedDB. You're in control, you can log whatever you want and know it's always private.*
 
 ## What can you do with FIVE?
 
