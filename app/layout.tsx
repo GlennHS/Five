@@ -5,7 +5,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Settings from "./lib/settings";
 import { ToastProvider } from "./context/ToastContext";
 
@@ -28,7 +28,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isScrolling, setIsScrolling] = useState(false)
   useEffect(() => Settings.setup(), [])
+
+  const handleScroll = () => setIsScrolling(true)
+  const handleScrollEnd = () => setTimeout(() => setIsScrolling(false), 500)
+
+  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scrollend', handleScrollEnd)
+
   return (
     <html lang="en" className={nunito.className}>
       <head>
@@ -52,7 +60,7 @@ export default function RootLayout({
             </AppProvider>
           </div>
         </div>
-        <Navbar />
+        <Navbar pageScrolled={isScrolling}/>
         <Footer />
         <FooterSpacer />
       </body>
