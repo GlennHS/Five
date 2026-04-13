@@ -31,11 +31,21 @@ export default function RootLayout({
   const [isScrolling, setIsScrolling] = useState(false)
   useEffect(() => Settings.setup(), [])
 
-  const handleScroll = () => setIsScrolling(true)
-  const handleScrollEnd = () => setTimeout(() => setIsScrolling(false), 500)
+  useEffect(() => {
+    const handleScroll = () => setIsScrolling(true)
 
-  window.addEventListener('scroll', handleScroll)
-  window.addEventListener('scrollend', handleScrollEnd)
+    const handleScrollEnd = () => {
+      setTimeout(() => setIsScrolling(false), 500)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scrollend', handleScrollEnd)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scrollend', handleScrollEnd)
+    }
+  }, [])
 
   return (
     <html lang="en" className={nunito.className}>
