@@ -1,3 +1,5 @@
+import { SETTINGS_VERSION_NUMBER } from "../constants/Constants";
+
 const defaultDecay = {
   mind: 2,
   body: 2,
@@ -7,12 +9,12 @@ const defaultDecay = {
 };
 
 interface SettingsConfig {
-  version: string;
-  firstLaunch: string;
-  decayRate: string;
+  version: string
+  firstLaunch: string
+  decayRate: string
 }
 
-const CURRENT_VERSION = 1.0;
+const CURRENT_VERSION = parseFloat(SETTINGS_VERSION_NUMBER)
 
 const settingsDefaults: SettingsConfig = {
   version: `${CURRENT_VERSION}`,
