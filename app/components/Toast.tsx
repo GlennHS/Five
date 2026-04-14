@@ -37,6 +37,7 @@ export default function Toast({
         ${visible
           ? "opacity-100 translate-y-0"
           : "pointer-events-none opacity-0 translate-y-4"}`}
+        onClick={() => setVisible(false)}
     >
       <div
         className={`rounded-2xl bg-white px-4 py-3 shadow-lg ring-1 ring-black/5 text-sm text-gray-800 backdrop-blur supports-[backdrop-filter]:bg-white/80 ${className}`}

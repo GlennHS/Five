@@ -13,6 +13,7 @@ export const calculateMetricsForRange = (
   from: Dayjs,
   to: Dayjs,
   manipulateMetrics: boolean = true,
+  addNewStarterBonus: boolean = true,
 ): FiveMetric => {
   let summedMetrics: FiveMetric = {
     body: 0,
@@ -37,7 +38,7 @@ export const calculateMetricsForRange = (
   else {
 
     // add the new starter bonus (if applicable)
-    const bonus = Math.max(30 - Math.floor(dayjs().subtract(dayjs(parseFloat(Settings.get('firstLaunch'))).valueOf()).valueOf() / (1000 * 60 * 60 * 24)), 0)
+    const bonus = addNewStarterBonus ? Math.max(30 - Math.floor(dayjs().subtract(dayjs(parseFloat(Settings.get('firstLaunch'))).valueOf()).valueOf() / (1000 * 60 * 60 * 24)), 0) : 0
     METRIC_KEYS.forEach(key => summedMetrics[key] += bonus)
 
     // cap it between hard caps

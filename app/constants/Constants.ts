@@ -12,3 +12,6 @@ export const METRIC_INFO_TEXT = {
   work: 'WORK is your academic/career health. This can be climbing the corporate ladder, personal projects, learning something new, studying, doing that essay you were meant to do.',
   bond: 'BOND is your social health. This can be caring for your friends, making time for your family or showing your partner you care; nurturing relationships boosts this metric.',
 } as const
+
+export const VERSION_NUMBER = "0.1.0alpha0"
+export const SETTINGS_VERSION_NUMBER = "1.0"

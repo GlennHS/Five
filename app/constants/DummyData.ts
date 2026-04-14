@@ -18,7 +18,7 @@ const importantTag: Tag = {
   colorKey: 'yellow',
 }
 
-const otherTag: Tag = {
+const relaxingTag: Tag = {
   id: 3,
   name: 'relaxing',
   colorKey: 'blue',
@@ -28,7 +28,7 @@ export const tags = [
   positiveTag,
   negativeTag,
   importantTag,
-  otherTag,
+  relaxingTag,
 ]
 
 export const actionDefinitions: ActionDefinition[] = [
@@ -39,9 +39,7 @@ export const actionDefinitions: ActionDefinition[] = [
     body: 4,
     tags: [
       positiveTag,
-      importantTag,
-      negativeTag,
-      otherTag,
+      relaxingTag,
     ],
     archived: false,
   },
@@ -124,7 +122,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 4,
     tags: [
       positiveTag,
-      otherTag,
+      relaxingTag,
     ],
     archived: false,
   },
@@ -134,7 +132,7 @@ export const actionDefinitions: ActionDefinition[] = [
     mind: 3,
     tags: [
       positiveTag,
-      otherTag,
+      relaxingTag,
     ],
     archived: false,
   },
