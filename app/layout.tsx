@@ -36,6 +36,8 @@ export default function RootLayout({
   useEffect(() => {
     if (didCheck) return
 
+    Settings.setup() // Check if they're a new user, if so set them up
+
     const didUpgrade = Settings.upgrade()
 
     if (didUpgrade) {
@@ -44,10 +46,6 @@ export default function RootLayout({
 
     setDidCheck(true)
   }, [didCheck])
-
-  useEffect(() => {
-    Settings.setup() // If first time, run setup
-  }, [])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolling(true)
