@@ -1,4 +1,4 @@
-import { SETTINGS_VERSION_NUMBER } from "../constants/Constants";
+import { VERSION_NUMBER } from "../constants/Constants";
 
 const defaultDecay = {
   mind: 2,
@@ -14,10 +14,8 @@ interface SettingsConfig {
   decayRate: string
 }
 
-const CURRENT_VERSION = parseFloat(SETTINGS_VERSION_NUMBER)
-
 const settingsDefaults: SettingsConfig = {
-  version: `${CURRENT_VERSION}`,
+  version: `${VERSION_NUMBER}`,
   firstLaunch: `${Date.now()}`,
   decayRate: JSON.stringify(defaultDecay),
 };
@@ -27,7 +25,7 @@ function keys<T extends object>(obj: T): (keyof T)[] {
 }
 
 const Settings = {
-  currentVersion: CURRENT_VERSION,
+  currentVersion: VERSION_NUMBER,
 
   setup(): void {
     if (localStorage.getItem("firstLaunch") === null) {
@@ -45,7 +43,7 @@ const Settings = {
   upgrade(): void {
     const clientVersion = localStorage.getItem("version");
     
-    if (!clientVersion || clientVersion && parseFloat(clientVersion) < this.currentVersion) {
+    if (!clientVersion || clientVersion && clientVersion !== this.currentVersion) {
       const currentSettings: Partial<SettingsConfig> = {};
 
       keys(settingsDefaults).forEach((key) => {
