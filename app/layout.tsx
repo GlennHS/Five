@@ -30,6 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isScrolling, setIsScrolling] = useState(false)
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
   const [showVersionModal, setShowVersionModal] = useState(false)
   const [didCheck, setDidCheck] = useState(false)
 
@@ -48,20 +49,32 @@ export default function RootLayout({
   }, [didCheck])
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolling(true)
+    let lastY = window.scrollY
 
-    const handleScrollEnd = () => {
-      setTimeout(() => setIsScrolling(false), 500)
-    }
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const diff = currentY - lastY;
 
-    window.addEventListener('scroll', handleScroll)
+      if (Math.abs(diff) < 5) return; // ignore tiny movements
+
+      if (currentY > lastY) {
+        setScrollDirection('down')
+      } else if (currentY < lastY) {
+        setScrollDirection('up')
+      }
+
+      lastY = currentY;
+    };
+    const handleScrollEnd = () => setIsScrolling(false)
+
+    window.addEventListener('scroll', handleScroll);
     window.addEventListener('scrollend', handleScrollEnd)
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('scrollend', handleScrollEnd)
     }
-  }, [])
+  }, []);
 
   const handleClose = () => setShowVersionModal(false)
 
@@ -89,7 +102,7 @@ export default function RootLayout({
             </AppProvider>
           </div>
         </div>
-        <Navbar pageScrolled={isScrolling}/>
+        <Navbar pageScrolled={isScrolling} scrollDirection={scrollDirection}/>
         <Footer />
         <FooterSpacer />
       </body>

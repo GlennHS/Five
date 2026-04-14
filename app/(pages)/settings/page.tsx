@@ -16,6 +16,11 @@ const links = [
     title: "Edit Actions",
     href: "/settings/actions",
     description: "Manage action definitions"
+  },
+  {
+    title: "App Settings",
+    href: "/settings/user",
+    description: "Manage user settings"
   }
 ]
 
@@ -24,7 +29,6 @@ export default function Page() {
 
   const handleReset = async () => {
     if (confirm("Are you ABSOLUTELY SURE you want to RESET ALL YOUR DATA?")) {
-      console.log("We doin' it boyz")
       Settings.reset()
       await db.delete({disableAutoOpen: false})
       await db.open()
