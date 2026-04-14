@@ -9,9 +9,9 @@ const defaultDecay = {
 };
 
 interface SettingsConfig {
-  version: string
-  firstLaunch: string
-  decayRate: string
+  version: string | undefined
+  firstLaunch: string | undefined
+  decayRate: string | undefined
 }
 
 const settingsDefaults: SettingsConfig = {
@@ -30,7 +30,7 @@ const Settings = {
   setup(): void {
     if (localStorage.getItem("firstLaunch") === null) {
       keys(settingsDefaults).forEach((key) => {
-        localStorage.setItem(key, settingsDefaults[key]);
+        settingsDefaults[key] !== undefined && localStorage.setItem(key, settingsDefaults[key]);
       });
     } else this.upgrade()
   },
@@ -40,27 +40,30 @@ const Settings = {
     return localStorage.getItem(key) ?? "";
   },
 
-  upgrade(): void {
+  upgrade(): boolean {
     const clientVersion = localStorage.getItem("version");
-    
-    if (!clientVersion || clientVersion && clientVersion !== this.currentVersion) {
-      const currentSettings: Partial<SettingsConfig> = {};
+    const needsUpgrade = !clientVersion || clientVersion && clientVersion !== this.currentVersion
 
-      keys(settingsDefaults).forEach((key) => {
-        currentSettings[key] = localStorage.getItem(key) ?? "";
-      });
+    if (!needsUpgrade) return false
 
-      keys(settingsDefaults).forEach((key) => {
-        localStorage.setItem(key, settingsDefaults[key]);
-      });
+    const currentSettings: Partial<SettingsConfig> = {};
+    // Set current settings to user's settings where we have them, if not create key with blank value
+    keys(settingsDefaults).forEach((key) => currentSettings[key] = localStorage.getItem(key) ?? "")
 
-      keys(currentSettings).forEach(key => currentSettings[key] !== undefined && localStorage.setItem(key, currentSettings[key]))
-    }
+    // Copy default values to LocalStorage
+    keys(settingsDefaults).forEach((key) => settingsDefaults[key] && localStorage.setItem(key, settingsDefaults[key]))
+
+    // For each non-blank currentSettings entry we copy that to LocalStorage
+    keys(currentSettings).forEach(key => currentSettings[key] !== undefined && localStorage.setItem(key, currentSettings[key]))
+
+    localStorage.setItem("version", VERSION_NUMBER) // Bump version number
+
+    return true
   },
 
   reset(): void {
     keys(settingsDefaults).forEach((key) => {
-      localStorage.setItem(key, settingsDefaults[key]);
+      settingsDefaults[key] && localStorage.setItem(key, settingsDefaults[key]);
     });
   },
 };

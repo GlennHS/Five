@@ -8,6 +8,7 @@ import { AppProvider } from "./context/AppContext";
 import { useEffect, useState } from "react";
 import Settings from "./lib/settings";
 import { ToastProvider } from "./context/ToastContext";
+import VersionModal from "./components/VersionModal";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -29,7 +30,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isScrolling, setIsScrolling] = useState(false)
-  useEffect(() => Settings.setup(), [])
+  const [showVersionModal, setShowVersionModal] = useState(false)
+  const [didCheck, setDidCheck] = useState(false)
+
+  useEffect(() => {
+    if (didCheck) return
+
+    const didUpgrade = Settings.upgrade()
+
+    if (didUpgrade) {
+      setShowVersionModal(true)
+    }
+
+    setDidCheck(true)
+  }, [didCheck])
+
+  useEffect(() => {
+    Settings.setup() // If first time, run setup
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolling(true)
@@ -46,6 +64,8 @@ export default function RootLayout({
       window.removeEventListener('scrollend', handleScrollEnd)
     }
   }, [])
+
+  const handleClose = () => setShowVersionModal(false)
 
   return (
     <html lang="en" className={nunito.className}>
@@ -65,7 +85,8 @@ export default function RootLayout({
           <div className="max-w-3xl w-full p-4">
             <AppProvider>
               <ToastProvider>
-                {children}
+                { children }
+                { showVersionModal && <VersionModal onClose={handleClose} /> }
               </ToastProvider>
             </AppProvider>
           </div>
