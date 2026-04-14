@@ -59,6 +59,12 @@ const Settings = {
       keys(currentSettings).forEach(key => currentSettings[key] !== undefined && localStorage.setItem(key, currentSettings[key]))
     }
   },
+
+  reset(): void {
+    keys(settingsDefaults).forEach((key) => {
+      localStorage.setItem(key, settingsDefaults[key]);
+    });
+  },
 };
 
 export default Settings;
