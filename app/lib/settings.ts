@@ -1,4 +1,6 @@
 import { VERSION_NUMBER } from "../constants/Constants";
+import { SettingsConfig } from "../types";
+import { keys } from "./utils";
 
 const defaultDecay = {
   mind: 2,
@@ -8,23 +10,14 @@ const defaultDecay = {
   bond: 2,
 };
 
-interface SettingsConfig {
-  version: string | undefined
-  firstLaunch: string | undefined
-  decayRate: string | undefined
-}
-
-const settingsDefaults: SettingsConfig = {
+export const settingsDefaults: SettingsConfig = {
   version: `${VERSION_NUMBER}`,
   firstLaunch: `${Date.now()}`,
   decayRate: JSON.stringify(defaultDecay),
+  preferedChart: 'bar',
 };
 
-function keys<T extends object>(obj: T): (keyof T)[] {
-  return Object.keys(obj) as (keyof T)[];
-}
-
-const Settings = {
+export const Settings = {
   currentVersion: VERSION_NUMBER,
 
   setup(): void {
@@ -38,6 +31,16 @@ const Settings = {
   get(key: keyof SettingsConfig): string {
     if (typeof window === "undefined") return "";
     return localStorage.getItem(key) ?? "";
+  },
+
+  getAll(): SettingsConfig {
+    let res = settingsDefaults
+    keys(settingsDefaults).forEach(k => res[k] = this.get(k))
+    return res
+  },
+
+  set(key: keyof SettingsConfig, val: string): void {
+    localStorage.setItem(key, val)
   },
 
   upgrade(): boolean {
@@ -67,5 +70,3 @@ const Settings = {
     });
   },
 };
-
-export default Settings;

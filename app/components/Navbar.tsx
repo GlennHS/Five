@@ -40,7 +40,7 @@ export default function Navbar({ pageScrolled, scrollDirection } : NavbarProps) 
       setIsScrollable(scrollable);
     };
 
-    const id = setTimeout(checkScrollable, 3000);
+    const id = setTimeout(checkScrollable, 500);
 
     window.addEventListener('resize', checkScrollable);
 

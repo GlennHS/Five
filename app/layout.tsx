@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
 import { useEffect, useState } from "react";
-import Settings from "./lib/settings";
+import { Settings } from "./lib/settings";
 import { ToastProvider } from "./context/ToastContext";
 import VersionModal from "./components/VersionModal";
 

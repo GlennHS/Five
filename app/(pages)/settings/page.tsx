@@ -3,7 +3,7 @@
 import BackLink from "@/app/components/BackLink"
 import { useApp } from "@/app/context/AppContext"
 import { db } from "@/app/db"
-import Settings from "@/app/lib/settings"
+import { Settings } from "@/app/lib/settings"
 import Link from "next/link"
 
 const links = [
@@ -39,7 +39,7 @@ export default function Page() {
   return (
     <div>
       <BackLink />
-      <h1 style={{ marginBottom: 20 }}>Settings</h1>
+      <h1 className="my-4! section-header">Settings</h1>
 
       <div className="flex flex-col gap-y-4 w-full">
         {links.map(link => (

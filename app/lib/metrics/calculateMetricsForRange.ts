@@ -5,7 +5,7 @@ import filterActionsByRange from "../actions/filterActionsByRange"
 import actionToMetrics from "../actions/actionToMetrics"
 import buildActionMap from "../actions/buildActionMap"
 import getBoundedMetric from "./getBoundedMetric"
-import Settings from "../settings"
+import { Settings } from "../settings"
 
 export const calculateMetricsForRange = (
   actions: Action[],
