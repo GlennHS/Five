@@ -230,7 +230,6 @@ export default function Page() {
         onClose={() => trackingMethods.setLogModalShowing(false)}
         onSubmit={trackingMethods.handleModalSubmit}
       />
-      <Toast show={toastVisible} text={toastText} duration={toastTimeout} />
     </div>
   )
 }
