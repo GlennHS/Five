@@ -4,9 +4,11 @@ import { ActionDB, ActionDefinitionDB, TagDB } from "./types"
 import { actionDefinitions, tags } from "./constants/DummyData"
 import { pickRandom } from "./lib/utils"
 
-let SIMULATE_LOG_TYPE = "random" // Have to use let or TypeScript has a little cry about it
-const QUANTITY = 0
-const MONTHS_OF_ACTIONS = 0.25
+const isDev = process.env.NEXT_PUBLIC_ENVIRONMENT === 'dev'
+
+let SIMULATE_LOG_TYPE = isDev ? 'random' : 'random'
+const QUANTITY = isDev ? 5000 : 0
+const MONTHS_OF_ACTIONS = isDev ? 36 : 0
 
 const db = new Dexie("Main") as Dexie & {
   tags: EntityTable<

@@ -54,33 +54,45 @@ html, body {
   }
 }
 
-@theme {
-  --animate-background: background-move ease infinite;
-
-  @keyframes background-move {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
+@keyframes five-background {
+  0% {
+    background-position: 0% 50%;
   }
-
-  @keyframes slide-up {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  50% {
+    background-position: 100% 50%;
   }
-
-  --animate-slide-up: slide-up 0.2s ease-out;
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-@source inline("{bg,border,text,to}-{mind,body,work,cash,bond,total}{/10,/25,/50,}");
+@keyframes background-move {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@theme {
+  --animate-slide-up: slide-up 0.2s ease-out;
+  --animate-background: background-move ease infinite;
+  --animate-five-background: five-background 5s ease-in-out infinite;
+}
+
+@source inline("{bg,border,text,to,outline}-{mind,body,work,cash,bond,total}{/10,/25,/50,}");
 

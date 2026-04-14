@@ -25,6 +25,7 @@ type AppState = {
   addTag: (def: Omit<Tag, 'id'>) => Promise<void>
   updateTag: (def: Tag) => Promise<void>
   deleteTag: (id: number) => Promise<void>
+  loadFromDB: () => Promise<void>
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -127,26 +128,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActionDefinitions((prev) => prev.map((def)=>{return {...def,tags:def.tags.filter(t=>t.id!==id)}}))
   }
 
+  async function loadFromDB() {
+    setLoading(true)
+    // await new Promise(resolve => setTimeout(resolve, 3000)) // Test loading states with this
+    const [tags, defs, acts] = await Promise.all([
+      TagController.getAll(),
+      ActionDefinitionController.getAll(),
+      ActionController.getAllYear()
+    ])
+
+    // hydrate here once
+    setTags(tags)
+    setActionDefinitions(hydrateActionDefinitions(defs, tags))
+    setActions(hydrateActions(acts))
+
+    setLoading(false)
+  }
+
   // initial load
   useEffect(() => {
-    async function load() {
-      setLoading(true)
-      // await new Promise(resolve => setTimeout(resolve, 3000)) // Test loading states with this
-      const [tags, defs, acts] = await Promise.all([
-        TagController.getAll(),
-        ActionDefinitionController.getAll(),
-        ActionController.getAllYear()
-      ])
-
-      // hydrate here once
-      setTags(tags)
-      setActionDefinitions(hydrateActionDefinitions(defs, tags))
-      setActions(hydrateActions(acts))
-
-      setLoading(false)
-    }
-
-    load()
+    loadFromDB()
   }, [])
 
     return (
@@ -165,6 +166,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           addTag,
           updateTag,
           deleteTag,
+          loadFromDB,
         }}
       >
         {children}

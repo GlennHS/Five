@@ -1,12 +1,49 @@
 ## FIVE - *Love Yourself*
 
-A simple habit tracker for the five areas of life that actually matter.
+[FIVE](https://www.fivefitness.uk) is a simple habit tracker for the five areas of life that actually matter.
 
-<img width="404" height="876" alt="image" src="https://github.com/user-attachments/assets/6218c5fa-f8e9-4632-bd4e-1c42053b59bf" />
+<img width="403" height="874" alt="image" src="https://github.com/user-attachments/assets/b3e94821-a2f9-4a8f-a8aa-23adb4bb1aa9" />
+
+## Quickstart Guide
+
+### Add the app to your home screen
+
+#### iOS (Safari)
+
+- Open Safari
+- Go to [https://www.fivefitness.uk](https://www.fivefitness.uk)
+- Tap the Share button (square with arrow pointing up)
+- Scroll down and tap Add to Home Screen
+- Edit the name if you want
+- Tap Add (top right)
+
+#### Android (not tested)
+
+- Open Chrome
+- Go to [https://www.fivefitness.uk](https://www.fivefitness.uk)
+- Tap the three dots menu (top right)
+- Tap Add to Home screen (sometimes called Install app)
+- Edit the name if needed
+- Tap Add
+
+### Using FIVE
+
+#### Add Actions
+
+- Tap the icon at the bottom to bring up the navigation
+- Tap "Track"
+- Press '+' to log an action OR press the sliders to modify the time you did the action or add a little note
+
+#### Adding Your Own Actions
+
+- Tap the icon at the bottom to bring up the navigation
+- Tap "Settings"
+- Go to "Edit Actions"
+- From here you can easily add/update/archive/delete actions
 
 ## What Is Five?
 
-FIVE is a  [Next.js](https://nextjs.org) project created by [GlennHS](https://glennhs.co.uk) to promote self-care, better habits and useful insight into what people are doing that is helping (and harming) their health. Not just mental or physical but all kinds of health. I believe there are at least FIVE main kinds of fitness everyone should try and keep healthy:
+FIVE is a [Next.js](https://nextjs.org) project created by [GlennHS](https://glennhs.co.uk) to promote self-care, better habits and useful insight into what people are doing that is helping (and harming) their health. Not just mental or physical but all kinds of health. I believe there are at least FIVE main kinds of fitness everyone should try and keep healthy:
 
 - **BODY**: Your **physical** health. This is your heart health, your "7 minute mile", your "my knee shouldn't make that noise" metric.
 - **MIND**: Your **mental** health. This is your mind's health, letting your brain relax, switching off or challenging it to grow and stimulating it (positively).
