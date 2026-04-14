@@ -1,6 +1,9 @@
 "use client"
 
 import BackLink from "@/app/components/BackLink"
+import { useApp } from "@/app/context/AppContext"
+import { db } from "@/app/db"
+import Settings from "@/app/lib/settings"
 import Link from "next/link"
 
 const links = [
@@ -17,6 +20,18 @@ const links = [
 ]
 
 export default function Page() {
+  const { loadFromDB } = useApp()
+
+  const handleReset = async () => {
+    if (confirm("Are you ABSOLUTELY SURE you want to RESET ALL YOUR DATA?")) {
+      console.log("We doin' it boyz")
+      Settings.reset()
+      await db.delete({disableAutoOpen: false})
+      await db.open()
+      loadFromDB()
+    }
+  }
+
   return (
     <div>
       <BackLink />
@@ -35,6 +50,12 @@ export default function Page() {
             </div>
           </Link>
         ))}
+        <button onClick={handleReset} className="p-4 rounded-2xl border border-red-600 bg-red-300 w-full">
+          <div className="font-semibold">Reset Data</div>
+          <div className="opacity-60 text-sm">
+            Clear all custom actions/tags and action log. Start completely from scratch. THIS CANNOT BE UNDONE!
+          </div>
+        </button>
       </div>
     </div>
   )

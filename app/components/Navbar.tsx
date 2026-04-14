@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 type NavLinkProps = {
-  href?: string;
-  ariaLabel?: string;
-  children?: React.ReactNode;
+  href?: string
+  ariaLabel?: string
+  children?: React.ReactNode
 };
 
 function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
@@ -23,12 +23,12 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
   );
 }
 
-export default function Navbar() {
-  const [isShowing, setIsShowing] = useState<boolean>(false)
+export default function Navbar({ pageScrolled } : { pageScrolled: boolean }) {
+  const [isShowing, setIsShowing] = useState<boolean>(true)
 
   return (
     <>
-      <nav className={`w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center transition-opacity duration-300 ${isShowing ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+      <nav className={`w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center transition-opacity duration-300 ${isShowing && !pageScrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
         <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
           <div className="w-full">
             <ul className="h-full flex items-center justify-between text-base gap-4">
@@ -87,7 +87,7 @@ export default function Navbar() {
         </div>
       </nav>
       <nav
-        className={`w-full fixed bottom-0 left-0 flex flex-col justify-center items-center transition-opacity duration-300 ${isShowing ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}`}
+        className={`w-full fixed bottom-0 left-0 flex flex-col justify-center items-center transition-opacity duration-300 ${isShowing && !pageScrolled ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}`}
         onClick={() => setIsShowing(true)}
       >
         <div className='bg-white border border-gray-400 px-2 py-1 flex flex-col justify-center items-center'>
