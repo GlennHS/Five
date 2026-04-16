@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import { BAR_DEFAULT_CONFIG } from "../../constants/DefaultChartConfig";
+import { defaultBarConfig } from "../../constants/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../constants/Colors";
 import type { FiveMetric, MetricKey } from "../../types";
@@ -23,7 +23,7 @@ const METRIC_RGB = [
 
 Chart.register(LinearScale, CategoryScale, BarElement)
 
-export default function FiveBarGraph({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
+export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
   const chartRef = useRef<Chart<'bar'> | null>(null);
 
   const chartData = useMemo(() => {
@@ -75,7 +75,7 @@ export default function FiveBarGraph({data, highlightedMetric, onMetricChange}: 
   };
 
   const chartOptions = useMemo(() => ({
-    ...BAR_DEFAULT_CONFIG.options,
+    ...defaultBarConfig.options,
     onClick: handleChartClick,
     onHover: handleChartClick
   }), [])

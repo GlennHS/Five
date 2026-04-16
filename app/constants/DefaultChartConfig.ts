@@ -1,7 +1,7 @@
 import type { ChartConfiguration } from 'chart.js';
 import { METRIC_COLORS } from './Colors';
 
-export const LINE_DEFAULT_CONFIG: ChartConfiguration<'line'> = {
+export const defaultLineConfig: ChartConfiguration<'line'> = {
   type: 'line',
   data: {
     labels: [
@@ -42,7 +42,7 @@ export const LINE_DEFAULT_CONFIG: ChartConfiguration<'line'> = {
   },
 }
 
-export const BAR_DEFAULT_CONFIG: ChartConfiguration<'bar'> = {
+export const defaultBarConfig: ChartConfiguration<'bar'> = {
   type: 'bar',
   data: {
     labels: [
@@ -94,5 +94,86 @@ export const BAR_DEFAULT_CONFIG: ChartConfiguration<'bar'> = {
         display: false
       }
     }
+  },
+}
+
+export const defaultRadarConfig: ChartConfiguration<'radar'> = {
+  type: 'radar',
+  data: {
+    labels: [],
+    datasets: [
+      {
+        label: 'Metrics',
+        data: [],
+
+        backgroundColor: 'rgba(54, 162, 235, 0.15)',
+        borderColor: '#36A2EB',
+        borderWidth: 2,
+
+        pointBackgroundColor: [
+          `rgb(${METRIC_COLORS.MIND})`,
+          `rgb(${METRIC_COLORS.BODY})`,
+          `rgb(${METRIC_COLORS.CASH})`,
+          `rgb(${METRIC_COLORS.WORK})`,
+          `rgb(${METRIC_COLORS.BOND})`,
+        ],
+        pointBorderColor: '#ffffff',
+        pointHoverBackgroundColor: [
+          `rgb(${METRIC_COLORS.MIND})`,
+          `rgb(${METRIC_COLORS.BODY})`,
+          `rgb(${METRIC_COLORS.CASH})`,
+          `rgb(${METRIC_COLORS.WORK})`,
+          `rgb(${METRIC_COLORS.BOND})`,
+        ],
+        pointHoverBorderColor: '#ffffff',
+
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            return `${ctx.label}: ${ctx.raw}`
+          },
+        },
+      },
+    },
+
+    scales: {
+      r: {
+        beginAtZero: true,
+        min: 0,
+        max: 100,
+
+        grid: {
+          color: 'rgba(0,0,0,0.1)',
+        },
+
+        angleLines: {
+          color: 'rgba(0,0,0,0.1)',
+        },
+
+        pointLabels: {
+          font: {
+            size: 12,
+          },
+        },
+
+        ticks: {
+          display: false,
+          stepSize: 20,
+        },
+      },
+    },
   },
 }
