@@ -38,9 +38,9 @@ export default function RootLayout({
   useEffect(() => {
     if (didCheck) return
 
-    const didUpgrade = Settings.setup() // Check if they're a new user, if so set them up
+    const upgradeStatus = Settings.setup() // Check if they're a new user, if so set them up
 
-    if (didUpgrade) {
+    if (upgradeStatus === SettingsSetupResult.UPGRADE) {
       setShowVersionModal(true)
     }
 
