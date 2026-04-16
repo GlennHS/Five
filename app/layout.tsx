@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Settings } from "./lib/settings";
 import { ToastProvider } from "./context/ToastContext";
 import VersionModal from "./components/VersionModal";
+import { SettingsSetupResult } from "./types";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -37,9 +38,7 @@ export default function RootLayout({
   useEffect(() => {
     if (didCheck) return
 
-    Settings.setup() // Check if they're a new user, if so set them up
-
-    const didUpgrade = Settings.upgrade()
+    const didUpgrade = Settings.setup() // Check if they're a new user, if so set them up
 
     if (didUpgrade) {
       setShowVersionModal(true)

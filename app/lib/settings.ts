@@ -1,5 +1,5 @@
 import { VERSION_NUMBER } from "../constants/Constants";
-import { SettingsConfig } from "../types";
+import { SettingsConfig, SettingsSetupResult } from "../types";
 import { keys } from "./utils";
 
 const defaultDecay = {
@@ -20,12 +20,15 @@ export const settingsDefaults: SettingsConfig = {
 export const Settings = {
   currentVersion: VERSION_NUMBER,
 
-  setup(): void {
+  setup(): SettingsSetupResult {
     if (localStorage.getItem("firstLaunch") === null) {
       keys(settingsDefaults).forEach((key) => {
         settingsDefaults[key] !== undefined && localStorage.setItem(key, settingsDefaults[key]);
       });
-    } else this.upgrade()
+      return SettingsSetupResult.FIRSTTIME
+    } else {
+      return this.upgrade()
+    }
   },
 
   get(key: keyof SettingsConfig): string {
@@ -34,7 +37,7 @@ export const Settings = {
   },
 
   getAll(): SettingsConfig {
-    let res = settingsDefaults
+    let res = { ...settingsDefaults }
     keys(settingsDefaults).forEach(k => res[k] = this.get(k))
     return res
   },
@@ -43,11 +46,11 @@ export const Settings = {
     localStorage.setItem(key, val)
   },
 
-  upgrade(): boolean {
+  upgrade(): SettingsSetupResult {
     const clientVersion = localStorage.getItem("version");
     const needsUpgrade = !clientVersion || clientVersion && clientVersion !== this.currentVersion
 
-    if (!needsUpgrade) return false
+    if (!needsUpgrade) return SettingsSetupResult.NONE
 
     const currentSettings: Partial<SettingsConfig> = {};
     // Set current settings to user's settings where we have them, if not create key with blank value
@@ -61,12 +64,12 @@ export const Settings = {
 
     localStorage.setItem("version", VERSION_NUMBER) // Bump version number
 
-    return true
+    return SettingsSetupResult.UPGRADE
   },
 
   reset(): void {
     keys(settingsDefaults).forEach((key) => {
-      settingsDefaults[key] && localStorage.setItem(key, settingsDefaults[key]);
+      settingsDefaults[key] !== undefined && localStorage.setItem(key, settingsDefaults[key]);
     });
   },
 };

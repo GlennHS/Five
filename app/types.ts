@@ -47,6 +47,8 @@ export interface SettingsConfig {
   preferedChart: string | undefined
 }
 
+export enum SettingsSetupResult { FIRSTTIME, UPGRADE, NONE }
+
 /* #region DB Types */
 export interface TagDB {
   id: number
