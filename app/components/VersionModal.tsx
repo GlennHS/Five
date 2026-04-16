@@ -37,8 +37,8 @@ export default function VersionModal({ onClose }: VersionModalProps) {
           </a>. Happy tracking!
         </p>
 
-        <span className="w-full flex items-center justify-center mt-8 italic font-thin tracking-wide">
-          Tap anywhere to close
+        <span className="w-full flex items-center justify-center mt-8 italic font-thin text-sm">
+          Tap anywhere outside this box to close
         </span>
       </div>
     </div>
