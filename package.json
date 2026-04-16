@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "chart.js": "^4.5.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "dayjs": "^1.11.19",
     "dexie": "^4.3.0",
     "dexie-react-hooks": "^4.2.0",

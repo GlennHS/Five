@@ -6,8 +6,10 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
 import { useEffect, useState } from "react";
-import Settings from "./lib/settings";
+import { Settings } from "./lib/settings";
 import { ToastProvider } from "./context/ToastContext";
+import VersionModal from "./components/VersionModal";
+import { SettingsSetupResult } from "./types";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -29,23 +31,51 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isScrolling, setIsScrolling] = useState(false)
-  useEffect(() => Settings.setup(), [])
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
+  const [showVersionModal, setShowVersionModal] = useState(false)
+  const [didCheck, setDidCheck] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolling(true)
+    if (didCheck) return
 
-    const handleScrollEnd = () => {
-      setTimeout(() => setIsScrolling(false), 500)
+    const upgradeStatus = Settings.setup() // Check if they're a new user, if so set them up
+
+    if (upgradeStatus === SettingsSetupResult.UPGRADE) {
+      setShowVersionModal(true)
     }
 
-    window.addEventListener('scroll', handleScroll)
+    setDidCheck(true)
+  }, [didCheck])
+
+  useEffect(() => {
+    let lastY = window.scrollY
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const diff = currentY - lastY;
+
+      if (Math.abs(diff) < 5) return; // ignore tiny movements
+
+      if (currentY > lastY) {
+        setScrollDirection('down')
+      } else if (currentY < lastY) {
+        setScrollDirection('up')
+      }
+
+      lastY = currentY;
+    };
+    const handleScrollEnd = () => setIsScrolling(false)
+
+    window.addEventListener('scroll', handleScroll);
     window.addEventListener('scrollend', handleScrollEnd)
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('scrollend', handleScrollEnd)
     }
-  }, [])
+  }, []);
+
+  const handleClose = () => setShowVersionModal(false)
 
   return (
     <html lang="en" className={nunito.className}>
@@ -65,12 +95,13 @@ export default function RootLayout({
           <div className="max-w-3xl w-full p-4">
             <AppProvider>
               <ToastProvider>
-                {children}
+                { children }
+                { showVersionModal && <VersionModal onClose={handleClose} /> }
               </ToastProvider>
             </AppProvider>
           </div>
         </div>
-        <Navbar pageScrolled={isScrolling}/>
+        <Navbar pageScrolled={isScrolling} scrollDirection={scrollDirection}/>
         <Footer />
         <FooterSpacer />
       </body>

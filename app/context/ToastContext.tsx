@@ -47,6 +47,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
     setVisible(false)
     setTimeout(() => setCurrent(null), ANIMATION_DELAY)
+    setQueue([])
   }
 
   return (

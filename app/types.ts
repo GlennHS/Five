@@ -40,6 +40,15 @@ export type Tag = {
   colorKey: keyof typeof TAG_COLOR_CLASSES,
 }
 
+export interface SettingsConfig {
+  version: string | undefined
+  firstLaunch: string | undefined
+  decayRate: string | undefined
+  preferedChart: string | undefined
+}
+
+export enum SettingsSetupResult { FIRSTTIME, UPGRADE, NONE }
+
 /* #region DB Types */
 export interface TagDB {
   id: number

@@ -3,7 +3,7 @@
 import BackLink from "@/app/components/BackLink"
 import { useApp } from "@/app/context/AppContext"
 import { db } from "@/app/db"
-import Settings from "@/app/lib/settings"
+import { Settings } from "@/app/lib/settings"
 import Link from "next/link"
 
 const links = [
@@ -16,6 +16,11 @@ const links = [
     title: "Edit Actions",
     href: "/settings/actions",
     description: "Manage action definitions"
+  },
+  {
+    title: "App Settings",
+    href: "/settings/user",
+    description: "Manage user settings"
   }
 ]
 
@@ -24,7 +29,6 @@ export default function Page() {
 
   const handleReset = async () => {
     if (confirm("Are you ABSOLUTELY SURE you want to RESET ALL YOUR DATA?")) {
-      console.log("We doin' it boyz")
       Settings.reset()
       await db.delete({disableAutoOpen: false})
       await db.open()
@@ -35,7 +39,7 @@ export default function Page() {
   return (
     <div>
       <BackLink />
-      <h1 style={{ marginBottom: 20 }}>Settings</h1>
+      <h1 className="my-4! section-header">Settings</h1>
 
       <div className="flex flex-col gap-y-4 w-full">
         {links.map(link => (

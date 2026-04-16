@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Action, METRIC_KEYS, type MetricKey } from './types';
+import { METRIC_KEYS, type MetricKey } from './types';
 
-import FiveBarGraph from './components/graphs/FiveBarGraph';
+import FiveBar from './components/graphs/FiveBar';
 import MetricCard from './components/MetricCard';
 
 import {
@@ -31,6 +31,8 @@ import TrackCard from './components/TrackCard';
 import { useTracking } from './hooks/useTracking';
 import { useInsights } from './hooks/useInsights';
 import SectionDivider from './components/SectionDivider';
+import { Settings } from './lib/settings';
+import FiveRadar from './components/graphs/FiveRadar';
 
 ChartJS.register(
   RadialLinearScale,
@@ -46,9 +48,11 @@ export default function Home() {
   const { trackingMethods } = useTracking(addAction)
   const insights = useInsights(actions, actionDefinitions)
 
-  const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>(null)
+  const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>("mind");
   const [streak, setStreak] = useState<number | null>(null)
   const [sortType, setSortType] = useState<string>("chrono")
+
+  const chartType = Settings.get("preferedChart")
 
   const metrics = useMemo(() => {
     if (!actions) return null
@@ -198,11 +202,16 @@ export default function Home() {
         </section>
 
         <section className="w-full rounded-2xl max-h-2/3 h-80">
-          <FiveBarGraph
+          { chartType === 'radar' && <FiveRadar
             data={metrics}
             highlightedMetric={highlightedMetric}
             onMetricChange={(metric) => setHighlightedMetric(metric)}
-          />
+          /> }
+          { chartType === 'bar' && <FiveBar
+            data={metrics}
+            highlightedMetric={highlightedMetric}
+            onMetricChange={(metric) => setHighlightedMetric(metric)}
+          /> }
         </section>
 
         <section className="w-full max-h-48">

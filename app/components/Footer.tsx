@@ -1,3 +1,4 @@
+import { Coffee, Heart } from "lucide-react";
 import { VERSION_NUMBER } from "../constants/Constants";
 
 export default function Footer() {
@@ -6,6 +7,13 @@ export default function Footer() {
       <div className="mx-auto flex max-w-sm flex-col items-center gap-2 px-4 py-2">
         <span className="text-sm text-slate-500">© 2026 Five. All rights reserved.</span>
         <span className="text-xs italic text-slate-500">ver. {VERSION_NUMBER}</span>
+        <a
+          href="https://www.ko-fi.com/aetherswitch"
+          target="_blank"
+          className="bg-pink-200 active:bg-pink-400 transition-colors duration-300 px-4 py-1 rounded-xl border text-xs font-bold flex gap-1 items-center"
+        >
+          <Heart size={16} strokeWidth={2} fill="#f77" />Support Me!
+        </a>
       </div>
     </footer>
   );
