@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Radar } from "react-chartjs-2";
 import { defaultRadarConfig } from "../../constants/DefaultChartConfig";
 import {
@@ -7,8 +7,6 @@ import {
   LineElement,
   Filler,
   Chart,
-  ChartEvent,
-  ActiveElement,
   ChartOptions,
 } from 'chart.js'
 import { METRIC_COLORS } from "../../constants/Colors";
@@ -36,7 +34,6 @@ Chart.register(
   PointElement,
   LineElement,
   Filler,
-  ChartDataLabels
 )
 
 export default function FiveRadar({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
@@ -63,7 +60,6 @@ export default function FiveRadar({data, highlightedMetric, onMetricChange}: Fiv
           label: "Metrics",
           data: values,
 
-          // 👇 dynamic background
           backgroundColor:
             selectedIndex >= 0
               ? `rgba(${baseColor}, 0.25)`
@@ -76,7 +72,6 @@ export default function FiveRadar({data, highlightedMetric, onMetricChange}: Fiv
 
           borderWidth: 2,
 
-          // 👇 keep your per-point branding
           pointBackgroundColor: METRIC_RGB.map((c, i) =>
             selectedIndex === -1 || selectedIndex === i
               ? `rgb(${c})`
@@ -126,6 +121,7 @@ export default function FiveRadar({data, highlightedMetric, onMetricChange}: Fiv
         ref={chartRef}
         data={chartData}
         options={chartOptions}
+        plugins={[ChartDataLabels]}
       />
     </div>
   )
