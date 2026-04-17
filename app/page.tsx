@@ -34,6 +34,8 @@ import SectionDivider from './components/SectionDivider';
 import { Settings } from './lib/settings';
 import FiveRadar from './components/graphs/FiveRadar';
 import LogModal from './components/LogModal';
+import { randomQuotes } from './constants/Quotes';
+import { pickRandom } from './lib/utils';
 
 ChartJS.register(
   RadialLinearScale,
@@ -322,6 +324,12 @@ export default function Home() {
         </section>
 
         <SectionDivider />
+
+        <section className="w-full">
+          <div className='w-full flex flex-col mb-2'>
+            <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ pickRandom(randomQuotes) }</blockquote>
+          </div>
+        </section>
       </main>
       <LogModal
         def={modal.actionToAdvancedLog}
