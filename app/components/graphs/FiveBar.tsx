@@ -4,6 +4,7 @@ import { defaultBarConfig } from "../../constants/DefaultChartConfig";
 import { ActiveElement, BarElement, CategoryScale, Chart, ChartEvent, LinearScale } from "chart.js";
 import { METRIC_COLORS } from "../../constants/Colors";
 import type { FiveMetric, MetricKey } from "../../types";
+import Annotation from "chartjs-plugin-annotation";
 
 type FiveBarGraphProps = {
   data: FiveMetric | null;
@@ -21,7 +22,7 @@ const METRIC_RGB = [
   METRIC_COLORS.BOND,
 ]
 
-Chart.register(LinearScale, CategoryScale, BarElement)
+Chart.register(LinearScale, CategoryScale, BarElement, Annotation)
 
 export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
   const chartRef = useRef<Chart<'bar'> | null>(null);
@@ -76,6 +77,20 @@ export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveB
 
   const chartOptions = useMemo(() => ({
     ...defaultBarConfig.options,
+    plugins: {
+      annotation: {
+        annotations: {
+          line1: {
+            type: 'line' as const,
+            yMin: 60,
+            yMax: 60,
+            borderColor: '#444',
+            borderWidth: 1,
+            borderDash: [6,6]
+          }
+        }
+      }
+    },
     onClick: handleChartClick,
     onHover: handleChartClick
   }), [])

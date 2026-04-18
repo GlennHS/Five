@@ -81,7 +81,23 @@ export default function FiveRadar({data, highlightedMetric, onMetricChange}: Fiv
           pointRadius: METRIC_ORDER.map((_, i) =>
             i === selectedIndex ? 6 : 4
           ),
+          datalabels: {
+            display: true,
+            color: '#000',
+            font: { weight: 'bold' as const },
+            align: "top" as const,
+            offset: 6,
+          },
         },
+        {
+          label: 'Goal',
+          data: Array(5).fill(70),
+          borderColor: '#444',
+          borderWidth: 1,
+          borderDash: [6, 6],
+          fill: false,
+          pointRadius: 0,
+        }
       ],
     };
   }, [data, highlightedMetric]);
@@ -109,6 +125,7 @@ export default function FiveRadar({data, highlightedMetric, onMetricChange}: Fiv
         formatter: (value: number) => value,
         align: "top" as const,
         offset: 6,
+        display: false,
       },
     },
   };

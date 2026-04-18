@@ -1,11 +1,19 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react';
+import { Clock, Hash } from 'lucide-react';
 
 import { METRIC_KEYS, type MetricKey } from './types';
 
+import ActionCard from './components/actionCards/ActionCard';
+import ActionCardList from './components/actionCards/ActionCardList';
 import FiveBar from './components/graphs/FiveBar';
+import FiveRadar from './components/graphs/FiveRadar';
+import LoadingSpinner from './components/LoadingSpinner';
+import LogModal from './components/LogModal';
 import MetricCard from './components/MetricCard';
+import SectionDivider from './components/SectionDivider';
+import TrackCard from './components/TrackCard';
 
 import {
   Chart as ChartJS,
@@ -18,24 +26,19 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
-import ActionCard from './components/actionCards/ActionCard';
-import LoadingSpinner from './components/LoadingSpinner';
 import { useApp } from './context/AppContext';
+import { useInsights } from './hooks/useInsights';
+import { useTracking } from './hooks/useTracking';
+
+import { ActionController } from './controllers/ActionController';
+
 import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange';
 import calculateTotal from './lib/metrics/calculateTotal';
-import ActionCardList from './components/actionCards/ActionCardList';
-import { ActionController } from './controllers/ActionController';
-import { Clock, Hash } from 'lucide-react';
-import TrackCard from './components/TrackCard';
-import { useTracking } from './hooks/useTracking';
-import { useInsights } from './hooks/useInsights';
-import SectionDivider from './components/SectionDivider';
+import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
 import { Settings } from './lib/settings';
-import FiveRadar from './components/graphs/FiveRadar';
-import LogModal from './components/LogModal';
-import { randomQuotes } from './constants/Quotes';
 import { pickRandom } from './lib/utils';
+
+import { randomQuotes } from './constants/Quotes';
 
 ChartJS.register(
   RadialLinearScale,
@@ -54,6 +57,8 @@ export default function Home() {
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>("mind");
   const [streak, setStreak] = useState<number | null>(null)
   const [sortType, setSortType] = useState<string>("chrono")
+
+  const [quote, setQuote] = useState(pickRandom(randomQuotes))
 
   const chartType = Settings.get("preferedChart")
 
@@ -286,7 +291,7 @@ export default function Home() {
 
         <section className="w-full">
           <div className='w-full flex flex-col mb-2'>
-            <h2 className='section-header'>Recent Actions</h2>
+            {/* <h2 className='section-header'>Recent Actions</h2> */}
             <div className="w-full flex items-center justify-center gap-x-4">
               <button
                 className={`flex items-center justify-center gap-2 border-2 rounded-xl p-2 ${sortType === 'chrono' ? "opacity-100" : "opacity-50"} transition-opacity duration-500`}
@@ -327,7 +332,7 @@ export default function Home() {
 
         <section className="w-full">
           <div className='w-full flex flex-col mb-2'>
-            <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ pickRandom(randomQuotes) }</blockquote>
+            <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ quote }</blockquote>
           </div>
         </section>
       </main>
