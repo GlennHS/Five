@@ -201,8 +201,8 @@ export default function Home() {
   )
 
   return (
-    <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">
-      <main className="flex min-h-screen w-full flex-col gap-4 bg-white">
+    <div className="flex items-stretch justify-center bg-zinc-50 font-sans">
+      <main className="flex w-full flex-col gap-4 bg-white">
         <section className='w-full'>
           { streak !== null ? (
             <>
@@ -265,7 +265,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section>
+        { actions.length > 0 && <section>
           <h2 className="section-header">Insights</h2>
           <div className="flex flex-col gap-2">
             {insights.map(insight => (
@@ -283,13 +283,13 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </section>
+        </section> }
 
         { /*! BELOW THE FOLD BEYOND HERE !*/ }
 
-        <SectionDivider />
+        { actions.length > 0 && <SectionDivider /> }
 
-        <section>
+        { actions.length > 0 && <section>
           <h2 className='section-header mb-4!'>Quick Log</h2>
           <div>
             {Array.from(actionCountMap.entries())
@@ -308,11 +308,11 @@ export default function Home() {
                 />
               ))}
           </div>
-        </section>
+        </section> }
 
-        <SectionDivider />
+        { actions.length > 0 && <SectionDivider /> }
 
-        <section className="w-full">
+        { actions.length > 0 && <section className="w-full">
           <div className='w-full flex flex-col mb-2'>
             {/* <h2 className='section-header'>Recent Actions</h2> */}
             <div className="w-full flex items-center justify-center gap-x-4">
@@ -349,7 +349,7 @@ export default function Home() {
               }
             )}
           </ActionCardList>
-        </section>
+        </section> }
 
         <SectionDivider />
 
