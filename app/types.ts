@@ -78,3 +78,9 @@ export type ActionDB = {
   note?: string
 }
 /* #endregion */
+
+export interface ChangelogEntry {
+  date: string
+  version: string
+  changes: { type: string, notes: string }[]
+}
