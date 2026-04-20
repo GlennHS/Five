@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, Hash } from 'lucide-react';
 
-import { METRIC_KEYS, type MetricKey } from './types';
+import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from './types';
 
 import ActionCard from './components/actionCards/ActionCard';
 import ActionCardList from './components/actionCards/ActionCardList';
@@ -36,9 +36,11 @@ import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange
 import calculateTotal from './lib/metrics/calculateTotal';
 import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
 import { Settings } from './lib/settings';
-import { pickRandom } from './lib/utils';
+import { pickRandom, waitForElement } from './lib/utils';
 
 import { randomQuotes } from './constants/Quotes';
+import VersionModal from './components/VersionModal';
+import { useNextStep } from 'nextstepjs';
 
 ChartJS.register(
   RadialLinearScale,
@@ -61,6 +63,26 @@ export default function Home() {
   const [quote, setQuote] = useState(pickRandom(randomQuotes))
 
   const chartType = Settings.get("preferedChart")
+
+  const [didCheck, setDidCheck] = useState(false)
+  const [showVersionModal, setShowVersionModal] = useState(false)
+  const { startNextStep } = useNextStep();
+
+  const handleClose = () => setShowVersionModal(false)
+
+  useEffect(() => {
+    if (didCheck) return
+
+    const upgradeStatus = Settings.setup() // Check if they're a new user, if so set them up
+
+    if (upgradeStatus === SettingsSetupResult.TUTORIAL) {
+      waitForElement("#chart").then(() => startNextStep("tutorial"))
+    } else if (upgradeStatus === SettingsSetupResult.UPGRADE) {
+      setShowVersionModal(true)
+    }
+
+    setDidCheck(true)
+  }, [didCheck])
 
   const metrics = useMemo(() => {
     if (!actions) return null
@@ -209,7 +231,7 @@ export default function Home() {
           )}
         </section>
 
-        <section className="w-full rounded-2xl max-h-2/3 h-80">
+        <section className="w-full rounded-2xl max-h-2/3 h-80" id="chart">
           { chartType === 'radar' && <FiveRadar
             data={metrics}
             highlightedMetric={highlightedMetric}
@@ -231,6 +253,7 @@ export default function Home() {
                 delta={dailyDeltas !== null ? dailyDeltas[key] : undefined}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
+                className={`metric-card-${key}`}
               />
             ))}
             <MetricCard
@@ -342,6 +365,7 @@ export default function Home() {
         onClose={() => trackingMethods.setLogModalShowing(false)}
         onSubmit={trackingMethods.handleModalSubmit}
       />
+      { showVersionModal && <VersionModal onClose={handleClose} /> }
     </div>
   );
 }
