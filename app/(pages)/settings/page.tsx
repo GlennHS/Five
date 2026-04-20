@@ -5,6 +5,7 @@ import { useApp } from "@/app/context/AppContext"
 import { db } from "@/app/db"
 import { Settings } from "@/app/lib/settings"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const links = [
   {
@@ -26,6 +27,7 @@ const links = [
 
 export default function Page() {
   const { loadFromDB } = useApp()
+  const router = useRouter()
 
   const handleReset = async () => {
     if (confirm("Are you ABSOLUTELY SURE you want to RESET ALL YOUR DATA?")) {
@@ -38,6 +40,7 @@ export default function Page() {
 
   const handleTutorial = () => {
     Settings.set('wantsTutorial', 'true')
+    router.push('/')
   }
 
   return (
