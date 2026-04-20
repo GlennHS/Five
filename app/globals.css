@@ -11,6 +11,9 @@
   --work-rgb: 168 85 247;   /* purple */
   --bond-rgb: 236 72 153;   /* pink */
   --total-rgb: 80 80 80;   /* slate */
+
+  --positive-rgb: 28 230 61; /* green */
+  --negative-rgb: 227 9 20; /* red */
 }
 
 
@@ -25,6 +28,9 @@
   --color-work: rgb(var(--work-rgb));
   --color-bond: rgb(var(--bond-rgb));
   --color-total: rgb(var(--total-rgb));
+
+  --color-positive: rgb(var(--positive-rgb));
+  --color-negative: rgb(var(--negative-rgb));
 }
 
 body {
@@ -92,6 +98,28 @@ html, body {
   --animate-slide-up: slide-up 0.2s ease-out;
   --animate-background: background-move ease infinite;
   --animate-five-background: five-background 5s ease-in-out infinite;
+}
+
+/* NextStep really doesn't like how slow /track renders apparently, this forces full height */
+/* div[data-name="nextstep-prevent-click-overlay-right"], div[data-name="nextstep-prevent-click-overlay-left"], div[data-name="nextstep-prevent-click-overlay"], div[data-name="nextstep-overlay"] {
+  height: 100vh!important;
+} */
+
+/* Can style prev button here */
+/* div[data-name="nextstep-card"] button:nth-child(1) {
+  background-color: #ffffff!important;
+} */
+
+/* Can style next button here */
+/* div[data-name="nextstep-card"] button:nth-child(3) {
+  background-color: #ffffff!important;
+} */
+
+/* Can style skip button here */
+div[data-name="nextstep-card"] > div > button:last-child {
+  background-color: var(--color-negative);
+  opacity: 0.75;
+  font-style: italic;
 }
 
 @source inline("{bg,border,text,to,outline}-{mind,body,work,cash,bond,total}{/10,/25,/50,}");

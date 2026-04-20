@@ -89,6 +89,9 @@ export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveB
             borderDash: [6,6]
           }
         }
+      },
+      legend: {
+        display: false
       }
     },
     onClick: handleChartClick,

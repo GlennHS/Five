@@ -15,6 +15,7 @@ export const settingsDefaults: SettingsConfig = {
   firstLaunch: `${Date.now()}`,
   decayRate: JSON.stringify(defaultDecay),
   preferedChart: 'bar',
+  wantsTutorial: "true",
 };
 
 export const Settings = {
@@ -25,7 +26,7 @@ export const Settings = {
       keys(settingsDefaults).forEach((key) => {
         settingsDefaults[key] !== undefined && localStorage.setItem(key, settingsDefaults[key]);
       });
-      return SettingsSetupResult.FIRSTTIME
+      return SettingsSetupResult.TUTORIAL
     } else {
       return this.upgrade()
     }
@@ -50,11 +51,11 @@ export const Settings = {
     const clientVersion = localStorage.getItem("version");
     const needsUpgrade = !clientVersion || clientVersion && clientVersion !== this.currentVersion
 
-    if (!needsUpgrade) return SettingsSetupResult.NONE
+    if (!needsUpgrade) return this.get('wantsTutorial') === 'true' ? SettingsSetupResult.TUTORIAL : SettingsSetupResult.NONE
 
     const currentSettings: Partial<SettingsConfig> = {};
-    // Set current settings to user's settings where we have them, if not create key with blank value
-    keys(settingsDefaults).forEach((key) => currentSettings[key] = localStorage.getItem(key) ?? "")
+    // Set current settings to user's settings where we have them, if not create key with undefined
+    keys(settingsDefaults).forEach((key) => currentSettings[key] = localStorage.getItem(key) ?? undefined)
 
     // Copy default values to LocalStorage
     keys(settingsDefaults).forEach((key) => settingsDefaults[key] && localStorage.setItem(key, settingsDefaults[key]))
@@ -64,7 +65,9 @@ export const Settings = {
 
     localStorage.setItem("version", VERSION_NUMBER) // Bump version number
 
-    return SettingsSetupResult.UPGRADE
+    if (this.get("wantsTutorial") === 'inProgress') this.set('wantsTutorial', 'true')
+
+    return this.get('wantsTutorial') === 'true' ? SettingsSetupResult.TUTORIAL : SettingsSetupResult.UPGRADE
   },
 
   reset(): void {

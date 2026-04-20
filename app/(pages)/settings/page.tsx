@@ -36,6 +36,10 @@ export default function Page() {
     }
   }
 
+  const handleTutorial = () => {
+    Settings.set('wantsTutorial', 'true')
+  }
+
   return (
     <div>
       <BackLink />
@@ -54,6 +58,12 @@ export default function Page() {
             </div>
           </Link>
         ))}
+        <button onClick={handleTutorial} className="p-4 rounded-2xl border border-mind bg-mind/20 w-full">
+          <div className="font-semibold">Tutorial</div>
+          <div className="opacity-60 text-sm">
+            Do the tutorial again?
+          </div>
+        </button>
         <button onClick={handleReset} className="p-4 rounded-2xl border border-red-600 bg-red-300 w-full">
           <div className="font-semibold">Reset Data</div>
           <div className="opacity-60 text-sm">

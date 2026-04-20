@@ -110,9 +110,9 @@ export default function Page() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-xl font-semibold mb-6">Track Actions</h1>
+      <h1 className="text-xl font-semibold mb-6" id="track-title">Track Actions</h1>
 
-      <div>
+      <div id="track-filters">
         {/* Search Bar */}
         <div className="w-full flex gap-2 items-center justify-center mb-4">
           <Search strokeWidth={2} size={32} onClick={() => searchBar.current && searchBar.current.focus()} />
@@ -177,14 +177,14 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="flex flex-col mt-4">
+      <div className="flex flex-col mt-4" id="track-list">
         {filteredActionDefinitions.map((def, i) => (
           <TrackCard
             key={def.id}
             def={def}
             onLog={trackingMethods.handleQuickLog}
             onAdvancedLog={trackingMethods.handleAdvancedLog}
-            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'}`}
+            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'} track-card`}
           />
         ))}
       </div>
