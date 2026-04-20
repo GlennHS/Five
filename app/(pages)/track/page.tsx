@@ -15,35 +15,15 @@ import { useTracking } from "@/app/hooks/useTracking"
 
 export default function Page() {
   const { actions, actionDefinitions, tags, loading, addAction } = useApp()
-  const { trackingMethods, modal } = useTracking(addAction)
+  const { modal, trackingMethods } = useTracking(addAction)
   const [search, setSearch] = useState("")
   const searchBar = useRef<HTMLInputElement>(null)
   const [filterMetrics, setFilterMetrics] = useState<MetricKey[]>([])
   const [filterTags, setFilterTags] = useState<Tag[]>([])
   const [sortType, setSortType] = useState<string>("chrono")
   const debouncedSearch = useDebounce(search, 250)
-  
-  const [toastVisible, setToastVisible] = useState(false)
-  const [toastText, setToastText] = useState("")
-  const [toastTimeout, setToastTimeout] = useState(2000)
-  
-  const [logModalShowing, setLogModalShowing] = useState(false)
-  const [actionToAdvancedLog, setActionToAdvancedLog] = useState<ActionDefinition | null>(null)
 
   const [filteredActionDefinitions, setFilteredActionDefinitions] = useState<ActionDefinition[]>([])
-
-  const toggleToast = (text: string) => {
-    setToastText(text)
-    setToastVisible(true)
-    setTimeout(() => setToastVisible(false), toastTimeout)
-  }
-
-  const getBGString = (key: MetricKey, def: ActionDefinition): string => {
-    if (def[key] && def[key] !== 0)
-      return `bg-${key}/50`
-    else
-      return `bg-${key}/10`
-  }
 
   function useDebounce<T>(value: T, delay = 300) {
     const [debounced, setDebounced] = useState(value)
@@ -55,16 +35,6 @@ export default function Page() {
 
     return debounced
   }
-
-  const handleModalSubmit = (data: {
-    id: number,
-    timestamp: number,
-    note: string,
-  }) => {
-    addAction(data.id, data.timestamp, data.note);
-    setLogModalShowing(false)
-    toggleToast("Action successfully logged!")
-  };
 
   const lastUsedMap = useMemo(() => {
     const map = new Map<number, number>() // defId -> latest timestamp
@@ -140,14 +110,9 @@ export default function Page() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
-      <LogModal
-        def={actionToAdvancedLog}
-        isOpen={logModalShowing}
-        onClose={() => setLogModalShowing(false)}
-        onSubmit={handleModalSubmit} />
-      <h1 className="text-xl font-semibold mb-6">Track Actions</h1>
+      <h1 className="text-xl font-semibold mb-6" id="track-title">Track Actions</h1>
 
-      <div>
+      <div id="track-filters">
         {/* Search Bar */}
         <div className="w-full flex gap-2 items-center justify-center mb-4">
           <Search strokeWidth={2} size={32} onClick={() => searchBar.current && searchBar.current.focus()} />
@@ -212,14 +177,14 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="flex flex-col mt-4">
+      <div className="flex flex-col mt-4" id="track-list">
         {filteredActionDefinitions.map((def, i) => (
           <TrackCard
             key={def.id}
             def={def}
             onLog={trackingMethods.handleQuickLog}
             onAdvancedLog={trackingMethods.handleAdvancedLog}
-            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'}`}
+            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'} track-card`}
           />
         ))}
       </div>

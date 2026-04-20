@@ -5,6 +5,7 @@ import { useApp } from "@/app/context/AppContext"
 import { db } from "@/app/db"
 import { Settings } from "@/app/lib/settings"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const links = [
   {
@@ -26,6 +27,7 @@ const links = [
 
 export default function Page() {
   const { loadFromDB } = useApp()
+  const router = useRouter()
 
   const handleReset = async () => {
     if (confirm("Are you ABSOLUTELY SURE you want to RESET ALL YOUR DATA?")) {
@@ -34,6 +36,11 @@ export default function Page() {
       await db.open()
       loadFromDB()
     }
+  }
+
+  const handleTutorial = () => {
+    Settings.set('wantsTutorial', 'true')
+    router.push('/')
   }
 
   return (
@@ -54,6 +61,12 @@ export default function Page() {
             </div>
           </Link>
         ))}
+        <button onClick={handleTutorial} className="p-4 rounded-2xl border border-mind bg-mind/20 w-full">
+          <div className="font-semibold">Tutorial</div>
+          <div className="opacity-60 text-sm">
+            Do the tutorial again?
+          </div>
+        </button>
         <button onClick={handleReset} className="p-4 rounded-2xl border border-red-600 bg-red-300 w-full">
           <div className="font-semibold">Reset Data</div>
           <div className="opacity-60 text-sm">

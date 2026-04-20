@@ -1,11 +1,19 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react';
+import { Clock, Hash } from 'lucide-react';
 
-import { METRIC_KEYS, type MetricKey } from './types';
+import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from './types';
 
+import ActionCard from './components/actionCards/ActionCard';
+import ActionCardList from './components/actionCards/ActionCardList';
 import FiveBar from './components/graphs/FiveBar';
+import FiveRadar from './components/graphs/FiveRadar';
+import LoadingSpinner from './components/LoadingSpinner';
+import LogModal from './components/LogModal';
 import MetricCard from './components/MetricCard';
+import SectionDivider from './components/SectionDivider';
+import TrackCard from './components/TrackCard';
 
 import {
   Chart as ChartJS,
@@ -18,21 +26,21 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
-import ActionCard from './components/actionCards/ActionCard';
-import LoadingSpinner from './components/LoadingSpinner';
 import { useApp } from './context/AppContext';
+import { useInsights } from './hooks/useInsights';
+import { useTracking } from './hooks/useTracking';
+
+import { ActionController } from './controllers/ActionController';
+
 import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange';
 import calculateTotal from './lib/metrics/calculateTotal';
-import ActionCardList from './components/actionCards/ActionCardList';
-import { ActionController } from './controllers/ActionController';
-import { Clock, Hash } from 'lucide-react';
-import TrackCard from './components/TrackCard';
-import { useTracking } from './hooks/useTracking';
-import { useInsights } from './hooks/useInsights';
-import SectionDivider from './components/SectionDivider';
+import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
 import { Settings } from './lib/settings';
-import FiveRadar from './components/graphs/FiveRadar';
+import { pickRandom, waitForElement } from './lib/utils';
+
+import { randomQuotes } from './constants/Quotes';
+import VersionModal from './components/VersionModal';
+import { useNextStep } from 'nextstepjs';
 
 ChartJS.register(
   RadialLinearScale,
@@ -45,14 +53,36 @@ ChartJS.register(
 
 export default function Home() {
   const { actions, actionDefinitions, loading, addAction } = useApp()
-  const { trackingMethods } = useTracking(addAction)
+  const { modal, trackingMethods } = useTracking(addAction)
   const insights = useInsights(actions, actionDefinitions)
 
   const [highlightedMetric, setHighlightedMetric] = useState<MetricKey | null>("mind");
   const [streak, setStreak] = useState<number | null>(null)
   const [sortType, setSortType] = useState<string>("chrono")
 
+  const [quote, setQuote] = useState(pickRandom(randomQuotes))
+
   const chartType = Settings.get("preferedChart")
+
+  const [didCheck, setDidCheck] = useState(false)
+  const [showVersionModal, setShowVersionModal] = useState(false)
+  const { startNextStep } = useNextStep();
+
+  const handleClose = () => setShowVersionModal(false)
+
+  useEffect(() => {
+    if (didCheck) return
+
+    const upgradeStatus = Settings.setup() // Check if they're a new user, if so set them up
+
+    if (upgradeStatus === SettingsSetupResult.TUTORIAL) {
+      waitForElement("#chart").then(() => startNextStep("tutorial"))
+    } else if (upgradeStatus === SettingsSetupResult.UPGRADE) {
+      setShowVersionModal(true)
+    }
+
+    setDidCheck(true)
+  }, [didCheck])
 
   const metrics = useMemo(() => {
     if (!actions) return null
@@ -171,8 +201,8 @@ export default function Home() {
   )
 
   return (
-    <div className="flex min-h-screen items-stretch justify-center bg-zinc-50 font-sans">
-      <main className="flex min-h-screen w-full flex-col gap-4 bg-white">
+    <div className="flex items-stretch justify-center bg-zinc-50 font-sans">
+      <main className="flex w-full flex-col gap-4 bg-white">
         <section className='w-full'>
           { streak !== null ? (
             <>
@@ -201,7 +231,7 @@ export default function Home() {
           )}
         </section>
 
-        <section className="w-full rounded-2xl max-h-2/3 h-80">
+        <section className="w-full rounded-2xl max-h-2/3 h-80" id="chart">
           { chartType === 'radar' && <FiveRadar
             data={metrics}
             highlightedMetric={highlightedMetric}
@@ -223,6 +253,7 @@ export default function Home() {
                 delta={dailyDeltas !== null ? dailyDeltas[key] : undefined}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
+                className={`metric-card-${key}`}
               />
             ))}
             <MetricCard
@@ -234,7 +265,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section>
+        { actions.length > 0 && <section>
           <h2 className="section-header">Insights</h2>
           <div className="flex flex-col gap-2">
             {insights.map(insight => (
@@ -252,13 +283,13 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </section>
+        </section> }
 
         { /*! BELOW THE FOLD BEYOND HERE !*/ }
 
-        <SectionDivider />
+        { actions.length > 0 && <SectionDivider /> }
 
-        <section>
+        { actions.length > 0 && <section>
           <h2 className='section-header mb-4!'>Quick Log</h2>
           <div>
             {Array.from(actionCountMap.entries())
@@ -277,13 +308,13 @@ export default function Home() {
                 />
               ))}
           </div>
-        </section>
+        </section> }
 
-        <SectionDivider />
+        { actions.length > 0 && <SectionDivider /> }
 
-        <section className="w-full">
+        { actions.length > 0 && <section className="w-full">
           <div className='w-full flex flex-col mb-2'>
-            <h2 className='section-header'>Recent Actions</h2>
+            {/* <h2 className='section-header'>Recent Actions</h2> */}
             <div className="w-full flex items-center justify-center gap-x-4">
               <button
                 className={`flex items-center justify-center gap-2 border-2 rounded-xl p-2 ${sortType === 'chrono' ? "opacity-100" : "opacity-50"} transition-opacity duration-500`}
@@ -318,10 +349,23 @@ export default function Home() {
               }
             )}
           </ActionCardList>
-        </section>
+        </section> }
 
         <SectionDivider />
+
+        <section className="w-full">
+          <div className='w-full flex flex-col mb-2'>
+            <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ quote }</blockquote>
+          </div>
+        </section>
       </main>
+      <LogModal
+        def={modal.actionToAdvancedLog}
+        isOpen={modal.logModalShowing}
+        onClose={() => trackingMethods.setLogModalShowing(false)}
+        onSubmit={trackingMethods.handleModalSubmit}
+      />
+      { showVersionModal && <VersionModal onClose={handleClose} /> }
     </div>
   );
 }

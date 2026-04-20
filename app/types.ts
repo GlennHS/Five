@@ -1,6 +1,6 @@
 import { TAG_COLOR_CLASSES } from "./constants/Colors"
 
-export const METRIC_KEYS = ["mind", "body", "work", "cash", "bond"] as const
+export const METRIC_KEYS = ["mind", "body", "cash", "work", "bond"] as const
 export const METRIC_LETTERS = {
   mind: "M",
   body: "B",
@@ -45,9 +45,12 @@ export interface SettingsConfig {
   firstLaunch: string | undefined
   decayRate: string | undefined
   preferedChart: string | undefined
+  wantsTutorial: string | undefined
 }
 
-export enum SettingsSetupResult { FIRSTTIME, UPGRADE, NONE }
+export enum SettingsSetupResult { TUTORIAL, UPGRADE, NONE }
+
+export type TutorialState = "not-started" | "action-logged" | "finished" | "skipped"
 
 /* #region DB Types */
 export interface TagDB {
