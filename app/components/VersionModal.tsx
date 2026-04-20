@@ -25,8 +25,8 @@ export default function VersionModal({ onClose }: VersionModalProps) {
             { CHANGELOG.map((entry, i) => (
               <div className="flex flex-col text-left" key={i}>
                 <h2 className="font-bold tracking-wide text-center"><span>[{ entry.date }]:</span> <span className={i === 0 ? "text-bond" : ""}>{ entry.version }</span></h2>
-                { entry.changes.map((change) => (
-                    <span><span className="font-semibold">{ change.type }</span> - <span className="italic">{ change.notes }</span></span>
+                { entry.changes.map((change, i) => (
+                    <span key={i}><span className="font-semibold">{ change.type }</span> - <span className="italic">{ change.notes }</span></span>
                 ))}
               </div>
             )) }
