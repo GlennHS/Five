@@ -6,8 +6,10 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AppProvider } from "./context/AppContext";
 import { useEffect, useState } from "react";
-import Settings from "./lib/settings";
 import { ToastProvider } from "./context/ToastContext";
+import { NextStep, NextStepProvider } from "nextstepjs";
+import steps from "./tour";
+import { Settings } from "./lib/settings";
 
 function FooterSpacer(){
   return (<div className="h-20"></div>)
@@ -29,23 +31,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isScrolling, setIsScrolling] = useState(false)
-  useEffect(() => Settings.setup(), [])
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolling(true)
+    let lastY = window.scrollY
 
-    const handleScrollEnd = () => {
-      setTimeout(() => setIsScrolling(false), 500)
-    }
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const diff = currentY - lastY;
 
-    window.addEventListener('scroll', handleScroll)
+      if (Math.abs(diff) < 5) return; // ignore tiny movements
+
+      if (currentY > lastY) {
+        setScrollDirection('down')
+      } else if (currentY < lastY) {
+        setScrollDirection('up')
+      }
+
+      lastY = currentY;
+    };
+    const handleScrollEnd = () => setIsScrolling(false)
+
+    window.addEventListener('scroll', handleScroll);
     window.addEventListener('scrollend', handleScrollEnd)
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('scrollend', handleScrollEnd)
     }
-  }, [])
+  }, []);
 
   return (
     <html lang="en" className={nunito.className}>
@@ -63,14 +77,23 @@ export default function RootLayout({
       <body>
         <div className="w-full flex flex-col justify-baseline items-center">
           <div className="max-w-3xl w-full p-4">
-            <AppProvider>
-              <ToastProvider>
-                {children}
-              </ToastProvider>
-            </AppProvider>
+            <NextStepProvider>
+              <AppProvider>
+                <ToastProvider>
+                  <NextStep
+                    steps={steps}
+                    onStart={() => Settings.set("wantsTutorial", "inProgress")}
+                    onComplete={() => Settings.set('wantsTutorial', 'false')}
+                    onSkip={() => Settings.set('wantsTutorial', 'false')}
+                  >
+                    { children }
+                  </NextStep>
+                </ToastProvider>
+              </AppProvider>
+            </NextStepProvider>
           </div>
         </div>
-        <Navbar pageScrolled={isScrolling}/>
+        <Navbar pageScrolled={isScrolling} scrollDirection={scrollDirection}/>
         <Footer />
         <FooterSpacer />
       </body>

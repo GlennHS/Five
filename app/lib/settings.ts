@@ -1,4 +1,6 @@
 import { VERSION_NUMBER } from "../constants/Constants";
+import { SettingsConfig, SettingsSetupResult } from "../types";
+import { keys } from "./utils";
 
 const defaultDecay = {
   mind: 2,
@@ -8,31 +10,26 @@ const defaultDecay = {
   bond: 2,
 };
 
-interface SettingsConfig {
-  version: string
-  firstLaunch: string
-  decayRate: string
-}
-
-const settingsDefaults: SettingsConfig = {
+export const settingsDefaults: SettingsConfig = {
   version: `${VERSION_NUMBER}`,
   firstLaunch: `${Date.now()}`,
   decayRate: JSON.stringify(defaultDecay),
+  preferedChart: 'bar',
+  wantsTutorial: "true",
 };
 
-function keys<T extends object>(obj: T): (keyof T)[] {
-  return Object.keys(obj) as (keyof T)[];
-}
-
-const Settings = {
+export const Settings = {
   currentVersion: VERSION_NUMBER,
 
-  setup(): void {
+  setup(): SettingsSetupResult {
     if (localStorage.getItem("firstLaunch") === null) {
       keys(settingsDefaults).forEach((key) => {
-        localStorage.setItem(key, settingsDefaults[key]);
+        settingsDefaults[key] !== undefined && localStorage.setItem(key, settingsDefaults[key]);
       });
-    } else this.upgrade()
+      return SettingsSetupResult.TUTORIAL
+    } else {
+      return this.upgrade()
+    }
   },
 
   get(key: keyof SettingsConfig): string {
@@ -40,29 +37,42 @@ const Settings = {
     return localStorage.getItem(key) ?? "";
   },
 
-  upgrade(): void {
+  getAll(): SettingsConfig {
+    let res = { ...settingsDefaults }
+    keys(settingsDefaults).forEach(k => res[k] = this.get(k))
+    return res
+  },
+
+  set(key: keyof SettingsConfig, val: string): void {
+    localStorage.setItem(key, val)
+  },
+
+  upgrade(): SettingsSetupResult {
     const clientVersion = localStorage.getItem("version");
-    
-    if (!clientVersion || clientVersion && clientVersion !== this.currentVersion) {
-      const currentSettings: Partial<SettingsConfig> = {};
+    const needsUpgrade = !clientVersion || clientVersion && clientVersion !== this.currentVersion
 
-      keys(settingsDefaults).forEach((key) => {
-        currentSettings[key] = localStorage.getItem(key) ?? "";
-      });
+    if (!needsUpgrade) return this.get('wantsTutorial') === 'true' ? SettingsSetupResult.TUTORIAL : SettingsSetupResult.NONE
 
-      keys(settingsDefaults).forEach((key) => {
-        localStorage.setItem(key, settingsDefaults[key]);
-      });
+    const currentSettings: Partial<SettingsConfig> = {};
+    // Set current settings to user's settings where we have them, if not create key with undefined
+    keys(settingsDefaults).forEach((key) => currentSettings[key] = localStorage.getItem(key) ?? undefined)
 
-      keys(currentSettings).forEach(key => currentSettings[key] !== undefined && localStorage.setItem(key, currentSettings[key]))
-    }
+    // Copy default values to LocalStorage
+    keys(settingsDefaults).forEach((key) => settingsDefaults[key] && localStorage.setItem(key, settingsDefaults[key]))
+
+    // For each non-blank currentSettings entry we copy that to LocalStorage
+    keys(currentSettings).forEach(key => currentSettings[key] !== undefined && localStorage.setItem(key, currentSettings[key]))
+
+    localStorage.setItem("version", VERSION_NUMBER) // Bump version number
+
+    if (this.get("wantsTutorial") === 'inProgress') this.set('wantsTutorial', 'true')
+
+    return this.get('wantsTutorial') === 'true' ? SettingsSetupResult.TUTORIAL : SettingsSetupResult.UPGRADE
   },
 
   reset(): void {
     keys(settingsDefaults).forEach((key) => {
-      localStorage.setItem(key, settingsDefaults[key]);
+      settingsDefaults[key] !== undefined && localStorage.setItem(key, settingsDefaults[key]);
     });
   },
 };
-
-export default Settings;

@@ -3,8 +3,9 @@
 import BackLink from "@/app/components/BackLink"
 import { useApp } from "@/app/context/AppContext"
 import { db } from "@/app/db"
-import Settings from "@/app/lib/settings"
+import { Settings } from "@/app/lib/settings"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const links = [
   {
@@ -16,15 +17,20 @@ const links = [
     title: "Edit Actions",
     href: "/settings/actions",
     description: "Manage action definitions"
+  },
+  {
+    title: "App Settings",
+    href: "/settings/user",
+    description: "Manage user settings"
   }
 ]
 
 export default function Page() {
   const { loadFromDB } = useApp()
+  const router = useRouter()
 
   const handleReset = async () => {
     if (confirm("Are you ABSOLUTELY SURE you want to RESET ALL YOUR DATA?")) {
-      console.log("We doin' it boyz")
       Settings.reset()
       await db.delete({disableAutoOpen: false})
       await db.open()
@@ -32,10 +38,15 @@ export default function Page() {
     }
   }
 
+  const handleTutorial = () => {
+    Settings.set('wantsTutorial', 'true')
+    router.push('/')
+  }
+
   return (
     <div>
       <BackLink />
-      <h1 style={{ marginBottom: 20 }}>Settings</h1>
+      <h1 className="my-4! section-header">Settings</h1>
 
       <div className="flex flex-col gap-y-4 w-full">
         {links.map(link => (
@@ -50,6 +61,12 @@ export default function Page() {
             </div>
           </Link>
         ))}
+        <button onClick={handleTutorial} className="p-4 rounded-2xl border border-mind bg-mind/20 w-full">
+          <div className="font-semibold">Tutorial</div>
+          <div className="opacity-60 text-sm">
+            Do the tutorial again?
+          </div>
+        </button>
         <button onClick={handleReset} className="p-4 rounded-2xl border border-red-600 bg-red-300 w-full">
           <div className="font-semibold">Reset Data</div>
           <div className="opacity-60 text-sm">

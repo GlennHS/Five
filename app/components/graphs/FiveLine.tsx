@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { LINE_DEFAULT_CONFIG } from "../../constants/DefaultChartConfig";
+import { defaultLineConfig } from "../../constants/DefaultChartConfig";
 import { CategoryScale, Chart, LinearScale, LineElement, PointElement } from "chart.js";
 
 type FiveLineGraphProps = {
@@ -11,8 +11,8 @@ type FiveLineGraphProps = {
 
 Chart.register(LinearScale, CategoryScale, LineElement, PointElement);
 
-export default function FiveLineGraph(props: FiveLineGraphProps) {
-  const [chartData, setChartData] = useState(LINE_DEFAULT_CONFIG);
+export default function FiveLine(props: FiveLineGraphProps) {
+  const [chartData, setChartData] = useState(defaultLineConfig);
 
   useEffect(() => {
     // Disabling as it's a run-once onload useEffect

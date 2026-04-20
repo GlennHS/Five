@@ -9,7 +9,7 @@ import { useApp } from '@/app/context/AppContext'
 
 import ActionCard from '@/app/components/actionCards/ActionCard'
 import BackLink from '@/app/components/BackLink'
-import FiveLineGraph from '@/app/components/graphs/FiveLineGraph'
+import FiveLine from '@/app/components/graphs/FiveLine'
 import LoadingSpinner from '@/app/components/LoadingSpinner'
 
 import actionAffectsMetric from '@/app/lib/actions/actionAffectsMetric'
@@ -80,7 +80,7 @@ export default function MetricPage({
           </h2>
 
           <div className="h-64 w-full">
-            <FiveLineGraph data={getMetricSeries(actions, actionDefinitions, metric, fromDate, toDate, 'day')} />
+            <FiveLine data={getMetricSeries(actions, actionDefinitions, metric, fromDate, toDate, 'day')} />
           </div>
         </section>
 
