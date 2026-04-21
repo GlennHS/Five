@@ -52,21 +52,23 @@ export default function Page() {
   useEffect(() => {
     const term = debouncedSearch.trim().toLowerCase()
     
-    const filteredDefs = actionDefinitions.filter(def => {
-      // search
-      const nameMatch = term ? def.name.toLowerCase().includes(term) : true
+    const filteredDefs = actionDefinitions
+      .filter(def => !def.archived)
+      .filter(def => {
+        // search
+        const nameMatch = term ? def.name.toLowerCase().includes(term) : true
 
-      // tag matching
-      let tagMatch = true
-      filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
+        // tag matching
+        let tagMatch = true
+        filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
 
-      // metric matching
-      let metricMatch = true
-      filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
-      // sort
+        // metric matching
+        let metricMatch = true
+        filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
+        // sort
 
-      return nameMatch && tagMatch && metricMatch
-    })
+        return nameMatch && tagMatch && metricMatch
+      })
 
     let sortedDefs = filteredDefs
 
