@@ -111,7 +111,7 @@ export default function Page() {
   }
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
+    <div className="max-w-xl mx-auto">
       <h1 className="text-xl font-semibold mb-6" id="track-title">Track Actions</h1>
 
       <div id="track-filters">
@@ -179,14 +179,14 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="flex flex-col mt-4" id="track-list">
+      <div className="flex flex-col gap-2 mt-4" id="track-list">
         {filteredActionDefinitions.map((def, i) => (
           <TrackCard
             key={def.id}
             def={def}
             onLog={trackingMethods.handleQuickLog}
             onAdvancedLog={trackingMethods.handleAdvancedLog}
-            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'} track-card`}
+            className={`${i % 2 === 0 ? 'bg-white' : 'bg-white'} track-card`}
           />
         ))}
       </div>
