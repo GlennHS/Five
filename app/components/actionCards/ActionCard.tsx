@@ -47,14 +47,22 @@ export default function ActionCard({ action, definition, quantity }: Props) {
           </div>
         )}
       </div>
-    <div className="flex justify-between items-center gap-4 whitespace-nowrap">
-      <div className="flex items-center justify-baseline gap-x-2">
-        <span className="truncate font-bold flex-1">
+    <div className="flex items-center gap-4 whitespace-nowrap">
+      {/* LEFT SIDE */}
+      <div className="flex items-center gap-x-2 min-w-0 flex-1">
+        <span className="truncate font-bold text-sm">
           {definition.name}
         </span>
-        { quantity !== undefined && quantity !== -1 && (<span className="italic">{`x${quantity}`}</span>)}
+
+        {quantity !== undefined && quantity !== -1 && (
+          <span className="italic shrink-0">{`x${quantity}`}</span>
+        )}
       </div>
-      <span className="text-sm opacity-70">{date}</span>
+
+      {/* RIGHT SIDE (date) */}
+      <span className="text-sm opacity-70 shrink-0">
+        {date}
+      </span>
     </div>
 
       {action.note && (
