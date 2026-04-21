@@ -140,7 +140,7 @@ export default function Page() {
         </div>
 
         {/* Metric Filtering */}
-        <div className="w-full flex gap-x-2 items-center justify-between rounded-xl py-1 text-sm my-2">
+        <div className="w-full flex flex-wrap gap-2 items-center justify-between rounded-xl py-1 text-sm my-2">
           {METRIC_KEYS.map(k => (
             <button
               key={k}
