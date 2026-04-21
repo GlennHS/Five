@@ -266,7 +266,7 @@ export default function Home() {
         </section>
 
         { actions.length > 0 && <section>
-          <h2 className="section-header">Insights</h2>
+          <SectionDivider text='Insights' />
           <div className="flex flex-col gap-2">
             {insights.map(insight => (
               <div
@@ -287,35 +287,33 @@ export default function Home() {
 
         { /*! BELOW THE FOLD BEYOND HERE !*/ }
 
-        { actions.length > 0 && <SectionDivider /> }
-
-        { actions.length > 0 && <section>
-          <h2 className='section-header mb-4!'>Quick Log</h2>
-          <div>
-            {Array.from(actionCountMap.entries())
-              .sort((a, b) => b[1] - a[1]) // sort by count desc
-              .slice(0, 5)
-              .map(m => actionDefinitions.find(d => d.id === m[0]))
-              .filter(d => d !== undefined)
-              .map((def, i) => (
-                <TrackCard
-                  key={def.id}
-                  def={def}
-                  onLog={trackingMethods.handleQuickLog}
-                  onAdvancedLog={trackingMethods.handleAdvancedLog}
-                  className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
-                  simple
-                />
-              ))}
-          </div>
-        </section> }
-
-        { actions.length > 0 && <SectionDivider /> }
+        { actions.length > 0 && (
+          <section>
+            <SectionDivider text='Quick Log' />
+            <div>
+              {Array.from(actionCountMap.entries())
+                .sort((a, b) => b[1] - a[1]) // sort by count desc
+                .slice(0, 5)
+                .map(m => actionDefinitions.find(d => d.id === m[0]))
+                .filter(d => d !== undefined)
+                .map((def, i) => (
+                  <TrackCard
+                    key={def.id}
+                    def={def}
+                    onLog={trackingMethods.handleQuickLog}
+                    onAdvancedLog={trackingMethods.handleAdvancedLog}
+                    className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
+                    simple
+                  />
+                ))}
+            </div>
+          </section>
+        )}
 
         { actions.length > 0 && <section className="w-full">
           <div className='w-full flex flex-col mb-2'>
-            {/* <h2 className='section-header'>Recent Actions</h2> */}
-            <div className="w-full flex items-center justify-center gap-x-4">
+            <SectionDivider text="Action Log"/>
+            <div className="w-full flex items-center justify-end gap-x-4">
               <button
                 className={`flex items-center justify-center gap-2 border-2 rounded-xl p-2 ${sortType === 'chrono' ? "opacity-100" : "opacity-50"} transition-opacity duration-500`}
                 onClick={() => setSortType('chrono')}
@@ -351,10 +349,9 @@ export default function Home() {
           </ActionCardList>
         </section> }
 
-        <SectionDivider />
-
-        <section className="w-full">
-          <div className='w-full flex flex-col mb-2'>
+        <section className="w-full mt-24">
+          <div className='w-full flex flex-col items-center mb-1'>
+            <SectionDivider />
             <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ quote }</blockquote>
           </div>
         </section>
