@@ -23,7 +23,7 @@ export default function ActionCardList({ children, className }: ActionCardListPr
         </span>
       ) : (
         childrenCount > 2 && (<span
-          className={`w-full text-center text-sm absolute top-1/2 bg-mind/50 py-2 border-y border-dashed border-black
+          className={`w-full text-center text-sm absolute z-50 top-1/2 bg-mind/50 py-2 border-y border-dashed border-black
           ${scrolled ? "transition-opacity duration-500 opacity-0" : ""}`}
         >
           Scroll to see more...
