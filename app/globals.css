@@ -44,6 +44,14 @@ html, body {
   touch-action: manipulation;
 }
 
+footer {
+  background-image: url("/images/Five-Footer.png");
+  background-color: rgba(255, 255, 255, 0.85);
+  background-blend-mode: lighten;
+  background-size: cover;
+  background-repeat: no-repeat
+}
+
 @layer utilities {
   .no-spinner::-webkit-outer-spin-button,
   .no-spinner::-webkit-inner-spin-button {

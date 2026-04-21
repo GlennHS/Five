@@ -95,7 +95,7 @@ export default function RootLayout({
         </div>
         <Navbar pageScrolled={isScrolling} scrollDirection={scrollDirection}/>
         <Footer />
-        <FooterSpacer />
+        {/* <FooterSpacer /> */}
       </body>
     </html>
   );
