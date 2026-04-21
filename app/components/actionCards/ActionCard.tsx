@@ -8,6 +8,8 @@ import { convertTimestampToDayJS, formatSmartDate } from "@/app/lib/dateTime"
 import { toSentenceCase } from "@/app/lib/utils"
 import getDominantMetric from "@/app/lib/metrics/getDominantMetric"
 import isActionNegative from "@/app/lib/actionDefinitions/isActionNegative"
+import { Trash2 } from "lucide-react"
+import { useApp } from "@/app/context/AppContext"
 
 type Props = {
   action: Action
@@ -16,6 +18,8 @@ type Props = {
 }
 
 export default function ActionCard({ action, definition, quantity }: Props) {
+  const { deleteAction } = useApp()
+
   const metricToCardClasses = (metric: MetricKey | null) => {
     let className = ""
     if (!metric) className += "border-total bg-total/10"
@@ -34,8 +38,21 @@ export default function ActionCard({ action, definition, quantity }: Props) {
 
   return (
     <div
-      className={`border-l-8 border rounded-r-lg p-3 mx-2 flex flex-col gap-1.5 ${cardClasses} ${isNegative && 'border-dashed'}`}
+      className={`border-l-8 border rounded-r-lg p-3 mx-2 relative flex flex-col gap-1.5 ${cardClasses} ${isNegative && 'border-dashed'}`}
+    >
+      <button
+        onClick={() => deleteAction(action.id)} // or whatever you call it
+        className="
+          absolute top-2 right-2
+          p-1 rounded-md
+          bg-slate-600 text-white
+          hover:bg-red-500
+          active:bg-red-600
+          transition-colors
+        "
       >
+        <Trash2 size={16} />
+      </button>
       <div className="flex gap-2 min-w-0">
         {visibleTags.map((t: Tag) => (
           <TagPill key={t.id} tag={t.name} color={t.colorKey} />
