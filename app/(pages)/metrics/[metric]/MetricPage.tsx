@@ -1,139 +1,54 @@
-'use client'
+"use client"
 
-import { useMemo, useState } from 'react'
+import MetricHeader from "@/app/components/Metrics/MetricHeader"
+import ScoreCard from "@/app/components/Metrics/ScoreCard"
+import WeeklySummary from "@/app/components/Metrics/WeeklySummary"
+import ActionsList from "@/app/components/Metrics/ActionsList"
+import AboutSection from "@/app/components/Metrics/AboutSection"
+import { Action, MetricKey } from "@/app/types"
+import { useApp } from "@/app/context/AppContext"
+import definitionAffectsMetric from "@/app/lib/actionDefinitions/definitionAffectsMetric"
+import { useMemo } from "react"
+import TrendChart from "@/app/components/Metrics/TrendChart"
+import { getAWeekAgo, getToday, getYesterday } from "@/app/lib/dateTime"
+import { calculateMetricsForRange } from "@/app/lib/metrics/calculateMetricsForRange"
+import LoadingSpinner from "@/app/components/LoadingSpinner"
 
-import { Action, MetricKey, TIME_GROUPS } from '@/app/types'
-import { Dayjs } from 'dayjs'
+export default function MetricPage({ metric }: { metric: MetricKey }) {
 
-import { useApp } from '@/app/context/AppContext'
-
-import ActionCard from '@/app/components/actionCards/ActionCard'
-import BackLink from '@/app/components/BackLink'
-import FiveLine from '@/app/components/graphs/FiveLine'
-import LoadingSpinner from '@/app/components/LoadingSpinner'
-
-import actionAffectsMetric from '@/app/lib/actions/actionAffectsMetric'
-import getMetricScore from '@/app/lib/metrics/getMetricScore'
-import getMetricSeries from '@/app/lib/metrics/getMetricSeries'
-import { getAWeekAgo, getToday } from '@/app/lib/dateTime'
-import { toSentenceCase } from '@/app/lib/utils'
-import ActionCardList from '@/app/components/actionCards/ActionCardList'
-import { METRIC_INFO_TEXT } from '@/app/constants/Constants'
-import { calculateMetricsForRange } from '@/app/lib/metrics/calculateMetricsForRange'
-
-export default function MetricPage({
-  metric,
-}: {
-  metric: MetricKey
-}) {
   const { actions, actionDefinitions, loading } = useApp()
 
-  const filteredActions: Action[] = useMemo<Action[]>((): Action[] => {
-    return actions.filter(action => {
-      const def = actionDefinitions.find(d => d.id === action.id) 
-      return def ? actionAffectsMetric(def, metric) : false
-    })
+  const relevantDefinitions: number[] = useMemo(() => {
+    return actionDefinitions.filter(def => definitionAffectsMetric(def, metric)).map(def => def.id)
+  }, [actionDefinitions])
+
+  const filteredActions: Action[] = useMemo(() => {
+    return actions.filter(a => relevantDefinitions.includes(a.actionId))
   }, [actions])
 
-  const totalDelta = useMemo(() => {
-    const metricsForWeek = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), false)
-    return metricsForWeek[metric]
-  }, [actions, actionDefinitions])
+  // TODO: wire these to your hooks
+  const score = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), true)[metric]
+  const dailyChange = calculateMetricsForRange(actions, actionDefinitions, getYesterday(), getToday(), false)[metric]
+  const weeklyChange = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), false)[metric]
+  const trendData = [12, 24, 28, 22, 25, 26, 15]
 
-  const [fromDate, setFromDate] = useState<Dayjs>(getAWeekAgo())
-  const [toDate, setToDate] = useState<Dayjs>(getToday())
-  const [timeGroup, setTimeGroup] = useState<string>("week")
-
-  if (loading) return (
-    <div className="p-6">
-      <LoadingSpinner />
-    </div>
-  )
+  if (loading) {
+    return <LoadingSpinner />
+  }
 
   return (
-    <main className="min-h-screen w-full bg-white px-4 py-6">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
-        <header className="flex flex-col gap-2">
-          <BackLink />
+    <div className="min-h-screen bg-gray-50 text-gray-900 px-4 py-6 space-y-6">
+      <MetricHeader metric={metric} />
 
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 uppercase">
-            {metric}
-          </h1>
+      <ScoreCard score={score} dailyChange={dailyChange} metric={metric}/>
 
-          <p className="text-sm text-slate-600">
-            Current score:
-            <span className="font-semibold text-slate-900">
-              {getMetricScore(actions, actionDefinitions, metric, fromDate, toDate)}
-            </span>
-          </p>
+      <WeeklySummary weeklyChange={weeklyChange} metric={metric} />
 
-          {totalDelta > 0 ? (
-            <span>Great work, this week your metric changed by +{totalDelta}!</span>
-          ) : (
-            <span>This week your metric changed by {totalDelta}</span>
-          )}
-        </header>
+      {/* <TrendChart data={trendData} weeklyChange={weeklyChange} /> */}
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">
-            Trend (this week)
-          </h2>
+      <ActionsList actions={filteredActions} metric={metric} />
 
-          <div className="h-64 w-full">
-            <FiveLine data={getMetricSeries(actions, actionDefinitions, metric, fromDate, toDate, 'day')} />
-          </div>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex gap-2 items-center justify-between">
-          {TIME_GROUPS.map(group => (
-            <button
-              key={group}
-              className={`rounded-lg border border-gray-600 px-3 py-1 transition-colors duration-500 ${timeGroup === group ? 'bg-gray-400' : 'bg-white'}`}
-              onClick={() => setTimeGroup(group)}
-            >
-              Past {toSentenceCase(group)}
-            </button>
-          ))}
-        </section>
-
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-semibold text-slate-700">
-            Recent Actions
-          </h2>
-
-          <ActionCardList>
-            {filteredActions
-              .slice()
-              .sort((a,b) => b.timestamp - a.timestamp)
-              .slice(0,50)
-              .map(action => {
-                const def = actionDefinitions.find(def => def.id === action.actionId)
-
-                if (def)
-                  return (
-                    <ActionCard
-                      key={action.id}
-                      action={action}
-                      definition={def}
-                    />
-                  )
-                else
-                  return
-              }
-            )}
-          </ActionCardList>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-          <h2 className="mb-1 text-base font-semibold text-slate-900">
-            About {metric}
-          </h2>
-
-          <p>
-            {METRIC_INFO_TEXT[metric]}
-          </p>
-        </section>
-      </section>
-    </main>
+      <AboutSection metric={metric} />
+    </div>
   )
 }

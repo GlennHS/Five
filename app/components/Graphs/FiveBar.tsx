@@ -15,11 +15,11 @@ type FiveBarGraphProps = {
 const METRIC_ORDER: MetricKey[] = ["mind", "body", "cash", "work", "bond"];
 
 const METRIC_RGB = [
-  METRIC_COLORS.MIND,
-  METRIC_COLORS.BODY,
-  METRIC_COLORS.CASH,
-  METRIC_COLORS.WORK,
-  METRIC_COLORS.BOND,
+  METRIC_COLORS.mind,
+  METRIC_COLORS.body,
+  METRIC_COLORS.cash,
+  METRIC_COLORS.work,
+  METRIC_COLORS.bond,
 ]
 
 Chart.register(LinearScale, CategoryScale, BarElement, Annotation)
@@ -37,18 +37,18 @@ export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveB
             ? [data.mind, data.body, data.cash, data.work, data.bond]
             : [30, 40, 56, 64, 88],
           backgroundColor: [
-            `rgba(${METRIC_COLORS.MIND}, 0.3)`,
-            `rgba(${METRIC_COLORS.BODY}, 0.3)`,
-            `rgba(${METRIC_COLORS.CASH}, 0.3)`,
-            `rgba(${METRIC_COLORS.WORK}, 0.3)`,
-            `rgba(${METRIC_COLORS.BOND}, 0.3)`,
+            `rgba(${METRIC_COLORS.mind}, 0.3)`,
+            `rgba(${METRIC_COLORS.body}, 0.3)`,
+            `rgba(${METRIC_COLORS.cash}, 0.3)`,
+            `rgba(${METRIC_COLORS.work}, 0.3)`,
+            `rgba(${METRIC_COLORS.bond}, 0.3)`,
           ],
           borderColor: [
-            `rgb(${METRIC_COLORS.MIND})`,
-            `rgb(${METRIC_COLORS.BODY})`,
-            `rgb(${METRIC_COLORS.CASH})`,
-            `rgb(${METRIC_COLORS.WORK})`,
-            `rgb(${METRIC_COLORS.BOND})`,
+            `rgb(${METRIC_COLORS.mind})`,
+            `rgb(${METRIC_COLORS.body})`,
+            `rgb(${METRIC_COLORS.cash})`,
+            `rgb(${METRIC_COLORS.work})`,
+            `rgb(${METRIC_COLORS.bond})`,
           ],
         },
       ],
@@ -102,11 +102,11 @@ export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveB
     if (!chartRef?.current) return;
 
     const baseBackgrounds = [
-      `rgba(${METRIC_COLORS.MIND}, 0.3)`,
-      `rgba(${METRIC_COLORS.BODY}, 0.3)`,
-      `rgba(${METRIC_COLORS.CASH}, 0.3)`,
-      `rgba(${METRIC_COLORS.WORK}, 0.3)`,
-      `rgba(${METRIC_COLORS.BOND}, 0.3)`,
+      `rgba(${METRIC_COLORS.mind}, 0.3)`,
+      `rgba(${METRIC_COLORS.body}, 0.3)`,
+      `rgba(${METRIC_COLORS.cash}, 0.3)`,
+      `rgba(${METRIC_COLORS.work}, 0.3)`,
+      `rgba(${METRIC_COLORS.bond}, 0.3)`,
     ];
 
     const nextBackgrounds = [...baseBackgrounds];

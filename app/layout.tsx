@@ -1,9 +1,9 @@
 'use client';
 
-import { Nunito, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
 import { AppProvider } from "./context/AppContext";
 import { useEffect, useState } from "react";
 import { ToastProvider } from "./context/ToastContext";
@@ -11,16 +11,7 @@ import { NextStep, NextStepProvider } from "nextstepjs";
 import steps from "./tour";
 import { Settings } from "./lib/settings";
 
-function FooterSpacer(){
-  return (<div className="h-20"></div>)
-}
-
-const nunito = Nunito({
-  weight: '400',
-  subsets: ['latin']
-})
-
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   weight: '400',
   subsets: ['latin']
 })
@@ -62,7 +53,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" className={nunito.className}>
+    <html lang="en" className={jakarta.className}>
       <head>
         <title>FIVE! Love Yourself</title>
         <meta
@@ -95,7 +86,6 @@ export default function RootLayout({
         </div>
         <Navbar pageScrolled={isScrolling} scrollDirection={scrollDirection}/>
         <Footer />
-        {/* <FooterSpacer /> */}
       </body>
     </html>
   );
