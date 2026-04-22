@@ -310,7 +310,7 @@ export default function Home() {
           </section>
         )}
 
-        { actions.length > 0 && <section className="w-full">
+        { actions.length > 0 && <section className="w-full" id="action-list">
           <div className='w-full flex flex-col mb-2'>
             <SectionDivider text="Action Log"/>
             <div className="w-full flex items-center justify-end gap-x-4">

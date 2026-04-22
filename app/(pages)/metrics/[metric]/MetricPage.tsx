@@ -12,10 +12,11 @@ import { useMemo } from "react"
 import TrendChart from "@/app/components/Metrics/TrendChart"
 import { getAWeekAgo, getToday, getYesterday } from "@/app/lib/dateTime"
 import { calculateMetricsForRange } from "@/app/lib/metrics/calculateMetricsForRange"
+import LoadingSpinner from "@/app/components/LoadingSpinner"
 
 export default function MetricPage({ metric }: { metric: MetricKey }) {
 
-  const { actions, actionDefinitions } = useApp()
+  const { actions, actionDefinitions, loading } = useApp()
 
   const relevantDefinitions: number[] = useMemo(() => {
     return actionDefinitions.filter(def => definitionAffectsMetric(def, metric)).map(def => def.id)
@@ -30,6 +31,10 @@ export default function MetricPage({ metric }: { metric: MetricKey }) {
   const dailyChange = calculateMetricsForRange(actions, actionDefinitions, getYesterday(), getToday(), false)[metric]
   const weeklyChange = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), false)[metric]
   const trendData = [12, 24, 28, 22, 25, 26, 15]
+
+  if (loading) {
+    return <LoadingSpinner />
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 px-4 py-6 space-y-6">

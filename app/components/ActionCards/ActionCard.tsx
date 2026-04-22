@@ -102,8 +102,8 @@ export default function ActionCard({ action, quantity, metricTheme, className }:
         {METRIC_KEYS.map(m => {
           if (definition[m])
           return (
-            <span key={m} className={`${!metricTheme ? "font-semibold" : metricTheme === m ? 'font-semibold' : 'font-normal'} text-${!metricTheme ? m : metricTheme === m ? m : "gray-600"} text-shadow-lg`}>
-              {toSentenceCase(m)} {definition[m] ? definition[m] > 0 ? "+" : "" : ""}{definition[m] ?? 0}
+            <span key={m} className={`${!metricTheme ? "font-semibold" : metricTheme === m ? 'font-semibold' : 'font-normal'} text-${!metricTheme ? m : metricTheme === m ? m : "gray-600"}`}>
+              {m.toUpperCase()} {definition[m] ? definition[m] > 0 ? "+" : "" : ""}{definition[m] ?? 0}
             </span>
           )}
         )}
