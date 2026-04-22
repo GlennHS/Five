@@ -5,10 +5,10 @@ import { Clock, Hash } from 'lucide-react';
 
 import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from './types';
 
-import ActionCard from './components/actionCards/ActionCard';
-import ActionCardList from './components/actionCards/ActionCardList';
-import FiveBar from './components/graphs/FiveBar';
-import FiveRadar from './components/graphs/FiveRadar';
+import ActionCard from './components/ActionCards/ActionCard';
+import ActionCardList from './components/ActionCards/ActionCardList';
+import FiveBar from './components/Graphs/FiveBar';
+import FiveRadar from './components/Graphs/FiveRadar';
 import LoadingSpinner from './components/LoadingSpinner';
 import LogModal from './components/LogModal';
 import MetricCard from './components/MetricCard';
@@ -201,7 +201,7 @@ export default function Home() {
   )
 
   return (
-    <div className="flex items-stretch justify-center bg-zinc-50 font-sans">
+    <div className="flex items-stretch justify-center bg-zinc-50">
       <main className="flex w-full flex-col gap-4 bg-white">
         <section className='w-full'>
           { streak !== null ? (
@@ -338,7 +338,6 @@ export default function Home() {
                     <ActionCard
                       key={action.id}
                       action={action}
-                      definition={def}
                       quantity={sortType === 'quantity' ? actionCountMap.get(def.id) : -1}
                     />
                   )

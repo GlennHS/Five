@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { Action, ActionDefinition, METRIC_KEYS } from "@/app/types"
-import actionAffectsMetric from "../lib/actions/actionAffectsMetric"
+import definitionAffectsMetric from "../lib/actionDefinitions/definitionAffectsMetric"
 
 type Insight = {
   id: string
@@ -45,7 +45,7 @@ function getNeglectedMetric(actions: Action[], defs: ActionDefinition[]) {
     const last = actions
       .filter(a => {
         const def = defs.find(d => d.id === a.actionId)
-        return def ? actionAffectsMetric(def, metric) : false
+        return def ? definitionAffectsMetric(def, metric) : false
       })
       .sort((a, b) => b.timestamp - a.timestamp)[0]
 
