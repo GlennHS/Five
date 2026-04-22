@@ -1,5 +1,5 @@
 import { MetricKey } from "@/app/types"
-import ActionCard from "../ActionCards/ActionCard"
+import ActionCard from "@/app/components/ActionCards/ActionCard"
 
 export default function ActionsList({
   actions,
