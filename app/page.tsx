@@ -3,17 +3,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, Hash } from 'lucide-react';
 
-import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from './types';
+import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from '@/app/types';
 
-import ActionCard from './components/actionCards/ActionCard';
-import ActionCardList from './components/actionCards/ActionCardList';
-import FiveBar from './components/graphs/FiveBar';
-import FiveRadar from './components/graphs/FiveRadar';
-import LoadingSpinner from './components/LoadingSpinner';
-import LogModal from './components/LogModal';
-import MetricCard from './components/MetricCard';
-import SectionDivider from './components/SectionDivider';
-import TrackCard from './components/TrackCard';
+import ActionCard from '@/app/components/ActionCards/ActionCard';
+import ActionCardList from '@/app/components/ActionCards/ActionCardList';
+import FiveBar from '@/app/components/Graphs/FiveBar';
+import FiveRadar from '@/app/components/Graphs/FiveRadar';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import LogModal from '@/app/components/LogModal';
+import MetricCard from '@/app/components/MetricCard';
+import SectionDivider from '@/app/components/SectionDivider';
+import TrackCard from '@/app/components/TrackCard';
 
 import {
   Chart as ChartJS,
@@ -26,20 +26,20 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { useApp } from './context/AppContext';
-import { useInsights } from './hooks/useInsights';
-import { useTracking } from './hooks/useTracking';
+import { useApp } from '@/app/context/AppContext';
+import { useInsights } from '@/app/hooks/useInsights';
+import { useTracking } from '@/app/hooks/useTracking';
 
-import { ActionController } from './controllers/ActionController';
+import { ActionController } from '@/app/controllers/ActionController';
 
-import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange';
-import calculateTotal from './lib/metrics/calculateTotal';
-import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
-import { Settings } from './lib/settings';
-import { pickRandom, waitForElement } from './lib/utils';
+import { calculateMetricsForRange } from '@/app/lib/metrics/calculateMetricsForRange';
+import calculateTotal from '@/app/lib/metrics/calculateTotal';
+import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from '@/app/lib/dateTime';
+import { Settings } from '@/app/lib/settings';
+import { pickRandom, waitForElement } from '@/app/lib/utils';
 
-import { randomQuotes } from './constants/Quotes';
-import VersionModal from './components/VersionModal';
+import { randomQuotes } from '@/app/constants/Quotes';
+import VersionModal from '@/app/components/VersionModal';
 import { useNextStep } from 'nextstepjs';
 
 ChartJS.register(
@@ -201,7 +201,7 @@ export default function Home() {
   )
 
   return (
-    <div className="flex items-stretch justify-center bg-zinc-50 font-sans">
+    <div className="flex items-stretch justify-center bg-zinc-50">
       <main className="flex w-full flex-col gap-4 bg-white">
         <section className='w-full'>
           { streak !== null ? (
@@ -338,7 +338,6 @@ export default function Home() {
                     <ActionCard
                       key={action.id}
                       action={action}
-                      definition={def}
                       quantity={sortType === 'quantity' ? actionCountMap.get(def.id) : -1}
                     />
                   )

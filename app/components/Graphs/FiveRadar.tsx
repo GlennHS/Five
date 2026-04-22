@@ -22,11 +22,11 @@ type FiveBarGraphProps = {
 const METRIC_ORDER: MetricKey[] = ["mind", "body", "cash", "work", "bond"];
 
 const METRIC_RGB = [
-  METRIC_COLORS.MIND,
-  METRIC_COLORS.BODY,
-  METRIC_COLORS.CASH,
-  METRIC_COLORS.WORK,
-  METRIC_COLORS.BOND,
+  METRIC_COLORS.mind,
+  METRIC_COLORS.body,
+  METRIC_COLORS.cash,
+  METRIC_COLORS.work,
+  METRIC_COLORS.bond,
 ]
 
 Chart.register(
