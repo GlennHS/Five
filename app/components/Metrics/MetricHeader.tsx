@@ -31,7 +31,7 @@ export default function MetricHeader({
           </h1>
 
           {metricInfo.subtitle && (
-            <p className="text-gray-700 text-xs mt-4">{metricInfo.subtitle}</p>
+            <p className="text-gray-700 text-xs mt-2">{metricInfo.subtitle}</p>
           )}
         </div>
 

@@ -23,7 +23,7 @@ export default function AboutSection({
         </h2>
 
         <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-          {metricInfo.subtitle}
+          {metricInfo.description}
         </p>
       </div>
     </div>
