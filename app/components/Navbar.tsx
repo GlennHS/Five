@@ -12,7 +12,7 @@ interface NavLinkProps {
 };
 
 interface NavbarProps {
-  pageScrolled: boolean,
+  pageScrolledToTop: boolean,
   scrollDirection: 'up' | 'down' | null
 }
 
@@ -28,15 +28,13 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
   );
 }
 
-export default function Navbar({ pageScrolled, scrollDirection } : NavbarProps) {
+export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarProps) {
   const [isScrollable, setIsScrollable] = useState(false)
-  const isVisible = !isScrollable  || scrollDirection === 'up'
+  const isVisible = !isScrollable || pageScrolledToTop || scrollDirection === 'up'
 
   useEffect(() => {
     const checkScrollable = () => {
-      const scrollable =
-        document.documentElement.scrollHeight > window.innerHeight;
-
+      const scrollable = document.documentElement.scrollHeight > window.innerHeight;
       setIsScrollable(scrollable);
     };
 
@@ -52,7 +50,7 @@ export default function Navbar({ pageScrolled, scrollDirection } : NavbarProps) 
 
   return (
     <>
-      <nav className={`w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 flex flex-col justify-center items-center transition-opacity duration-300 ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+      <nav className={`w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 z-50 flex flex-col justify-center items-center transition-opacity duration-300 ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
         <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
           <div className="w-full">
             <ul className="h-full flex items-center justify-between text-base gap-4">

@@ -1,9 +1,9 @@
 'use client';
 
 import { METRIC_KEYS } from "../../types";
-import MetricCardLarge from "../../components/MetricCardLarge";
+import MetricCardLarge from "@/app/components/MetricCardLarge";
 import { getAWeekAgo, getToday } from "../../lib/dateTime";
-import BackLink from "../../components/BackLink";
+import BackLink from "@/app/components/BackLink";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import { useApp } from "@/app/context/AppContext";
 import { useMemo } from "react";

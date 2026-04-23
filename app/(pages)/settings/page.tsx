@@ -1,6 +1,7 @@
 "use client"
 
 import BackLink from "@/app/components/BackLink"
+import SectionDivider from "@/app/components/SectionDivider"
 import { useApp } from "@/app/context/AppContext"
 import { db } from "@/app/db"
 import { Settings } from "@/app/lib/settings"
@@ -22,7 +23,12 @@ const links = [
     title: "App Settings",
     href: "/settings/user",
     description: "Manage user settings"
-  }
+  },
+  {
+    title: "FAQ Page",
+    href: "/settings/faq",
+    description: "See common questions and answers"
+  },
 ]
 
 export default function Page() {
@@ -46,7 +52,7 @@ export default function Page() {
   return (
     <div>
       <BackLink />
-      <h1 className="my-4! section-header">Settings</h1>
+      <h1 className="my-4! font-bold text-lg">Settings</h1>
 
       <div className="flex flex-col gap-y-4 w-full">
         {links.map(link => (
@@ -62,11 +68,12 @@ export default function Page() {
           </Link>
         ))}
         <button onClick={handleTutorial} className="p-4 rounded-2xl border border-mind bg-mind/20 w-full">
-          <div className="font-semibold">Tutorial</div>
-          <div className="opacity-60 text-sm">
+          <div className="font-semibold text-left">Tutorial</div>
+          <div className="opacity-60 text-sm text-left">
             Do the tutorial again?
           </div>
         </button>
+        <SectionDivider text="Danger Zone!"/>
         <button onClick={handleReset} className="p-4 rounded-2xl border border-red-600 bg-red-300 w-full">
           <div className="font-semibold">Reset Data</div>
           <div className="opacity-60 text-sm">

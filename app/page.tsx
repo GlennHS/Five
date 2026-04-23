@@ -3,17 +3,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, Hash } from 'lucide-react';
 
-import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from './types';
+import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from '@/app/types';
 
-import ActionCard from './components/actionCards/ActionCard';
-import ActionCardList from './components/actionCards/ActionCardList';
-import FiveBar from './components/graphs/FiveBar';
-import FiveRadar from './components/graphs/FiveRadar';
-import LoadingSpinner from './components/LoadingSpinner';
-import LogModal from './components/LogModal';
-import MetricCard from './components/MetricCard';
-import SectionDivider from './components/SectionDivider';
-import TrackCard from './components/TrackCard';
+import ActionCard from '@/app/components/ActionCards/ActionCard';
+import ActionCardList from '@/app/components/ActionCards/ActionCardList';
+import FiveBar from '@/app/components/Graphs/FiveBar';
+import FiveRadar from '@/app/components/Graphs/FiveRadar';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import LogModal from '@/app/components/LogModal';
+import MetricCard from '@/app/components/MetricCard';
+import SectionDivider from '@/app/components/SectionDivider';
+import TrackCard from '@/app/components/TrackCard';
 
 import {
   Chart as ChartJS,
@@ -26,20 +26,20 @@ import {
 } from 'chart.js';
 
 // Helpers
-import { useApp } from './context/AppContext';
-import { useInsights } from './hooks/useInsights';
-import { useTracking } from './hooks/useTracking';
+import { useApp } from '@/app/context/AppContext';
+import { useInsights } from '@/app/hooks/useInsights';
+import { useTracking } from '@/app/hooks/useTracking';
 
-import { ActionController } from './controllers/ActionController';
+import { ActionController } from '@/app/controllers/ActionController';
 
-import { calculateMetricsForRange } from './lib/metrics/calculateMetricsForRange';
-import calculateTotal from './lib/metrics/calculateTotal';
-import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from './lib/dateTime';
-import { Settings } from './lib/settings';
-import { pickRandom, waitForElement } from './lib/utils';
+import { calculateMetricsForRange } from '@/app/lib/metrics/calculateMetricsForRange';
+import calculateTotal from '@/app/lib/metrics/calculateTotal';
+import { convertTimestampToDayJS, getAWeekAgo, getToday, getYesterday } from '@/app/lib/dateTime';
+import { Settings } from '@/app/lib/settings';
+import { pickRandom, waitForElement } from '@/app/lib/utils';
 
-import { randomQuotes } from './constants/Quotes';
-import VersionModal from './components/VersionModal';
+import { randomQuotes } from '@/app/constants/Quotes';
+import VersionModal from '@/app/components/VersionModal';
 import { useNextStep } from 'nextstepjs';
 
 ChartJS.register(
@@ -201,7 +201,7 @@ export default function Home() {
   )
 
   return (
-    <div className="flex items-stretch justify-center bg-zinc-50 font-sans">
+    <div className="flex items-stretch justify-center bg-zinc-50">
       <main className="flex w-full flex-col gap-4 bg-white">
         <section className='w-full'>
           { streak !== null ? (
@@ -266,7 +266,7 @@ export default function Home() {
         </section>
 
         { actions.length > 0 && <section>
-          <h2 className="section-header">Insights</h2>
+          <SectionDivider text='Insights' />
           <div className="flex flex-col gap-2">
             {insights.map(insight => (
               <div
@@ -287,35 +287,33 @@ export default function Home() {
 
         { /*! BELOW THE FOLD BEYOND HERE !*/ }
 
-        { actions.length > 0 && <SectionDivider /> }
+        { actions.length > 0 && (
+          <section>
+            <SectionDivider text='Quick Log' />
+            <div>
+              {Array.from(actionCountMap.entries())
+                .sort((a, b) => b[1] - a[1]) // sort by count desc
+                .slice(0, 5)
+                .map(m => actionDefinitions.find(d => d.id === m[0]))
+                .filter(d => d !== undefined)
+                .map((def, i) => (
+                  <TrackCard
+                    key={def.id}
+                    def={def}
+                    onLog={trackingMethods.handleQuickLog}
+                    onAdvancedLog={trackingMethods.handleAdvancedLog}
+                    className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
+                    simple
+                  />
+                ))}
+            </div>
+          </section>
+        )}
 
-        { actions.length > 0 && <section>
-          <h2 className='section-header mb-4!'>Quick Log</h2>
-          <div>
-            {Array.from(actionCountMap.entries())
-              .sort((a, b) => b[1] - a[1]) // sort by count desc
-              .slice(0, 5)
-              .map(m => actionDefinitions.find(d => d.id === m[0]))
-              .filter(d => d !== undefined)
-              .map((def, i) => (
-                <TrackCard
-                  key={def.id}
-                  def={def}
-                  onLog={trackingMethods.handleQuickLog}
-                  onAdvancedLog={trackingMethods.handleAdvancedLog}
-                  className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
-                  simple
-                />
-              ))}
-          </div>
-        </section> }
-
-        { actions.length > 0 && <SectionDivider /> }
-
-        { actions.length > 0 && <section className="w-full">
+        { actions.length > 0 && <section className="w-full" id="action-list">
           <div className='w-full flex flex-col mb-2'>
-            {/* <h2 className='section-header'>Recent Actions</h2> */}
-            <div className="w-full flex items-center justify-center gap-x-4">
+            <SectionDivider text="Action Log"/>
+            <div className="w-full flex items-center justify-end gap-x-4">
               <button
                 className={`flex items-center justify-center gap-2 border-2 rounded-xl p-2 ${sortType === 'chrono' ? "opacity-100" : "opacity-50"} transition-opacity duration-500`}
                 onClick={() => setSortType('chrono')}
@@ -340,7 +338,6 @@ export default function Home() {
                     <ActionCard
                       key={action.id}
                       action={action}
-                      definition={def}
                       quantity={sortType === 'quantity' ? actionCountMap.get(def.id) : -1}
                     />
                   )
@@ -351,10 +348,9 @@ export default function Home() {
           </ActionCardList>
         </section> }
 
-        <SectionDivider />
-
-        <section className="w-full">
-          <div className='w-full flex flex-col mb-2'>
+        <section className="w-full mt-24">
+          <div className='w-full flex flex-col items-center mb-1'>
+            <SectionDivider />
             <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ quote }</blockquote>
           </div>
         </section>
