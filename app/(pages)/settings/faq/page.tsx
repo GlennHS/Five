@@ -17,8 +17,8 @@ export default function Page() {
         </div>
         <SectionDivider />
         <div className="flex flex-col gap-1">
-          <span className="font-bold text-bond">Q. Why can't I remove the "positive" and "negative" tags?</span>
-          <span className="italic text-gray-700">A. Because they drive some of the stylings and behaviours in the app. If there's enough demand I can make it so you can remove them though.</span>
+          <span className="font-bold text-bond">Q. Can I remove the "positive" and "negative" tags?</span>
+          <span className="italic text-gray-700">A. Yup! It won't break anything. I find them useful though for tracking "good" and "bad" behaviours/habits you want to maintain/break.</span>
         </div>
         <SectionDivider />
         <div className="flex flex-col gap-1">

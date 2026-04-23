@@ -110,8 +110,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/settings"
                   aria-label="Go to settings"
                 >
-                  <Cog className={pathname === '/settings' ? 'text-work' : ''}/>
-                  <span className={pathname === '/settings' ? 'text-work' : ''}>Settings</span>
+                  <Cog className={/\/settings/.test(pathname) ? 'text-work' : ''}/>
+                  <span className={/\/settings/.test(pathname) ? 'text-work' : ''}>Settings</span>
                 </NavLink>
               </li>
             </ul>
