@@ -1,4 +1,4 @@
-import { Coffee, Heart } from "lucide-react";
+import { Coffee, Github, Heart } from "lucide-react";
 import { VERSION_NUMBER } from "../constants/Constants";
 import Image from "next/image";
 
@@ -14,6 +14,18 @@ export default function Footer() {
           className="bg-pink-200 active:bg-pink-400 transition-colors duration-300 px-4 py-1 rounded-xl border text-xs font-bold flex gap-1 items-center"
         >
           <Heart size={16} strokeWidth={2} fill="#f77" />Support Me!
+        </a>
+        <a
+          href="https://github.com/GlennHS/Five/issues/new/choose"
+          target="_blank"
+          className="transition-colors duration-300 rounded-xl overflow-hidden border text-xs font-bold flex gap-1 items-center"
+        >
+          <Image
+            alt="GitHub logo"
+            src="/images/github-logo.png"
+            width={70}
+            height={28}
+          />
         </a>
       </div>
     </footer>
