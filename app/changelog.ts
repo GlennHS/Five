@@ -2,7 +2,7 @@ import { ChangelogEntry } from "./types";
 
 const CHANGELOG: ChangelogEntry[] = [
   {
-    date: "2026-04-20",
+    date: "2026-04-23",
     version: "v0.2.2-alpha",
     changes: [
       { type: "feat", notes: "Completely overhaul the metric pages!!!" },

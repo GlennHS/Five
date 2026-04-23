@@ -1,27 +1,31 @@
 'use client';
 
-import Link from 'next/link';
-import { ChartColumnIncreasing, ChevronUp, Cog, House, ListChecks } from 'lucide-react'
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+import { ChartColumnIncreasing, Cog, House, ListChecks } from 'lucide-react'
 
 interface NavLinkProps {
   href?: string
   ariaLabel?: string
   children?: React.ReactNode
-};
-
+  isActive?: boolean
+}
 interface NavbarProps {
   pageScrolledToTop: boolean,
   scrollDirection: 'up' | 'down' | null
 }
 
-function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
+function NavLink({ href = '#', ariaLabel, children, isActive }: NavLinkProps) {
   return (
     <Link
       href={href}
       aria-label={ariaLabel}
-      className="px-2 py-1 text-sm text-slate-900 hover:text-slate-700 flex flex-col items-center content-center"
+      className={`px-2 py-1 text-sm flex flex-col items-center content-center ${
+        isActive ? 'text-pink-500' : 'text-slate-900 hover:text-slate-700'
+      }`}
     >
       {children}
     </Link>
@@ -29,6 +33,8 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
 }
 
 export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarProps) {
+  const pathname = usePathname();
+
   const [isScrollable, setIsScrollable] = useState(false)
   const isVisible = !isScrollable || pageScrolledToTop || scrollDirection === 'up'
 
@@ -59,8 +65,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/"
                   aria-label="Go to home"
                 >
-                  <House />
-                  <span>Home</span>
+                  <House className={pathname === '/' ? 'text-mind' : ''} />
+                  <span className={pathname === '/' ? 'text-mind' : ''}>Home</span>
                 </NavLink>
               </li>
 
@@ -69,8 +75,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/track"
                   aria-label="Go to track"
                 >
-                  <ListChecks />
-                  <span>Track</span>
+                  <ListChecks className={pathname === '/track' ? 'text-body' : ''}/>
+                  <span className={pathname === '/track' ? 'text-body' : ''}>Track</span>
                 </NavLink>
               </li>
 
@@ -94,8 +100,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/metrics"
                   aria-label="Go to metrics"
                 >
-                  <ChartColumnIncreasing />
-                  <span>Metrics</span>
+                  <ChartColumnIncreasing className={pathname === '/metrics' ? 'text-cash' : ''}/>
+                  <span className={pathname === '/metrics' ? 'text-cash' : ''}>Metrics</span>
                 </NavLink>
               </li>
 
@@ -104,8 +110,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/settings"
                   aria-label="Go to settings"
                 >
-                  <Cog />
-                  <span>Settings</span>
+                  <Cog className={pathname === '/settings' ? 'text-work' : ''}/>
+                  <span className={pathname === '/settings' ? 'text-work' : ''}>Settings</span>
                 </NavLink>
               </li>
             </ul>
