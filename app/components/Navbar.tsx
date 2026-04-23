@@ -100,8 +100,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/metrics"
                   aria-label="Go to metrics"
                 >
-                  <ChartColumnIncreasing className={pathname === '/metrics' ? 'text-cash' : ''}/>
-                  <span className={pathname === '/metrics' ? 'text-cash' : ''}>Metrics</span>
+                  <ChartColumnIncreasing className={/\/metrics/.test(pathname) ? 'text-cash' : ''}/>
+                  <span className={/\/metrics/.test(pathname) ? 'text-cash' : ''}>Metrics</span>
                 </NavLink>
               </li>
 
