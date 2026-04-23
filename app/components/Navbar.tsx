@@ -12,7 +12,7 @@ interface NavLinkProps {
 };
 
 interface NavbarProps {
-  pageScrolled: boolean,
+  pageScrolledToTop: boolean,
   scrollDirection: 'up' | 'down' | null
 }
 
@@ -28,15 +28,13 @@ function NavLink({ href = '#', ariaLabel, children }: NavLinkProps) {
   );
 }
 
-export default function Navbar({ pageScrolled, scrollDirection } : NavbarProps) {
+export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarProps) {
   const [isScrollable, setIsScrollable] = useState(false)
-  const isVisible = !isScrollable  || scrollDirection === 'up'
+  const isVisible = !isScrollable || pageScrolledToTop || scrollDirection === 'up'
 
   useEffect(() => {
     const checkScrollable = () => {
-      const scrollable =
-        document.documentElement.scrollHeight > window.innerHeight;
-
+      const scrollable = document.documentElement.scrollHeight > window.innerHeight;
       setIsScrollable(scrollable);
     };
 

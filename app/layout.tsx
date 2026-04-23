@@ -21,8 +21,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isScrolling, setIsScrolling] = useState(false)
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
+  const [scrolledToTop, setScrolledToTop] = useState<boolean>(true);
 
   useEffect(() => {
     let lastY = window.scrollY
@@ -41,7 +41,7 @@ export default function RootLayout({
 
       lastY = currentY;
     };
-    const handleScrollEnd = () => setIsScrolling(false)
+    const handleScrollEnd = () => setScrolledToTop(window.scrollY === 0)
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('scrollend', handleScrollEnd)
@@ -84,7 +84,7 @@ export default function RootLayout({
             </NextStepProvider>
           </div>
         </div>
-        <Navbar pageScrolled={isScrolling} scrollDirection={scrollDirection}/>
+        <Navbar pageScrolledToTop={scrolledToTop} scrollDirection={scrollDirection}/>
         <Footer />
       </body>
     </html>
