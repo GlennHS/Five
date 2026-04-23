@@ -52,21 +52,23 @@ export default function Page() {
   useEffect(() => {
     const term = debouncedSearch.trim().toLowerCase()
     
-    const filteredDefs = actionDefinitions.filter(def => {
-      // search
-      const nameMatch = term ? def.name.toLowerCase().includes(term) : true
+    const filteredDefs = actionDefinitions
+      .filter(def => !def.archived)
+      .filter(def => {
+        // search
+        const nameMatch = term ? def.name.toLowerCase().includes(term) : true
 
-      // tag matching
-      let tagMatch = true
-      filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
+        // tag matching
+        let tagMatch = true
+        filterTags.forEach(t => { tagMatch = tagMatch && def.tags.find(tag => tag === t) !== undefined })
 
-      // metric matching
-      let metricMatch = true
-      filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
-      // sort
+        // metric matching
+        let metricMatch = true
+        filterMetrics.forEach(metric => metricMatch = metricMatch && def[metric] !== null && def[metric] !== 0)
+        // sort
 
-      return nameMatch && tagMatch && metricMatch
-    })
+        return nameMatch && tagMatch && metricMatch
+      })
 
     let sortedDefs = filteredDefs
 
@@ -109,7 +111,7 @@ export default function Page() {
   }
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
+    <div className="max-w-xl mx-auto">
       <h1 className="text-xl font-semibold mb-6" id="track-title">Track Actions</h1>
 
       <div id="track-filters">
@@ -138,7 +140,7 @@ export default function Page() {
         </div>
 
         {/* Metric Filtering */}
-        <div className="w-full flex gap-x-2 items-center justify-between rounded-xl py-1 text-sm my-2">
+        <div className="w-full flex flex-wrap gap-2 items-center justify-between rounded-xl py-1 text-sm my-2">
           {METRIC_KEYS.map(k => (
             <button
               key={k}
@@ -177,14 +179,14 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="flex flex-col mt-4" id="track-list">
+      <div className="flex flex-col gap-2 mt-4" id="track-list">
         {filteredActionDefinitions.map((def, i) => (
           <TrackCard
             key={def.id}
             def={def}
             onLog={trackingMethods.handleQuickLog}
             onAdvancedLog={trackingMethods.handleAdvancedLog}
-            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-300'} ${i === 0 && 'border-t-2'} track-card`}
+            className={`${i % 2 === 0 ? 'bg-white' : 'bg-white'} track-card`}
           />
         ))}
       </div>

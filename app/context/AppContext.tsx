@@ -21,6 +21,7 @@ type AppState = {
   updateActionDefinition: (def: ActionDefinitionDB) => Promise<void>
   archiveActionDefinition: (id: number) => Promise<void>
   unarchiveActionDefinition: (id: number) => Promise<void>
+  deleteAction: (id: number) => Promise<void>
   deleteActionDefinition: (id: number) => Promise<void>
   addTag: (def: Omit<Tag, 'id'>) => Promise<void>
   updateTag: (def: Tag) => Promise<void>
@@ -107,6 +108,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActionDefinitions(prev => [...prev.map(d=>d.id===id ? {...d, archived: false} : d)])
   }
 
+  async function deleteAction(id: number) {
+    ActionController.delete(id)
+    setActions(prev => [...prev.filter(act=>act.id !== id)])
+  }
+
   async function deleteActionDefinition(id: number) {
     ActionDefinitionController.delete(id)
     setActionDefinitions(prev => [...prev.filter(def=>def.id !== id)])
@@ -162,6 +168,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           updateActionDefinition,
           archiveActionDefinition,
           unarchiveActionDefinition,
+          deleteAction,
           deleteActionDefinition,
           addTag,
           updateTag,

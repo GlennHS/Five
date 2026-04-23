@@ -90,5 +90,6 @@ I welcome contributions to FIVE as long as you adhere to the following:
 - Explain WHY you're doing something
 - Link to issues where appropriate
 - Keep the README in mind (tone, ethos, etc)
+- Use the Conventional Commits specification (feat|fix|docs|style|refactor|test|chore)
 
 I love FIVE, it's my passion project so I want to make sure any code coming into it is good but likewise I know I'm far from infallible and some of the code I've written is doubtless suboptimal so if you know a better way, respectfully call it out and I'll take a look!

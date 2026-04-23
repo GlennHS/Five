@@ -36,12 +36,19 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 html, body {
   overscroll-behavior: none;
   touch-action: manipulation;
+}
+
+footer {
+  background-image: url("/images/Five-Footer.png");
+  background-color: rgba(255, 255, 255, 0.85);
+  background-blend-mode: lighten;
+  background-size: cover;
+  background-repeat: no-repeat
 }
 
 @layer utilities {
@@ -53,10 +60,6 @@ html, body {
 
   .no-spinner {
     -moz-appearance: textfield;
-  }
-
-  .section-header {
-    @apply w-full mb-2 text-lg font-semibold border-l-8 border-bond pl-4 bg-gray-100 px-1;
   }
 }
 

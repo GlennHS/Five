@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useRef, useState } from "react"
-import Toast from "../components/Toast"
+import Toast from "@/app/components/Toast"
 
 type ToastContextType = {
   showToast: (text: string, duration?: number) => void
