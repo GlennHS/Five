@@ -14,7 +14,7 @@ export default function Page() {
   const { showToast } = useToast()
   const [settings, setSettings] = useState<SettingsConfig>(settingsDefaults)
 
-  const { acceptedAnalytics, setAcceptedAnalytics } = useConsent()
+  const { acceptedAnalytics, updateConsent } = useConsent()
 
   const handleChange = (sKey: keyof SettingsConfig, sVal: string) => {
     Settings.set(sKey, sVal)
@@ -72,7 +72,7 @@ export default function Page() {
 
         <div className="flex bg-gray-100 rounded-xl p-1 border border-gray-300">
           <button
-            onClick={() => setAcceptedAnalytics(true)}
+            onClick={() => updateConsent(true)}
             className={`
               flex items-center justify-center px-3 py-1 rounded-lg transition
               ${acceptedAnalytics === true
@@ -84,7 +84,7 @@ export default function Page() {
           </button>
 
           <button
-            onClick={() => setAcceptedAnalytics(false)}
+            onClick={() => updateConsent(false)}
             className={`
               flex items-center justify-center px-3 py-1 rounded-lg transition
               ${acceptedAnalytics === false

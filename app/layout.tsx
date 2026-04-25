@@ -69,10 +69,10 @@ export default function RootLayout({
       <body>
         <div className="w-full flex flex-col justify-baseline items-center">
           <div className="max-w-3xl w-full p-4">
+          <ToastProvider>
             <ConsentProvider>
               <NextStepProvider>
                 <AppProvider>
-                  <ToastProvider>
                     <NextStep
                       steps={steps}
                       onStart={() => Settings.set("wantsTutorial", "inProgress")}
@@ -82,10 +82,10 @@ export default function RootLayout({
                       <AnalyticsBanner />
                       { children }
                     </NextStep>
-                  </ToastProvider>
                 </AppProvider>
               </NextStepProvider>
             </ConsentProvider>
+          </ToastProvider>
           </div>
         </div>
         <Navbar pageScrolledToTop={scrolledToTop} scrollDirection={scrollDirection}/>

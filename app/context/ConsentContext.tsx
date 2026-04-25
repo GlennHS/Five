@@ -1,11 +1,12 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect } from 'react'
+import { useToast } from './ToastContext'
 
 type Consent = {
   acceptedAnalytics: boolean | null
   loadingConsent: boolean
-  setAcceptedAnalytics: (val: boolean) => void
+  updateConsent: (val: boolean) => void
 }
 
 const ConsentContext = createContext<Consent | null>(null)
@@ -13,6 +14,13 @@ const ConsentContext = createContext<Consent | null>(null)
 export function ConsentProvider({ children }: { children: React.ReactNode }) {
   const [acceptedAnalytics, setAcceptedAnalytics] = useState<boolean | null>(null)
   const [loadingConsent, setloadingConsent] = useState(true)
+
+  const { showToast } = useToast()
+
+  const updateConsent = (consent: boolean): void => {
+    setAcceptedAnalytics(consent)
+    showToast(consent ? 'Thank you for allowing analytics <3' : 'You have opted out of analytics.')
+  }
 
   // hydrate from cookie on mount
   useEffect(() => {
@@ -29,7 +37,7 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
   }, [acceptedAnalytics])
 
   return (
-    <ConsentContext.Provider value={{ acceptedAnalytics, loadingConsent, setAcceptedAnalytics }}>
+    <ConsentContext.Provider value={{ acceptedAnalytics, loadingConsent, updateConsent }}>
       {children}
     </ConsentContext.Provider>
   )
