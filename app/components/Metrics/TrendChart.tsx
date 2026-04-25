@@ -2,12 +2,12 @@
 
 import { MetricKey } from "@/app/types"
 import { Line } from "react-chartjs-2"
-import { CategoryScale, Chart, LinearScale, LineElement, PointElement, Tick } from 'chart.js';
+import { CategoryScale, Chart, Filler, LinearScale, LineElement, PointElement, Tick } from 'chart.js';
 import { METRIC_COLORS } from "@/app/constants/Colors";
 import { getRollingWeekLabels } from "@/app/lib/dateTime";
 import { useInViewAnimation } from "../useInViewAnimation";
 
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement);
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Filler);
 
 export default function TrendChart({
   data,
@@ -37,6 +37,7 @@ export default function TrendChart({
   const options = {
     plugins: {
       legend: { display: false },
+      annotations: false,
     },
     scales: {
       x: {
