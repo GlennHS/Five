@@ -22,7 +22,7 @@ const METRIC_RGB = [
   METRIC_COLORS.bond,
 ]
 
-Chart.register(LinearScale, CategoryScale, BarElement, Annotation)
+Chart.register(LinearScale, CategoryScale, BarElement)
 
 export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
   const chartRef = useRef<Chart<'bar'> | null>(null);
@@ -137,6 +137,7 @@ export default function FiveBar({data, highlightedMetric, onMetricChange}: FiveB
         ref={chartRef}
         data={chartData}
         options={chartOptions}
+        plugins={[Annotation]}
       />
     </div>
   )
