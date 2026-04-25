@@ -1,8 +1,14 @@
+import { NextStep, useNextStep } from "nextstepjs"
+
 interface Props {
   consentHandler: (consentGiven: boolean) => void
 }
 
 export default function AnalyticsBanner({ consentHandler } : Props) {
+  const { isNextStepVisible } = useNextStep()
+
+  if (isNextStepVisible) return;
+
   return (
     <div className="w-full flex items-center justify-center text-center fixed top-0 left-0 backdrop-blur-lg">
       <div className="flex items-center justify-around gap-2 max-w-3xl w-full bg-bond/20 text-black border-b-2 border-bond shadow-2xl px-2 py-4 z-50">
