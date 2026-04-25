@@ -10,6 +10,8 @@ import { ToastProvider } from "./context/ToastContext";
 import { NextStep, NextStepProvider } from "nextstepjs";
 import steps from "./tour";
 import { Settings } from "./lib/settings";
+import AnalyticsBanner from "./components/AnalyticsBanner";
+import { ConsentProvider } from "./context/ConsentContext";
 
 const jakarta = Plus_Jakarta_Sans({
   weight: '400',
@@ -67,20 +69,23 @@ export default function RootLayout({
       <body>
         <div className="w-full flex flex-col justify-baseline items-center">
           <div className="max-w-3xl w-full p-4">
-            <NextStepProvider>
-              <AppProvider>
-                <ToastProvider>
-                  <NextStep
-                    steps={steps}
-                    onStart={() => Settings.set("wantsTutorial", "inProgress")}
-                    onComplete={() => Settings.set('wantsTutorial', 'false')}
-                    onSkip={() => Settings.set('wantsTutorial', 'false')}
-                  >
-                    { children }
-                  </NextStep>
-                </ToastProvider>
-              </AppProvider>
-            </NextStepProvider>
+          <ToastProvider>
+            <ConsentProvider>
+              <NextStepProvider>
+                <AppProvider>
+                    <NextStep
+                      steps={steps}
+                      onStart={() => Settings.set("wantsTutorial", "inProgress")}
+                      onComplete={() => Settings.set('wantsTutorial', 'false')}
+                      onSkip={() => Settings.set('wantsTutorial', 'false')}
+                    >
+                      <AnalyticsBanner />
+                      { children }
+                    </NextStep>
+                </AppProvider>
+              </NextStepProvider>
+            </ConsentProvider>
+          </ToastProvider>
           </div>
         </div>
         <Navbar pageScrolledToTop={scrolledToTop} scrollDirection={scrollDirection}/>
