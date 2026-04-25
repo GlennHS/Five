@@ -9,12 +9,16 @@ import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionCo
 import { TagController } from "@/app/controllers/TagController"
 import hydrateActionDefinitions from "../lib/actionDefinitions/hydrateActionDefinitions"
 import hydrateActions from "../lib/actions/hydrateActions"
+import buildActionMap from "../lib/actions/buildActionMap"
+
+type ActionMap = Record<string, ActionDefinition>
 
 type AppState = {
   actions: Action[]
   actionDefinitions: ActionDefinition[]
   tags: Tag[]
   loading: boolean
+  actionMap: ActionMap
 
   addAction: (actionId: number, timestamp?: number, note?: string) => Promise<void>
   addActionDefinition: (def: Omit<ActionDefinitionDB, 'id'>) => Promise<void>
@@ -31,11 +35,13 @@ type AppState = {
 
 const AppContext = createContext<AppState | null>(null)
 
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [actions, setActions] = useState<Action[]>([])
   const [actionDefinitions, setActionDefinitions] = useState<ActionDefinition[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(true)
+  const [actionMap, setActionMap] = useState<ActionMap>({})
 
   async function addAction(actionId: number, timestamp = Date.now(), note = "") {
     const id: number = await ActionController.create({
@@ -151,6 +157,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }
 
+  useEffect(() => {
+    setActionMap(buildActionMap(actionDefinitions))
+  }, [actionDefinitions])
+
   // initial load
   useEffect(() => {
     loadFromDB()
@@ -163,6 +173,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           actionDefinitions,
           tags,
           loading,
+          actionMap,
           addAction,
           addActionDefinition,
           updateActionDefinition,

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { Action, MetricKey } from "@/app/types"
+import { Action, DailyMetric, MetricKey } from "@/app/types"
 import { useApp } from "@/app/context/AppContext"
 import AboutSection from "@/app/components/Metrics/AboutSection"
 import ActionsList from "@/app/components/Metrics/ActionsList"
@@ -10,9 +10,11 @@ import MetricHeader from "@/app/components/Metrics/MetricHeader"
 import ScoreCard from "@/app/components/Metrics/ScoreCard"
 import TrendChart from "@/app/components/Metrics/TrendChart"
 import WeeklySummary from "@/app/components/Metrics/WeeklySummary"
-import { calculateMetricsForRange } from "@/app/lib/metrics/calculateMetricsForRange"
 import definitionAffectsMetric from "@/app/lib/actionDefinitions/definitionAffectsMetric"
-import { getAWeekAgo, getToday, getYesterday } from "@/app/lib/dateTime"
+import { getAWeekAgo, getToday, isDateBetween } from "@/app/lib/dateTime"
+import dayjs from "dayjs"
+import { getDailyMetric } from "@/app/lib/metrics/getDailyMetric"
+import { applyBonusToMetric } from "@/app/lib/metrics/applyBonusToMetric"
 
 export default function MetricPage({ metric }: { metric: MetricKey }) {
 
@@ -23,14 +25,32 @@ export default function MetricPage({ metric }: { metric: MetricKey }) {
   }, [actionDefinitions])
 
   const filteredActions: Action[] = useMemo(() => {
-    return actions.filter(a => relevantDefinitions.includes(a.actionId))
+    return actions
+      .filter(a => isDateBetween(dayjs(a.timestamp), getToday(), getAWeekAgo()))
+      .filter(a => relevantDefinitions.includes(a.actionId))
   }, [actions])
 
-  // TODO: wire these to your hooks
-  const score = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), true)[metric]
-  const dailyChange = calculateMetricsForRange(actions, actionDefinitions, getYesterday(), getToday(), false)[metric]
-  const weeklyChange = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), false)[metric]
-  const trendData = [12, 24, 28, 22, 25, 26, 15]
+  let metricsForWeek: DailyMetric[] = []
+
+  for (let i = 0; i < 7; i++) {
+    metricsForWeek.push(getDailyMetric(filteredActions, actionDefinitions, metric, getToday().subtract(6 - i, 'days')))
+  }
+
+  // const score = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), true)[metric]
+  const score = applyBonusToMetric(metricsForWeek.map((m:DailyMetric) => m.value).reduce((a,b) => a + b))
+  const dailyChange = metricsForWeek[metricsForWeek.length - 1].value
+  const weeklyChange = metricsForWeek.map((m:DailyMetric) => m.value).reduce((a,b) => a + b)
+  const trendData = () => {
+    const out: number[] = []
+    let runningTotal: number = 0
+
+    metricsForWeek.forEach(m => {
+      runningTotal += m.value
+      out.push(applyBonusToMetric(runningTotal))
+    })
+
+    return out
+  }
 
   if (loading) {
     return <LoadingSpinner />
@@ -44,7 +64,7 @@ export default function MetricPage({ metric }: { metric: MetricKey }) {
 
       <WeeklySummary weeklyChange={weeklyChange} metric={metric} />
 
-      {/* <TrendChart data={trendData} weeklyChange={weeklyChange} /> */}
+      <TrendChart data={trendData()} weeklyChange={weeklyChange} metric={metric} />
 
       <ActionsList actions={filteredActions} metric={metric} />
 

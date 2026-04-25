@@ -61,3 +61,13 @@ export const formatSmartDate = (d: Dayjs): string => {
 
 export const dateToHumanString = (d: Date): string => d.toLocaleString()
 export const getDaysSinceDate = (from: Dayjs, to: Dayjs = getToday()): number => Math.abs(from.diff(to, 'day'))
+
+export const getRollingWeekLabels = (
+  date: Dayjs = getToday()
+): string[] => {
+  const start = date.subtract(6, "day")
+
+  return Array.from({ length: 7 }, (_, i) =>
+    start.add(i, "day").format("ddd")
+  )
+}

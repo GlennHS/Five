@@ -1,6 +1,6 @@
 import { MetricKey } from "@/app/types"
 import { Star } from "lucide-react"
-import { useInViewAnimation } from "@/app/components/useInViewAnimation";
+import { useInViewAnimation } from "../useInViewAnimation";
 import { METRIC_COLORS } from "@/app/constants/Colors"
 
 
@@ -22,22 +22,20 @@ export default function WeeklySummary({
       }`}
     >
       {/* Icon */}
-      <div className={`text-${metric} text-xl`}>
+      {weeklyChange > 0 && <div className={`text-${metric} text-xl`}>
         <Star fill={`rgb(${METRIC_COLORS[metric]})`}/>
-      </div>
+      </div> }
 
       {/* Text */}
-      <p className="text-sm text-gray-700">
+      <p className="text-sm text-gray-700 text-center w-full">
         {isPositive ? "Great work, t" : 'T'}his week your metric changed by{" "}
         <span
           className={`font-semibold ${
             isPositive ? `text-${metric}` : "text-gray-600"
           }`}
         >
-          {isPositive ? "+" : ""}
-          {weeklyChange}
+          {isPositive ? `+${weeklyChange}!` : `${weeklyChange}.`}
         </span>
-        !
       </p>
     </div>
   )
