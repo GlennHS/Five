@@ -60,7 +60,6 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
-        <link rel="apple-touch-icon" sizes="256x256" href="/images/icons/five-app-icon-256.png" />
         <link rel="apple-touch-icon" sizes="128x128" href="/images/icons/five-app-icon-128.png" />
         <link rel="apple-touch-icon" sizes="64x64" href="/images/icons/five-app-icon-64.png" />
         <link rel="icon" href="/images/icons/five-icon-256.png" sizes="any" />
