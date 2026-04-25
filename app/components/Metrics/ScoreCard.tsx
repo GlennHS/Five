@@ -1,4 +1,5 @@
 import { MetricKey } from "@/app/types"
+import { useInViewAnimation } from "@/app/components/useInViewAnimation";
 
 export default function ScoreCard({
   score,
@@ -9,8 +10,15 @@ export default function ScoreCard({
   dailyChange: number
   metric: MetricKey
 }) {
+  const { ref, isVisible } = useInViewAnimation<HTMLDivElement>();
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border p-4 grid grid-cols-2 gap-4">
+    <div
+      ref={ref}
+      className={`bg-white rounded-2xl shadow-sm border p-4 grid grid-cols-2 gap-4 transition-all duration-700 delay-200 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+    >
       <div className="text-center">
         <p className="text-sm text-gray-500">Current score</p>
         <p className={`text-4xl font-bold text-${metric}`}>{score}</p>

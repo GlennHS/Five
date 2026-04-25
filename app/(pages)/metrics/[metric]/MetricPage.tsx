@@ -1,18 +1,18 @@
 "use client"
 
-import MetricHeader from "@/app/components/Metrics/MetricHeader"
-import ScoreCard from "@/app/components/Metrics/ScoreCard"
-import WeeklySummary from "@/app/components/Metrics/WeeklySummary"
-import ActionsList from "@/app/components/Metrics/ActionsList"
-import AboutSection from "@/app/components/Metrics/AboutSection"
+import { useMemo } from "react"
 import { Action, MetricKey } from "@/app/types"
 import { useApp } from "@/app/context/AppContext"
-import definitionAffectsMetric from "@/app/lib/actionDefinitions/definitionAffectsMetric"
-import { useMemo } from "react"
-import TrendChart from "@/app/components/Metrics/TrendChart"
-import { getAWeekAgo, getToday, getYesterday } from "@/app/lib/dateTime"
-import { calculateMetricsForRange } from "@/app/lib/metrics/calculateMetricsForRange"
+import AboutSection from "@/app/components/Metrics/AboutSection"
+import ActionsList from "@/app/components/Metrics/ActionsList"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
+import MetricHeader from "@/app/components/Metrics/MetricHeader"
+import ScoreCard from "@/app/components/Metrics/ScoreCard"
+import TrendChart from "@/app/components/Metrics/TrendChart"
+import WeeklySummary from "@/app/components/Metrics/WeeklySummary"
+import { calculateMetricsForRange } from "@/app/lib/metrics/calculateMetricsForRange"
+import definitionAffectsMetric from "@/app/lib/actionDefinitions/definitionAffectsMetric"
+import { getAWeekAgo, getToday, getYesterday } from "@/app/lib/dateTime"
 
 export default function MetricPage({ metric }: { metric: MetricKey }) {
 
