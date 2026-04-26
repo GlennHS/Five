@@ -1,13 +1,17 @@
-import { Coffee, Github, Heart } from "lucide-react";
-import { VERSION_NUMBER } from "../constants/Constants";
+import { useState } from "react";
 import Image from "next/image";
+import { Heart } from "lucide-react";
+import { VERSION_NUMBER } from "../constants/Constants";
+import VersionModal from "./VersionModal";
 
 export default function Footer() {
+  const [showVersionModal, setShowVersionModal] = useState(false)
+
   return (
     <footer className="w-full border-t border-slate-200 bg-white">
       <div className="mx-auto flex max-w-sm flex-col items-center gap-2 py-2">
         <span className="text-sm text-slate-700">© 2026 Five. All rights reserved.</span>
-        <span className="text-xs italic text-slate-700">ver. {VERSION_NUMBER}</span>
+        <span onClick={() => setShowVersionModal(true)} className="text-xs italic text-slate-700">ver. {VERSION_NUMBER}</span>
         <a
           href="https://www.ko-fi.com/aetherswitch"
           target="_blank"
@@ -28,6 +32,7 @@ export default function Footer() {
           />
         </a>
       </div>
+      { showVersionModal && <VersionModal onClose={() => setShowVersionModal(false)} />}
     </footer>
   );
 }
