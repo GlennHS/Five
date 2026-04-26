@@ -3,6 +3,19 @@ import { ChangelogEntry } from "./types";
 const CHANGELOG: ChangelogEntry[] = [
   {
     date: "2026-04-23",
+    version: "v0.2.3-alpha",
+    changes: [
+      { type: "feat", notes: "Add graph to metric page" },
+      { type: "feat", notes: "Add opt-in anonymous analytics" },
+      { type: "style", notes: "Add animations to metric page" },
+      { type: "fix", notes: "Fix toast getting stuck behind Navbar" },
+      { type: "style", notes: "Navbar icons now highlight what page you're on" },
+      { type: "feat", notes: "Update metric page subtitle text" },
+      { type: "fix", notes: "Fix bug in tour when action log empty" },
+    ],
+  },
+  {
+    date: "2026-04-23",
     version: "v0.2.2-alpha",
     changes: [
       { type: "feat", notes: "Completely overhaul the metric pages!!!" },
