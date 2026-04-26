@@ -3,9 +3,10 @@ import { Action, ActionDefinition, FiveMetric, METRIC_KEYS } from "@/app/types"
 import sumMetrics from "./sumMetrics"
 import filterActionsByRange from "../actions/filterActionsByRange"
 import actionToMetrics from "../actions/actionToMetrics"
-import buildActionMap from "../actions/buildActionMap"
 import getBoundedMetric from "./getBoundedMetric"
 import { Settings } from "../settings"
+import { useApp } from "@/app/context/AppContext"
+import buildActionMap from "../actions/buildActionMap"
 
 export const calculateMetricsForRange = (
   actions: Action[],
@@ -15,6 +16,7 @@ export const calculateMetricsForRange = (
   manipulateMetrics: boolean = true,
   addNewStarterBonus: boolean = true,
 ): FiveMetric => {
+  const actionMap = buildActionMap(defs)
   let summedMetrics: FiveMetric = {
     body: 0,
     mind: 0,
@@ -23,7 +25,6 @@ export const calculateMetricsForRange = (
     bond: 0,
   }
   if (actions.length > 0) {
-    const actionMap = buildActionMap(defs)
   
     const filtered = filterActionsByRange(actions, from, to)
   

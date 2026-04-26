@@ -2,12 +2,38 @@ import { ChangelogEntry } from "./types";
 
 const CHANGELOG: ChangelogEntry[] = [
   {
+    date: "2026-04-23",
+    version: "v0.2.3-alpha",
+    changes: [
+      { type: "feat", notes: "Add graph to metric page" },
+      { type: "feat", notes: "Add opt-in anonymous analytics" },
+      { type: "style", notes: "Add animations to metric page" },
+      { type: "fix", notes: "Fix toast getting stuck behind Navbar" },
+      { type: "style", notes: "Navbar icons now highlight what page you're on" },
+      { type: "feat", notes: "Update metric page subtitle text" },
+      { type: "fix", notes: "Fix bug in tour when action log empty" },
+    ],
+  },
+  {
+    date: "2026-04-23",
+    version: "v0.2.2-alpha",
+    changes: [
+      { type: "feat", notes: "Completely overhaul the metric pages!!!" },
+      { type: "fix", notes: "Fix version modal's styling and display" },
+      { type: "style", notes: "Update the section divider's styling" },
+      { type: "style", notes: "Update footer styling" },
+      { type: "fix", notes: "Archived actions now hidden from tracking page" },
+      { type: "feat", notes: "Add FAQ page" },
+      { type: "fix", notes: "Fix action cards overflowing" },
+      { type: "fix", notes: "Fix Navbar sometimes not showing" },
+    ],
+  },
+  {
     date: "2026-04-20",
     version: "v0.2.1-alpha",
     changes: [
       { type: "fix", notes: "Fix tutorial button navigation to homepage" },
       { type: "fix", notes: "Fix FiveBar legend incorrectly displaying" },
-      { type: "chore", notes: "Update .gitignore" },
     ],
   },
   {

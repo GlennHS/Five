@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs"
 import { TAG_COLOR_CLASSES } from "./constants/Colors"
 
 export const METRIC_KEYS = ["mind", "body", "cash", "work", "bond"] as const
@@ -18,6 +19,12 @@ export type MetricName = Uppercase<MetricKey>
 export type Metric = {
   name: MetricKey | "total"
   value: number
+}
+
+export interface DailyMetric {
+  metric: MetricKey,
+  value: number,
+  date: Dayjs
 }
 
 export type Action = {

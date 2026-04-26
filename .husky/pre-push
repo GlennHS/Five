@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# ---- RUN BUILD ----
+echo "🔧 Running pnpm build..."
+
+pnpm build
+BUILD_STATUS=$?
+
+if [ $BUILD_STATUS -ne 0 ]; then
+  echo "❌ Build failed. Commit aborted."
+  exit 1
+fi
+
+echo "✅ Build passed."
+exit 0

@@ -7,6 +7,7 @@ interface DisplayInfo {
   icon: LucideIcon
   title: string
   subtitle: string
+  description: string
 }
 
 export default function getMetricDisplayInfo(m: MetricKey): DisplayInfo {
@@ -15,38 +16,44 @@ export default function getMetricDisplayInfo(m: MetricKey): DisplayInfo {
       return {
         icon: HeartPulse,
         title: 'BODY',
-        subtitle: METRIC_INFO_TEXT.body,
+        subtitle: "Heart, Strength, Fitness",
+        description: METRIC_INFO_TEXT.body,
       }
     case "mind":
       return {
         icon: Brain,
         title: 'MIND',
-        subtitle: METRIC_INFO_TEXT.mind,
+        subtitle: "Self-Care, Mentality, Positive Thoughts",
+        description: METRIC_INFO_TEXT.mind,
       }
     case "cash":
       return {
         icon: BadgeDollarSign,
         title: 'CASH',
-        subtitle: METRIC_INFO_TEXT.cash,
+        subtitle: "Saving, Careful Spending, Frugality",
+        description: METRIC_INFO_TEXT.cash,
       }
     case "work":
       return {
         icon: Handshake,
         title: 'WORK',
-        subtitle: METRIC_INFO_TEXT.work,
+        subtitle: "Productivity, Study, Career",
+        description: METRIC_INFO_TEXT.work,
       }
     case "bond":
       return {
         icon: HeartPlus,
         title: 'BOND',
-        subtitle: METRIC_INFO_TEXT.bond,
+        subtitle: "Friends, Family, Relationships",
+        description: METRIC_INFO_TEXT.bond,
       }
-  
+      
     default:
       return {
         icon: HeartPlus,
         title: 'BOND',
-        subtitle: METRIC_INFO_TEXT.bond,
+        subtitle: "Friends, Family, Relationships",
+        description: METRIC_INFO_TEXT.bond,
       }
   }
 }

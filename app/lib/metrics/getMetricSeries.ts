@@ -1,56 +1,36 @@
 import { Dayjs } from "dayjs"
-import { Action, ActionDefinition, MetricKey, TimeGroup } from "@/app/types"
+import { Action, ActionDefinition, MetricKey } from "@/app/types"
 import { calculateMetricsForRange } from "./calculateMetricsForRange"
+import { getToday } from "../dateTime"
 
 /**
- * @description Used to get values for FiveLineGraph
- * @param actionHistory action history from app data
- * @param actionDefinitions action definitions from app data
- * @param metricKey the metric to be queried
- * @param from date from
- * @param to date to
- * @param groupBy time period to group by
- * @returns Array of numbers where each number represents the sum of the metric change for that time period group
- * @
+ * Returns 7 cumulative values for a given metric over a rolling week.
+ * Final point = total for the full 7-day window.
  */
-const getMetricSeries = (
-  actionHistory: Action[],
-  actionDefinitions: ActionDefinition[],
+const getWeeklyMetricSeries = (
+  actions: Action[],
+  defs: ActionDefinition[],
   metricKey: MetricKey,
-  from: Dayjs,
-  to: Dayjs,
-  groupBy: TimeGroup
+  date: Dayjs = getToday()
 ): number[] => {
-
   const values: number[] = []
 
-  const actions = actionHistory
-  const defs = actionDefinitions
+  const start = date.subtract(6, "day")
 
-  let accumulator = 0
-
-  let cursor = from.startOf(groupBy)
-
-  while (cursor.isBefore(to) || cursor.isSame(to)) {
-
-    const bucketStart = cursor
-    const bucketEnd = cursor.endOf(groupBy)
+  for (let i = 0; i < 7; i++) {
+    const dayEnd = start.add(i, "day")
 
     const metrics = calculateMetricsForRange(
       actions,
       defs,
-      bucketStart,
-      bucketEnd
+      start,
+      dayEnd,
     )
 
-    accumulator += metrics[metricKey]
-
-    values.push(accumulator)
-
-    cursor = cursor.add(1, groupBy)
+    values.push(metrics[metricKey])
   }
 
   return values
 }
 
-export default getMetricSeries
+export default getWeeklyMetricSeries

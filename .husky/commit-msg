@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Path to commit message file
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# ---- CONFIG ----
+# Define allowed types here
+TYPES="feat|fix|docs|style|refactor|test|chore"
+
+# Conventional Commits regex
+# Format: type(scope?): subject
+REGEX="^(${TYPES})(\([a-zA-Z0-9_-]+\))?: .+"
+
+# ---- VALIDATE COMMIT MESSAGE ----
+if ! echo "$COMMIT_MSG" | grep -Eq "$REGEX"; then
+  echo "❌ Invalid commit message format."
+  echo ""
+  echo "Expected format:"
+  echo "  type(scope?): subject"
+  echo ""
+  echo "Allowed types: $TYPES"
+  echo ""
+  echo "Examples:"
+  echo "  feat(auth): add login endpoint"
+  echo "  fix: handle null response"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Commit message valid."
+exit 0

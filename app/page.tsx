@@ -66,7 +66,7 @@ export default function Home() {
 
   const [didCheck, setDidCheck] = useState(false)
   const [showVersionModal, setShowVersionModal] = useState(false)
-  const { startNextStep } = useNextStep();
+  const { startNextStep, isNextStepVisible } = useNextStep();
 
   const handleClose = () => setShowVersionModal(false)
 
@@ -310,7 +310,7 @@ export default function Home() {
           </section>
         )}
 
-        { actions.length > 0 && <section className="w-full" id="action-list">
+        { (actions.length > 0 || isNextStepVisible) && <section className="w-full" id="action-list">
           <div className='w-full flex flex-col mb-2'>
             <SectionDivider text="Action Log"/>
             <div className="w-full flex items-center justify-end gap-x-4">
