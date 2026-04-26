@@ -1,6 +1,7 @@
+import { useRouter } from "next/navigation"
 import { Action, MetricKey } from "@/app/types"
 import ActionCard from "@/app/components/ActionCards/ActionCard"
-import { useRouter } from "next/navigation"
+import { useInViewAnimation } from "@/app/components/useInViewAnimation";
 
 export default function ActionsList({
   actions,
@@ -11,9 +12,16 @@ export default function ActionsList({
 }) {
   const router = useRouter()
 
+  const { ref, isVisible } = useInViewAnimation<HTMLDivElement>();
+
+
   const goToAll = () => router.push('/#action-list')
   return (
-    <div className="bg-white rounded-2xl shadow-sm border p-4">
+    <div
+      ref={ref}
+      className={`bg-white rounded-2xl shadow-sm border p-4 transition-all duration-700 delay-400 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}>
       <div className="flex justify-between mb-4">
         <p className="font-semibold">Recent Actions</p>
         <button className={`text-${metric} text-sm`} onClick={goToAll}>View all</button>

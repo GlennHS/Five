@@ -142,7 +142,7 @@ const steps : Tour[] = [
       {
         icon: null,
         title: "That's It!",
-        content: <><p>That covers the basics, if you have any issues you can always raise them over on <a href="https://github.com/glennhs/five/issues">my GitHub</a>! Hope you enjoy and take care of yourself!</p><p>- Glenn</p></>,
+        content: <><p>That covers the basics, if you have any issues you can always raise them over on <a href="https://github.com/glennhs/five/issues" target='_blank' className='text-bond underline'>my GitHub</a>! Hope you enjoy and take care of yourself!</p><p>- Glenn</p></>,
         showControls: true,
         showSkip: true,
       },

@@ -1,5 +1,6 @@
-import getMetricDisplayInfo from "@/app/lib/metrics/getMetricDisplayInfo"
 import { MetricKey } from "@/app/types"
+import getMetricDisplayInfo from "@/app/lib/metrics/getMetricDisplayInfo"
+import { useInViewAnimation } from "@/app/components/useInViewAnimation";
 
 // components/metrics/AboutSection.tsx
 export default function AboutSection({
@@ -9,8 +10,15 @@ export default function AboutSection({
 }) {
   const metricInfo = getMetricDisplayInfo(metric)
 
+  const { ref, isVisible } = useInViewAnimation<HTMLDivElement>();
+
   return (
-    <div className="bg-white border rounded-2xl p-4 flex gap-4 items-start">
+    <div
+      ref={ref}
+      className={`bg-white border rounded-2xl p-4 flex gap-4 items-start transition-all duration-700 delay-500 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+    >
       {/* Icon */}
       <div className={`text-${metric} mt-1`}>
         <metricInfo.icon />
@@ -23,7 +31,7 @@ export default function AboutSection({
         </h2>
 
         <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-          {metricInfo.subtitle}
+          {metricInfo.description}
         </p>
       </div>
     </div>

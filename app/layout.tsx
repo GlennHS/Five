@@ -10,6 +10,8 @@ import { ToastProvider } from "./context/ToastContext";
 import { NextStep, NextStepProvider } from "nextstepjs";
 import steps from "./tour";
 import { Settings } from "./lib/settings";
+import AnalyticsBanner from "./components/AnalyticsBanner";
+import { ConsentProvider } from "./context/ConsentContext";
 
 const jakarta = Plus_Jakarta_Sans({
   weight: '400',
@@ -60,7 +62,6 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
-        <link rel="apple-touch-icon" sizes="256x256" href="/images/icons/five-app-icon-256.png" />
         <link rel="apple-touch-icon" sizes="128x128" href="/images/icons/five-app-icon-128.png" />
         <link rel="apple-touch-icon" sizes="64x64" href="/images/icons/five-app-icon-64.png" />
         <link rel="icon" href="/images/icons/five-icon-256.png" sizes="any" />
@@ -68,20 +69,23 @@ export default function RootLayout({
       <body>
         <div className="w-full flex flex-col justify-baseline items-center">
           <div className="max-w-3xl w-full p-4">
-            <NextStepProvider>
-              <AppProvider>
-                <ToastProvider>
-                  <NextStep
-                    steps={steps}
-                    onStart={() => Settings.set("wantsTutorial", "inProgress")}
-                    onComplete={() => Settings.set('wantsTutorial', 'false')}
-                    onSkip={() => Settings.set('wantsTutorial', 'false')}
-                  >
-                    { children }
-                  </NextStep>
-                </ToastProvider>
-              </AppProvider>
-            </NextStepProvider>
+          <ToastProvider>
+            <ConsentProvider>
+              <NextStepProvider>
+                <AppProvider>
+                    <NextStep
+                      steps={steps}
+                      onStart={() => Settings.set("wantsTutorial", "inProgress")}
+                      onComplete={() => Settings.set('wantsTutorial', 'false')}
+                      onSkip={() => Settings.set('wantsTutorial', 'false')}
+                    >
+                      <AnalyticsBanner />
+                      { children }
+                    </NextStep>
+                </AppProvider>
+              </NextStepProvider>
+            </ConsentProvider>
+          </ToastProvider>
           </div>
         </div>
         <Navbar pageScrolledToTop={scrolledToTop} scrollDirection={scrollDirection}/>

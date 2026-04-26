@@ -1,9 +1,10 @@
 "use client"
 
-import getMetricDisplayInfo from "@/app/lib/metrics/getMetricDisplayInfo"
+import { useRouter } from "next/navigation"
 import { MetricKey } from "@/app/types"
 import { ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useInViewAnimation } from "@/app/components/useInViewAnimation";
+import getMetricDisplayInfo from "@/app/lib/metrics/getMetricDisplayInfo"
 
 export default function MetricHeader({
   metric
@@ -13,8 +14,15 @@ export default function MetricHeader({
   const router = useRouter()
   const metricInfo = getMetricDisplayInfo(metric)
 
+  const { ref, isVisible } = useInViewAnimation<HTMLDivElement>();
+
   return (
-    <div className="space-y-3">
+    <div
+      ref={ref}
+      className={`space-y-3 transition-all duration-700 delay-100 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+    >
       {/* Back button */}
       <button
         onClick={() => router.back()}
@@ -31,7 +39,7 @@ export default function MetricHeader({
           </h1>
 
           {metricInfo.subtitle && (
-            <p className="text-gray-700 text-xs mt-4">{metricInfo.subtitle}</p>
+            <p className="text-gray-700 text-xs mt-2">{metricInfo.subtitle}</p>
           )}
         </div>
 
