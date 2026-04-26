@@ -22,18 +22,18 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
     showToast(consent ? 'Thank you for allowing analytics <3' : 'You have opted out of analytics.')
   }
 
-  // hydrate from cookie on mount
+  // hydrate from localStorage on mount
   useEffect(() => {
-    window.cookieStore.get('analytics-consent').then(cookie => {
-      if (cookie && cookie?.value !== null)
-        setAcceptedAnalytics(cookie.value === 'yes')
-    }).then(() => setloadingConsent(false))
+    const consent = window.localStorage.getItem('analytics-consent')
+    if (consent !== null)
+      setAcceptedAnalytics(consent === 'yes')
+    setloadingConsent(false)
   }, [])
 
-  // persist to cookie when it changes
+  // persist to localStorage when it changes
   useEffect(() => {
     if (acceptedAnalytics !== null)
-      window.cookieStore.set("analytics-consent", `${acceptedAnalytics ? 'yes' : 'no'}`)
+      window.localStorage.setItem("analytics-consent", `${acceptedAnalytics ? 'yes' : 'no'}`)
   }, [acceptedAnalytics])
 
   return (
