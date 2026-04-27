@@ -1,7 +1,6 @@
-import { METRIC_COLORS } from "@/app/constants/Colors";
 import { METRIC_INFO_TEXT } from "@/app/constants/Constants";
 import { MetricKey } from "@/app/types";
-import { LucideIcon, BadgeDollarSign, Brain, Handshake, HeartPlus, HeartPulse } from "lucide-react";
+import { LucideIcon, BadgeDollarSign, Brain, Laptop, Dumbbell, HeartPlus } from "lucide-react";
 
 interface DisplayInfo {
   icon: LucideIcon
@@ -14,7 +13,7 @@ export default function getMetricDisplayInfo(m: MetricKey): DisplayInfo {
   switch (m) {
     case "body":
       return {
-        icon: HeartPulse,
+        icon: Dumbbell,
         title: 'BODY',
         subtitle: "Heart, Strength, Fitness",
         description: METRIC_INFO_TEXT.body,
@@ -35,7 +34,7 @@ export default function getMetricDisplayInfo(m: MetricKey): DisplayInfo {
       }
     case "work":
       return {
-        icon: Handshake,
+        icon: Laptop,
         title: 'WORK',
         subtitle: "Productivity, Study, Career",
         description: METRIC_INFO_TEXT.work,
