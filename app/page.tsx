@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, Hash } from 'lucide-react';
 
-import { METRIC_KEYS, SettingsSetupResult, type MetricKey } from '@/app/types';
+import { DailyMetric, METRIC_KEYS, SettingsSetupResult, type MetricKey } from '@/app/types';
 
 import ActionCard from '@/app/components/ActionCards/ActionCard';
 import ActionCardList from '@/app/components/ActionCards/ActionCardList';
@@ -41,6 +41,7 @@ import { pickRandom, waitForElement } from '@/app/lib/utils';
 import { randomQuotes } from '@/app/constants/Quotes';
 import VersionModal from '@/app/components/VersionModal';
 import { useNextStep } from 'nextstepjs';
+import { getDailyMetric } from './lib/metrics/getDailyMetric';
 
 ChartJS.register(
   RadialLinearScale,
@@ -106,16 +107,12 @@ export default function Home() {
     )
   }, [actions])
 
-  const dailyDeltas = useMemo(() => {
+  const dailyDeltas: DailyMetric[] | null = useMemo(() => {
     if (!actions) return null
 
-    return calculateMetricsForRange(
-      actions,
-      actionDefinitions,
-      getYesterday(),
-      getToday(),
-      false
-    )
+    const out: DailyMetric[] = []
+    METRIC_KEYS.forEach((metric) => out.push(getDailyMetric(actions, actionDefinitions, metric, getToday())))
+    return out
   }, [actions])
 
   const totalDelta = useMemo(() => {
@@ -123,8 +120,9 @@ export default function Home() {
 
     let d = 0
     METRIC_KEYS.forEach(key => {
-      if (dailyDeltas !== null)
-        d += dailyDeltas[key]
+      const dailyMetric = dailyDeltas?.find(d => d.metric === key)
+      if (dailyMetric !== undefined)
+        d += dailyMetric.value
     })
 
     return d / METRIC_KEYS.length
@@ -250,7 +248,7 @@ export default function Home() {
               <MetricCard
                 key={key}
                 metric={{ name: key, value: metrics![key] }}
-                delta={dailyDeltas !== null ? dailyDeltas[key] : undefined}
+                delta={dailyDeltas?.find(d => d.metric === key)?.value ?? 0}
                 isActive={highlightedMetric === key}
                 onClick={() => handleMetricCardClick(key)}
                 className={`metric-card-${key}`}

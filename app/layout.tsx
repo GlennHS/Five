@@ -1,59 +1,48 @@
-'use client';
-
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
 import { AppProvider } from "./context/AppContext";
-import { useEffect, useState } from "react";
 import { ToastProvider } from "./context/ToastContext";
 import { NextStep, NextStepProvider } from "nextstepjs";
 import steps from "./tour";
 import { Settings } from "./lib/settings";
-import AnalyticsBanner from "./components/AnalyticsBanner";
 import { ConsentProvider } from "./context/ConsentContext";
+import LayoutClientComponent from "./components/LayoutClientComponent";
 
 const jakarta = Plus_Jakarta_Sans({
   weight: '400',
   subsets: ['latin']
 })
 
+export const metadata = {
+  title: "FIVE",
+  description: "FIVE is a self-care mobile app for habit tracking and self-improvement",
+  openGraph: {
+    title: "FIVE",
+    description: "FIVE is a self-care mobile app for habit tracking and self-improvement",
+    url: "https://fivefitness.uk/images/og-image.png",
+    siteName: "FIVE",
+    images: [
+      {
+        url: "https://fivefitness.uk/images/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FIVE",
+    description: "FIVE is a self-care mobile app for habit tracking and self-improvement",
+    images: ["https://fivefitness.uk/images/og-image.png"],
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
-  const [scrolledToTop, setScrolledToTop] = useState<boolean>(true);
-
-  useEffect(() => {
-    let lastY = window.scrollY
-
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      const diff = currentY - lastY;
-
-      if (Math.abs(diff) < 5) return; // ignore tiny movements
-
-      if (currentY > lastY) {
-        setScrollDirection('down')
-      } else if (currentY < lastY) {
-        setScrollDirection('up')
-      }
-
-      lastY = currentY;
-    };
-    const handleScrollEnd = () => setScrolledToTop(window.scrollY === 0)
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('scrollend', handleScrollEnd)
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('scrollend', handleScrollEnd)
-    }
-  }, []);
-
   return (
     <html lang="en" className={jakarta.className}>
       <head>
@@ -73,23 +62,15 @@ export default function RootLayout({
             <ConsentProvider>
               <NextStepProvider>
                 <AppProvider>
-                    <NextStep
-                      steps={steps}
-                      onStart={() => Settings.set("wantsTutorial", "inProgress")}
-                      onComplete={() => Settings.set('wantsTutorial', 'false')}
-                      onSkip={() => Settings.set('wantsTutorial', 'false')}
-                    >
-                      <AnalyticsBanner />
-                      { children }
-                    </NextStep>
+                  <LayoutClientComponent>
+                    { children }
+                  </LayoutClientComponent>
                 </AppProvider>
               </NextStepProvider>
             </ConsentProvider>
           </ToastProvider>
           </div>
         </div>
-        <Navbar pageScrolledToTop={scrolledToTop} scrollDirection={scrollDirection}/>
-        <Footer />
       </body>
     </html>
   );
