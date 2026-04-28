@@ -5,7 +5,6 @@ import filterActionsByRange from "../actions/filterActionsByRange"
 import actionToMetrics from "../actions/actionToMetrics"
 import getBoundedMetric from "./getBoundedMetric"
 import { Settings } from "../settings"
-import { useApp } from "@/app/context/AppContext"
 import buildActionMap from "../actions/buildActionMap"
 
 export const calculateMetricsForRange = (
@@ -13,8 +12,8 @@ export const calculateMetricsForRange = (
   defs: ActionDefinition[],
   from: Dayjs,
   to: Dayjs,
-  manipulateMetrics: boolean = true,
   addNewStarterBonus: boolean = true,
+  addDecay: boolean = false,
 ): FiveMetric => {
   const actionMap = buildActionMap(defs)
   let summedMetrics: FiveMetric = {
@@ -35,16 +34,22 @@ export const calculateMetricsForRange = (
     summedMetrics = sumMetrics(deltas)
   }
 
-  if (!manipulateMetrics) return summedMetrics
-  else {
-
+  if (addNewStarterBonus) {
     // add the new starter bonus (if applicable)
     const bonus = addNewStarterBonus ? Math.max(30 - Math.floor(dayjs().subtract(dayjs(parseFloat(Settings.get('firstLaunch'))).valueOf()).valueOf() / (1000 * 60 * 60 * 24)), 0) : 0
     METRIC_KEYS.forEach(key => summedMetrics[key] += bonus)
-
-    // cap it between hard caps
-    METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))
-    return summedMetrics
   }
 
+  if (addDecay) {
+    const daysOfDecay = Math.abs(Math.floor(from.diff(to, 'days')))
+    const decayConfig = Settings.get("decayRate")
+    if (decayConfig !== "") {
+      const decayJSON = JSON.parse(decayConfig)
+      METRIC_KEYS.forEach(key => summedMetrics[key] -= decayJSON[key] * daysOfDecay)
+    }
+  }
+
+  // cap it between hard caps
+  METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))
+  return summedMetrics
 }

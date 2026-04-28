@@ -92,7 +92,9 @@ export default function Home() {
       actions,
       actionDefinitions,
       getAWeekAgo(),
-      getToday()
+      getToday(),
+      true,
+      true,
     )
   }, [actions])
 

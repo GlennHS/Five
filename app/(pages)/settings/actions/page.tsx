@@ -6,7 +6,7 @@ import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { Archive, ArchiveRestore, Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import { ActionDefinitionDB, ActionDefinition, METRIC_KEYS } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
-import { NumberStepper } from "@/app/components/NumberStepper"
+import NumberStepper from "@/app/components/NumberStepper"
 import { useApp } from "@/app/context/AppContext"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
