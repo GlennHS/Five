@@ -3,11 +3,11 @@ import { SettingsConfig, SettingsSetupResult } from "../types";
 import { keys } from "./utils";
 
 const defaultDecay = {
-  mind: 2,
-  body: 2,
-  cash: 2,
-  work: 2,
-  bond: 2,
+  mind: 0,
+  body: 0,
+  cash: 0,
+  work: 0,
+  bond: 0,
 };
 
 export const settingsDefaults: SettingsConfig = {
