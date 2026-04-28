@@ -1,13 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import TagPill from "@/app/components/TagPill"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
-import { Archive, ArchiveRestore, Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
+import { Archive, ArchiveRestore, Pencil, Plus, Save, SaveOff, Search, Trash } from "lucide-react"
 import { ActionDefinitionDB, ActionDefinition, METRIC_KEYS } from "@/app/types"
 import BackLink from "@/app/components/BackLink"
 import NumberStepper from "@/app/components/NumberStepper"
 import { useApp } from "@/app/context/AppContext"
+import { useDebounce } from "@/app/hooks/useDebounce"
+import { useToast } from "@/app/context/ToastContext"
 
 type MetricKey = "mind" | "body" | "work" | "cash" | "bond"
 
@@ -22,6 +24,8 @@ export default function Page() {
     unarchiveActionDefinition,
     deleteActionDefinition
   } = useApp()
+
+  const { showToast } = useToast()
 
   const [name, setName] = useState("")
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([])
@@ -43,6 +47,28 @@ export default function Page() {
     cash: 0,
     bond: 0
   })
+
+  const [filteredActions, setFilteredActions] = useState(actionDefinitions)
+
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 250)
+  const searchBar = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const term = debouncedSearch.trim().toLowerCase()
+    
+    const filteredDefs = actionDefinitions
+      .filter(def => !def.archived)
+      .filter(def => {
+        // search
+        const nameMatch = term ? def.name.toLowerCase().includes(term) : true
+
+        return nameMatch
+      })
+
+    setFilteredActions(filteredDefs)
+
+  }, [actionDefinitions, debouncedSearch])
 
   function startEdit(action: ActionDefinition) {
     setEditingId(action.id!)
@@ -108,7 +134,10 @@ export default function Page() {
   }
 
   async function handleAdd() {
-    if (!name.trim()) return
+    if (!name.trim()) {
+      showToast("Action name can't be empty!")
+      return
+    }
 
     const newDef: Omit<ActionDefinitionDB, "id"> = {
       name,
@@ -163,7 +192,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-xl mx-auto">
       <BackLink />
-      <h1 className="text-xl font-semibold mb-6">Edit ActionDefinitions</h1>
+      <h1 className="text-xl font-semibold mb-6 mt-2">Edit Actions</h1>
 
       {/* Create */}
       <div className="flex flex-col gap-3 mb-6 border p-4 rounded-lg">
@@ -208,15 +237,26 @@ export default function Page() {
 
         <button
           onClick={handleAdd}
-          className="px-4 py-2 rounded-lg border-2 w-fit"
+          className="px-4 py-2 rounded-lg border-2 w-full flex items-center justify-center active:bg-gray-300 transition duration-300"
         >
           <Plus />
         </button>
       </div>
 
+      <div className="w-full flex gap-2 items-center justify-center mb-4">
+        <Search strokeWidth={2} size={32} onClick={() => searchBar.current && searchBar.current.focus()} />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search actions..."
+          className="border rounded w-full px-3 py-2"
+          ref={searchBar}
+        />
+      </div>
+
       {/* List */}
       <div className="flex flex-col">
-        {actionDefinitions
+        {filteredActions
           .sort((a, b) => (a.archived === b.archived ? 0 : a.archived ? 1 : -1))
           .map((action, i) => {
           const actionTags = action.tags
