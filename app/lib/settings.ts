@@ -11,10 +11,11 @@ const defaultDecay = {
 };
 
 export const settingsDefaults: SettingsConfig = {
-  version: `${VERSION_NUMBER}`,
-  firstLaunch: `${Date.now()}`,
   decayRate: JSON.stringify(defaultDecay),
+  firstLaunch: `${Date.now()}`,
+  goal: '60',
   preferedChart: 'bar',
+  version: `${VERSION_NUMBER}`,
   wantsTutorial: "true",
 };
 

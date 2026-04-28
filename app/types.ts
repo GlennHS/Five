@@ -48,10 +48,11 @@ export type Tag = {
 }
 
 export interface SettingsConfig {
-  version: string | undefined
-  firstLaunch: string | undefined
   decayRate: string | undefined
+  firstLaunch: string | undefined
+  goal: string | undefined
   preferedChart: string | undefined
+  version: string | undefined
   wantsTutorial: string | undefined
 }
 

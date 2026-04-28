@@ -12,6 +12,7 @@ import LogModal from "@/app/components/LogModal"
 import { TAG_COLOR_CLASSES } from "@/app/constants/Colors"
 import TrackCard from "@/app/components/TrackCard"
 import { useTracking } from "@/app/hooks/useTracking"
+import { useDebounce } from "@/app/hooks/useDebounce"
 
 export default function Page() {
   const { actions, actionDefinitions, tags, loading, addAction } = useApp()
@@ -24,17 +25,6 @@ export default function Page() {
   const debouncedSearch = useDebounce(search, 250)
 
   const [filteredActionDefinitions, setFilteredActionDefinitions] = useState<ActionDefinition[]>([])
-
-  function useDebounce<T>(value: T, delay = 300) {
-    const [debounced, setDebounced] = useState(value)
-
-    useEffect(() => {
-      const id = setTimeout(() => setDebounced(value), delay)
-      return () => clearTimeout(id)
-    }, [value, delay])
-
-    return debounced
-  }
 
   const lastUsedMap = useMemo(() => {
     const map = new Map<number, number>() // defId -> latest timestamp

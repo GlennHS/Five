@@ -12,6 +12,7 @@ import {
 import { METRIC_COLORS } from "../../constants/Colors";
 import type { FiveMetric, MetricKey } from "../../types";
 import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { Settings } from "@/app/lib/settings";
 
 type FiveBarGraphProps = {
   data: FiveMetric | null;
@@ -38,6 +39,7 @@ Chart.register(
 
 export default function FiveRadar({data, highlightedMetric, onMetricChange}: FiveBarGraphProps) {
   const chartRef = useRef<Chart<'radar'> | null>(null);
+  const goal = parseInt(Settings.get('goal'))
 
   const chartData = useMemo(() => {
     const values = data
@@ -91,7 +93,7 @@ export default function FiveRadar({data, highlightedMetric, onMetricChange}: Fiv
         },
         {
           label: 'Goal',
-          data: Array(5).fill(70),
+          data: Array(5).fill(goal),
           borderColor: '#444',
           borderWidth: 1,
           borderDash: [6, 6],
