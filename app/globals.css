@@ -1,3 +1,4 @@
+@import "swiper/css";
 @import "tailwindcss";
 @import "react-datepicker/dist/react-datepicker.css";
 
@@ -130,5 +131,5 @@ div[data-name="nextstep-card"] > div > button:last-child {
   font-style: italic;
 }
 
-@source inline("{bg,border,text,to,outline}-{mind,body,work,cash,bond,total}{/10,/25,/50,}");
+@source inline("{bg,border,text,to,outline}-{mind,body,work,cash,bond,total}{/10,/20,/25,/50,}");
 
