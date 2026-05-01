@@ -10,13 +10,16 @@ import { getAWeekAgo, getToday, toDay } from "../lib/dateTime"
 import getDominantMetric from "../lib/metrics/getDominantMetric"
 import isActionNegative from "../lib/actionDefinitions/isActionNegative"
 
+export const INSIGHT_CATEGORIES = ["performance", "attribution", "habit", "achievement"] as const
+export type InsightCategory = typeof INSIGHT_CATEGORIES[number]
+
 export type Insight = {
   id: string
   icon: LucideIcon
   text: ReactNode
   tone: "positive" | "negative" | "neutral"
   priority: number
-  category: "performance" | "attribution" | "habit" | "achievement"
+  category: InsightCategory
   metric?: MetricKey
 }
 

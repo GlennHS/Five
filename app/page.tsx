@@ -270,20 +270,6 @@ export default function Home() {
           <SectionDivider text='Insights' />
           <div className="flex flex-col gap-2">
             <InsightsCarousel insights={insights}/>
-            {/* {insights.map(insight => (
-              <div
-                key={insight.id}
-                className={`p-3 rounded-lg border ${
-                  insight.tone === "positive"
-                    ? "bg-green-100"
-                    : insight.tone === "negative"
-                    ? "bg-red-100"
-                    : "bg-gray-100"
-                }`}
-              >
-                {insight.text}
-              </div>
-            ))} */}
           </div>
         </section> }
 
