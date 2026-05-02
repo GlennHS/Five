@@ -8,15 +8,13 @@ import { toSentenceCase } from "../lib/utils";
 import { ChevronRight } from "lucide-react";
 
 function InsightCard({ insight }: { insight: Insight }) {
-  const metricInfo = insight.metric !== undefined ? METRIC_INFO[insight.metric] : null;
-
   return (
     <div
       className={`
         flex flex-col justify-center
         h-full rounded-2xl border p-4 shadow-sm
-        bg-${insight.metric}/20
-        border-2 border-${insight.metric}
+        bg-${insight.metric ?? 'neutral'}/20
+        border-2 border-${insight.metric ?? 'neutral'}
         ${insight.tone === "negative" ? "border-dashed" : ""}
       `}
     >
@@ -25,14 +23,14 @@ function InsightCard({ insight }: { insight: Insight }) {
           className={`
             flex items-center justify-center
             w-10 h-10 rounded-xl
-            text-${insight.metric}
+            text-${insight.metric ?? 'neutral'}
             bg-white/50
             aspect-square shrink-0
           `}
         >
-          {metricInfo && <metricInfo.icon />}
+          <insight.icon />
         </div>
-        <p className={`text-sm font-medium leading-snug text-${insight.metric}`}>
+        <p className={`text-sm font-medium leading-snug text-${insight.metric ?? 'neutral'}`}>
           {insight.text}
         </p>
       </div>

@@ -3,12 +3,13 @@
 import { ReactNode, useMemo } from "react"
 import { Action, ActionDefinition, Metric, METRIC_KEYS, MetricKey } from "@/app/types"
 import definitionAffectsMetric from "../lib/actionDefinitions/definitionAffectsMetric"
-import { ChartColumnIncreasing, Flame, LucideIcon } from "lucide-react"
+import { Calendar, ChartColumnIncreasing, Flame, LucideIcon, Star } from "lucide-react"
 import { METRIC_INFO } from "../constants/Constants"
 import { calculateMetricsForRange } from "../lib/metrics/calculateMetricsForRange"
 import { getAWeekAgo, getToday, getYesterday, toDay } from "../lib/dateTime"
 import getDominantMetric from "../lib/metrics/getDominantMetric"
 import isActionNegative from "../lib/actionDefinitions/isActionNegative"
+import dayjs from "dayjs"
 
 export const INSIGHT_CATEGORIES = ["performance", "attribution", "habit", "achievement"] as const
 export type InsightCategory = typeof INSIGHT_CATEGORIES[number]
@@ -180,6 +181,108 @@ function getBiggestGain(actions: Action[], definitions: ActionDefinition[], metr
   return mostImpactfulAction
 }
 
+function getBiggestLoss(actions: Action[], definitions: ActionDefinition[], metric: MetricKey) {
+  const relevantDefs = definitions.filter(d => definitionAffectsMetric(d, metric))
+  const relevantActions = actions
+    .filter(a => relevantDefs.map(d => d.id).includes(a.actionId))
+    .filter(a => a.timestamp > getAWeekAgo().valueOf())
+
+  const actionCount: Record<number, number> = {}
+  relevantActions.forEach(a => {
+    actionCount[a.actionId] = (actionCount[a.actionId] ?? 0) + 1
+  })
+
+  let mostDamagingAction: { definition: ActionDefinition; value: number } | null = {
+    definition: definitions[0],
+    value: 100,
+  }
+
+  relevantDefs.forEach(d => {
+    const metricValue = d[metric] ?? 0
+    if (metricValue >= 0) return // only care about negatives
+    const totalChange = (actionCount[d.id] ?? 0) * metricValue
+    if (totalChange < 0 && (!mostDamagingAction || totalChange < mostDamagingAction.value)) {
+      mostDamagingAction = { definition: d, value: totalChange }
+    }
+  })
+
+  return mostDamagingAction
+}
+
+function getDaysLoggedCalendarMonth(actions: Action[]): {
+  daysLogged: number
+  daysInPeriod: number
+  isEarlyMonth: boolean
+} {
+  const now = getToday()
+  const dayOfMonth = now.date()
+  const isEarlyMonth = dayOfMonth <= 7
+
+  if (isEarlyMonth) {
+    // Last calendar month
+    const startOfLastMonth = now.subtract(1, 'month').startOf('month')
+    const endOfLastMonth = now.subtract(1, 'month').endOf('month')
+    const daysInLastMonth = endOfLastMonth.date()
+
+    const uniqueDays = new Set(
+      actions
+        .filter(a => {
+          const d = dayjs(a.timestamp)
+          return d.isAfter(startOfLastMonth.subtract(1, 'ms')) && d.isBefore(endOfLastMonth.add(1, 'ms'))
+        })
+        .map(a => toDay(a.timestamp))
+    )
+
+    return { daysLogged: uniqueDays.size, daysInPeriod: daysInLastMonth, isEarlyMonth: true }
+  } else {
+    // This calendar month so far
+    const startOfMonth = now.startOf('month').valueOf()
+
+    const uniqueDays = new Set(
+      actions
+        .filter(a => a.timestamp >= startOfMonth)
+        .map(a => toDay(a.timestamp))
+    )
+
+    return { daysLogged: uniqueDays.size, daysInPeriod: dayOfMonth, isEarlyMonth: false }
+  }
+}
+
+function getLongestSingleActionStreak(
+  actions: Action[],
+  defs: ActionDefinition[]
+): { definition: ActionDefinition; streak: number } | null {
+  let best: { definition: ActionDefinition; streak: number } | null = null
+
+  defs.forEach(def => {
+    const days = new Set(
+      actions
+        .filter(a => a.actionId === def.id)
+        .map(a => toDay(a.timestamp))
+    )
+
+    if (days.size === 0) return
+
+    // Walk backwards from today counting consecutive days
+    let streak = 0
+    let current = toDay(Date.now())
+
+    // Allow streak to start from today or yesterday
+    // (same grace period logic as getStreak)
+    if (days.has(current)) streak++
+    while (days.has(current - 1)) {
+      streak++
+      current--
+    }
+
+    if (streak > 0 && (!best || streak > best.streak)) {
+      best = { definition: def, streak }
+    }
+  })
+
+  return best
+}
+
 // --- Main hook ---
 
 export function useInsights(
@@ -248,12 +351,27 @@ export function useInsights(
           icon: METRIC_INFO[key].icon,
           text: <>Your greatest <span className="font-bold">{ key.toUpperCase() }</span> increase came from <span className="font-bold">{ biggestGain.definition?.name ?? "" }</span> [+{ biggestGain.value }]</>,
           tone: 'positive',
-          priority: 6,
+          priority: 1,
           category: "attribution",
           metric: key
         })
       }
     })
+
+    METRIC_KEYS.forEach(key => {
+    const biggestLoss = getBiggestLoss(actions, defs, key)
+    if (biggestLoss && biggestLoss.definition !== undefined) {
+      insights.push({
+        id: `${key}-biggest-loss`,
+        icon: METRIC_INFO[key].icon,
+        text: <>Your greatest <span className="font-bold">{key.toUpperCase()}</span> decrease came from <span className="font-bold">{biggestLoss.definition.name}</span> [{biggestLoss.value}]</>,
+        tone: "negative",
+        priority: 2,
+        category: "attribution",
+        metric: key
+      })
+    }
+  })
     // #endregion
 
     // #region Habit Insights
@@ -268,6 +386,40 @@ export function useInsights(
         text: <>Your most logged action this week is <span className="font-bold">{ mostFrequentAction.definition.name }</span></>,
         tone: isNegative ? 'negative' : 'positive',
         priority: 3,
+        category: "habit",
+        metric: dominantMetric ?? undefined
+      })
+    }
+
+    // Days logged this month
+    const { daysLogged, daysInPeriod, isEarlyMonth } = getDaysLoggedCalendarMonth(actions)
+    const pct = Math.round((daysLogged / daysInPeriod) * 100)
+    const isGood = pct > 50
+
+    if (daysLogged > 0) {
+      const periodLabel = isEarlyMonth ? "last month" : "this month"
+      const prefix = isGood ? "Great work! You've" : "You've"
+
+      insights.push({
+        id: "days-logged",
+        icon: pct === 100 ? Star : Calendar,
+        text: `${pct === 100 ? `Amazing! You logged actions every single day ${periodLabel}` : `${prefix} logged actions on ${daysLogged} of ${daysInPeriod} days ${periodLabel} (${pct}%)`}`,
+        tone: isGood ? "positive" : "neutral",
+        priority: 3,
+        category: "habit",
+      })
+    }
+
+    // Longest single action streak
+    const longestStreak = getLongestSingleActionStreak(actions, defs)
+    if (longestStreak && longestStreak.streak >= 2) {
+      const dominantMetric = getDominantMetric(longestStreak.definition)
+      insights.push({
+        id: "single-action-streak",
+        icon: Flame,
+        text: `You've logged "${longestStreak.definition.name}" for ${longestStreak.streak} days in a row`,
+        tone: "positive",
+        priority: 4,
         category: "habit",
         metric: dominantMetric ?? undefined
       })
