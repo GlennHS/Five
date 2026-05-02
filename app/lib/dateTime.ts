@@ -7,6 +7,8 @@ dayjs.extend(advancedFormat)
 dayjs.extend(isBetween)
 dayjs.extend(isoWeek)
 
+const MS_PER_DAY = 1000 * 60 * 60 * 24
+
 export const days = [
   "Mon",
   "Tue",
@@ -71,3 +73,5 @@ export const getRollingWeekLabels = (
     start.add(i, "day").format("ddd")
   )
 }
+
+export const toDay = (ts: number) => Math.floor(ts / MS_PER_DAY)

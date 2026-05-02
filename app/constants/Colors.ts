@@ -6,6 +6,8 @@ export const METRIC_COLORS = {
   bond: "236, 72, 153"
 }
 
+export const NEUTRAL_COLOR = "113, 113, 153"
+
 export const TAG_COLOR_CLASSES = {
   green: "bg-green-300/10 text-green-700 border-green-700",
   red: "bg-red-300/10 text-red-500 border-red-500",

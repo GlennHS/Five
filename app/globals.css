@@ -14,8 +14,9 @@
 
   --positive-rgb: 28 230 61; /* green */
   --negative-rgb: 227 9 20; /* red */
-}
 
+  --neutral-rgb: 113 113 153; /* neutral */
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -31,6 +32,8 @@
 
   --color-positive: rgb(var(--positive-rgb));
   --color-negative: rgb(var(--negative-rgb));
+
+  --color-neutral: rgb(var(--neutral-rgb));
 }
 
 body {
@@ -130,5 +133,5 @@ div[data-name="nextstep-card"] > div > button:last-child {
   font-style: italic;
 }
 
-@source inline("{bg,border,text,to,outline}-{mind,body,work,cash,bond,total}{/10,/25,/50,}");
+@source inline("{bg,border,text,to,outline}-{mind,body,work,cash,bond,total,neutral}{/10,/20,/25,/50,}");
 

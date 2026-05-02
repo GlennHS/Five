@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { MetricKey } from "@/app/types"
 import { ArrowLeft } from "lucide-react"
 import { useInViewAnimation } from "@/app/components/useInViewAnimation";
-import getMetricDisplayInfo from "@/app/lib/metrics/getMetricDisplayInfo"
+import { METRIC_INFO } from "@/app/constants/Constants";
 
 export default function MetricHeader({
   metric
@@ -12,7 +12,7 @@ export default function MetricHeader({
   metric: MetricKey
 }) {
   const router = useRouter()
-  const metricInfo = getMetricDisplayInfo(metric)
+  const metricInfo = METRIC_INFO[metric]
 
   const { ref, isVisible } = useInViewAnimation<HTMLDivElement>();
 

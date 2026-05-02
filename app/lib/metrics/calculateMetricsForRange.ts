@@ -14,6 +14,7 @@ export const calculateMetricsForRange = (
   to: Dayjs,
   addNewStarterBonus: boolean = true,
   addDecay: boolean = false,
+  ignoreCaps: boolean = false,
 ): FiveMetric => {
   const actionMap = buildActionMap(defs)
   let summedMetrics: FiveMetric = {
@@ -50,6 +51,9 @@ export const calculateMetricsForRange = (
   }
 
   // cap it between hard caps
-  METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))
+  if (!ignoreCaps) {
+    METRIC_KEYS.forEach(key => summedMetrics[key] = getBoundedMetric(summedMetrics[key]))
+  }
+
   return summedMetrics
 }
