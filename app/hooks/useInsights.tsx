@@ -6,7 +6,7 @@ import definitionAffectsMetric from "../lib/actionDefinitions/definitionAffectsM
 import { ChartColumnIncreasing, Flame, LucideIcon } from "lucide-react"
 import { METRIC_INFO } from "../constants/Constants"
 import { calculateMetricsForRange } from "../lib/metrics/calculateMetricsForRange"
-import { getAWeekAgo, getToday, toDay } from "../lib/dateTime"
+import { getAWeekAgo, getToday, getYesterday, toDay } from "../lib/dateTime"
 import getDominantMetric from "../lib/metrics/getDominantMetric"
 import isActionNegative from "../lib/actionDefinitions/isActionNegative"
 
@@ -48,6 +48,36 @@ function getTopMetric(
   if (topMetric.value <= 0) return null
 
   return topMetric
+}
+
+function getLowestMetric(
+  actions: Action[],
+  defs: ActionDefinition[]
+): {
+  metric: MetricKey,
+  value: number
+} | null {
+  const metrics = calculateMetricsForRange(actions, defs, getToday(), getToday().subtract(3, 'days'), false, false, true)
+  console.log("metrics", metrics)
+  let lowestMetric : {
+    metric: MetricKey,
+    value: number
+  } = {
+    metric: "mind",
+    value: 100,
+  } // Yes... I really have to hard-type this because TypeScript is stupid
+  METRIC_KEYS.forEach(key => {
+    if (metrics[key] < lowestMetric.value) {
+      lowestMetric.metric = key as MetricKey
+      lowestMetric.value = metrics[key]
+    }
+  })
+
+  console.log(lowestMetric)
+
+  if (lowestMetric.value >= 0) return null
+
+  return lowestMetric
 }
 
 function getNeglectedMetric(
@@ -162,16 +192,10 @@ export function useInsights(
   return useMemo(() => {
     const insights: Insight[] = []
     /**
-     * Insights tracked:
-     * Best metric
-     * Worst metric
-     * Biggest gain
-     * Biggest loss
-     * Streak
-     * Days logged out of past month
-     * Most logged action
-     * Longest single-action streak
-     * "performance" | "attribution" | "habit" | "achievement"
+     * ==TODO==
+     * X Biggest loss
+     * X Days logged out of past month
+     * X Longest single-action streak
      */
 
     // #region Performance Insights
@@ -181,11 +205,25 @@ export function useInsights(
       insights.push({
         id: "top-metric",
         icon: METRIC_INFO[topMetric.metric].icon,
-        text: `You've focused on ${ topMetric.metric } recently (+${ topMetric.value })`,
+        text: <>You've focused on <span className="font-bold">{ topMetric.metric.toUpperCase() }</span> recently (+{ topMetric.value })</>,
         tone: "positive",
-        priority: 2,
+        priority: 1,
         category: "performance",
         metric: topMetric.metric
+      })
+    }
+    
+    // Lowest metric - Lowest metric score
+    const lowestMetric = getLowestMetric(actions, defs)
+    if (lowestMetric) {
+      insights.push({
+        id: "lowest-metric",
+        icon: METRIC_INFO[lowestMetric.metric].icon,
+        text: <>You've neglected <span className="font-bold">{ lowestMetric.metric.toUpperCase() }</span> the past few days ({ lowestMetric.value })</>,
+        tone: "negative",
+        priority: 3,
+        category: "performance",
+        metric: lowestMetric.metric
       })
     }
 
@@ -193,11 +231,11 @@ export function useInsights(
     const neglected = getNeglectedMetric(actions, defs)
     if (neglected) {
       insights.push({
-        id: "neglected",
+        id: "neglected-metric",
         icon: METRIC_INFO[neglected.metric].icon,
-        text: `You haven't touched ${ neglected.metric } in ${ neglected.days } days`,
+        text: <>You haven't touched <span className="font-bold">{ neglected.metric.toUpperCase() }</span> in { neglected.days } days</>,
         tone: "negative",
-        priority: 4,
+        priority: 2,
         category: "performance",
         metric: neglected.metric
       })
@@ -214,7 +252,7 @@ export function useInsights(
           text: <>Your greatest <span className="font-bold">{ key.toUpperCase() }</span> increase came from <span className="font-bold">{ biggestGain.definition?.name ?? "" }</span> [+{ biggestGain.value }]</>,
           tone: 'positive',
           priority: 6,
-          category: "performance",
+          category: "attribution",
           metric: key
         })
       }
@@ -230,7 +268,7 @@ export function useInsights(
       insights.push({
         id: "worst-action",
         icon: dominantMetric ? METRIC_INFO[dominantMetric].icon : ChartColumnIncreasing,
-        text: `Your most logged action this week is "${ mostFrequentAction.definition.name }"`,
+        text: <>Your most logged action this week is <span className="font-bold">{ mostFrequentAction.definition.name }</span></>,
         tone: isNegative ? 'negative' : 'positive',
         priority: 3,
         category: "habit",
@@ -238,20 +276,21 @@ export function useInsights(
       })
     }
     // #endregion
+
+    // #region Achievement Insights
+    // Current Streak
     const streak = getStreak(actions)
     if (streak >= 1) {
       insights.push({
         id: "streak",
         icon: Flame,
-        text: `You're on a ${streak} day streak!`,
+        text: <>You're on a <span className="font-bold">{streak}</span> day streak!</>,
         tone: 'positive',
         priority: 2,
-        category: "habit",
+        category: "achievement",
         metric: "body"
       })
     }
-    // #region Achievement Insights
-    
     // #endregion
 
     // sort + limit

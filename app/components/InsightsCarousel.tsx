@@ -179,7 +179,7 @@ export default function InsightsCarousel({ insights }: { insights: Insight[] }) 
         {INSIGHT_CATEGORIES.map((category) => {
           const categoryInsights = insights
             .filter((i) => i.category === category)
-            .sort((a, b) => b.priority - a.priority);
+            .sort((a, b) => a.priority - b.priority);
 
           return (
             <CategorySection
