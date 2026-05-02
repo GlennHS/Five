@@ -58,7 +58,6 @@ function getLowestMetric(
   value: number
 } | null {
   const metrics = calculateMetricsForRange(actions, defs, getToday(), getToday().subtract(3, 'days'), false, false, true)
-  console.log("metrics", metrics)
   let lowestMetric : {
     metric: MetricKey,
     value: number
@@ -72,8 +71,6 @@ function getLowestMetric(
       lowestMetric.value = metrics[key]
     }
   })
-
-  console.log(lowestMetric)
 
   if (lowestMetric.value >= 0) return null
 
