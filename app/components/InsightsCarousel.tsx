@@ -113,7 +113,7 @@ function CategorySection({
         </span>
         <span
           className={`text-neutral-500 transition-transform duration-300 ${
-            isExpanded ? "rotate-90" : "-rotate-90"
+            isExpanded ? "rotate-180" : "rotate-0"
           }`}
         >
           <ChevronRight size={12} />
