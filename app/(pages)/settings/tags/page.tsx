@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import TagPill from "@/app/components/TagPill"
 import { TAG_COLOR_CLASSES, TagColorKey } from "@/app/constants/Colors"
-import { Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
+import { ChevronDown, Pencil, Plus, Save, SaveOff, Trash } from "lucide-react"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import BackLink from "@/app/components/BackLink"
 import { useApp } from "@/app/context/AppContext"
@@ -61,31 +61,90 @@ export default function Page() {
     </div>
   )
 
+  function ColorKeyDropdown({
+    value,
+    onChange,
+  }: {
+    value: TagColorKey
+    onChange: (key: TagColorKey) => void
+  }) {
+    const [open, setOpen] = useState(false)
+    const ref = useRef<HTMLDivElement>(null)
+
+    // Close on outside click
+    useEffect(() => {
+      const handler = (e: MouseEvent) => {
+        if (ref.current && !ref.current.contains(e.target as Node)) {
+          setOpen(false)
+        }
+      }
+      document.addEventListener("mousedown", handler)
+      return () => document.removeEventListener("mousedown", handler)
+    }, [])
+
+    return (
+      <div ref={ref} className="relative w-fit flex">
+        {/* Trigger */}
+        <button
+          type="button"
+          onClick={() => setOpen(prev => !prev)}
+          className="flex items-center gap-2 border rounded-lg px-2 py-1 bg-white"
+        >
+          <TagPill color={value} tag={value} />
+          <ChevronDown
+            size={14}
+            className={`text-neutral-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {/* Dropdown */}
+        <div
+          className={`
+            absolute z-50 left-0
+            flex flex-col gap-1 p-1
+            bg-white border rounded-lg shadow-md
+            overflow-hidden
+            transition-all duration-200 ease-in-out
+            ${open ? "max-h-60 opacity-100" : "max-h-0 opacity-0 pointer-events-none"}
+          `}
+        >
+          {Object.keys(TAG_COLOR_CLASSES).map((key) => (
+            <button
+              type="button"
+              key={key}
+              onClick={() => {
+                onChange(key as TagColorKey)
+                setOpen(false)
+              }}
+              className={`
+                flex items-center px-2 py-1 rounded-md text-left
+                hover:bg-gray-100 transition-colors
+                ${value === key ? "bg-gray-100" : ""}
+              `}
+            >
+              <TagPill color={key as TagColorKey} tag={key} />
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="p-6 max-w-xl mx-auto">
       <BackLink />
       <h1 className="text-xl font-semibold mb-6">Edit Tags</h1>
 
       {/* Create */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 w-full">
         <input
-          className="border rounded-lg px-3 py-2 flex-1"
+          className="border rounded-lg pl-3 py-2 flex-1 min-w-0"
           placeholder="Tag name"
           value={name}
           onChange={e => setName(e.target.value)}
         />
 
-        <select
-          className="border rounded-lg px-2"
-          value={colorKey}
-          onChange={e => setColorKey(e.target.value as TagColorKey)}
-        >
-          {Object.keys(TAG_COLOR_CLASSES).map(key => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
+        <ColorKeyDropdown value={colorKey} onChange={setColorKey} />
 
         <button
           onClick={handleAdd}
