@@ -360,7 +360,7 @@ export function useInsights(
 
     METRIC_KEYS.forEach(key => {
     const biggestLoss = getBiggestLoss(actions, defs, key)
-    if (biggestLoss && biggestLoss.definition !== undefined) {
+    if (biggestLoss.value < 0 && biggestLoss.definition !== undefined) {
       insights.push({
         id: `${key}-biggest-loss`,
         icon: METRIC_INFO[key].icon,
