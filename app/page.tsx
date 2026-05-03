@@ -42,6 +42,7 @@ import { randomQuotes } from '@/app/constants/Quotes';
 import VersionModal from '@/app/components/VersionModal';
 import { useNextStep } from 'nextstepjs';
 import { getDailyMetric } from './lib/metrics/getDailyMetric';
+import InsightsCarousel from './components/InsightsCarousel';
 
 ChartJS.register(
   RadialLinearScale,
@@ -165,7 +166,7 @@ export default function Home() {
       }).slice(0, 50)
     }
 
-    return sorted.slice(0, 50)
+    return sorted.slice(0, 500)
   }, [actions, sortType, actionCountMap])
 
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
@@ -268,20 +269,7 @@ export default function Home() {
         { actions.length > 0 && <section>
           <SectionDivider text='Insights' />
           <div className="flex flex-col gap-2">
-            {insights.map(insight => (
-              <div
-                key={insight.id}
-                className={`p-3 rounded-lg border ${
-                  insight.tone === "positive"
-                    ? "bg-green-100"
-                    : insight.tone === "negative"
-                    ? "bg-red-100"
-                    : "bg-gray-100"
-                }`}
-              >
-                {insight.text}
-              </div>
-            ))}
+            <InsightsCarousel insights={insights}/>
           </div>
         </section> }
 
