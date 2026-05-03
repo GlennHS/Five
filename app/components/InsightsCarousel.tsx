@@ -92,7 +92,8 @@ function CategorySection({
       className={`
         flex rounded-2xl bg-gray-100 p-2 shrink-0
         transition-all duration-500 ease-in-out
-        ${isExpanded ? "w-11/12" : "w-12"}
+        max-w-11/12
+        ${isExpanded ? "w-fit" : "w-12"}
       `}
     >
       {/* Toggle button */}
@@ -146,7 +147,7 @@ function CategorySection({
               pointer-events-none absolute right-0 top-0 h-full w-8
               bg-linear-to-l from-neutral-100 to-transparent
               transition-opacity duration-300
-              ${atEnd ? "opacity-0" : "opacity-100"}
+              ${(atEnd || insights.length <= 1) ? "opacity-0" : "opacity-100"}
             `}
           />
         </div>
