@@ -1,10 +1,6 @@
 import { db } from "../db"
+import { toDay } from "../lib/dateTime"
 import { ActionDB } from "../types"
-
-const MS_PER_DAY = 1000 * 60 * 60 * 24
-
-const toDay = (ts: number) =>
-  Math.floor(ts / MS_PER_DAY)
 
 export const ActionController = {
   async create(def: Omit<ActionDB, "id">) {
