@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { ChartColumnIncreasing, Cog, House, ListChecks } from 'lucide-react'
+import { ChartColumnIncreasing, ClipboardList, Cog, House, ListChecks } from 'lucide-react'
 
 interface NavLinkProps {
   href?: string
@@ -56,7 +56,7 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
 
   return (
     <>
-      <nav className={`w-full border-t-2 bg-white border-slate-600 bg-neutral fixed bottom-0 left-0 h-20 z-40 flex flex-col justify-center items-center transition-opacity duration-300 ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+      <nav className={`w-full border-t-2 bg-white border-slate-600 fixed bottom-0 left-0 h-20 z-40 flex flex-col justify-center items-center transition-opacity duration-300 ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
         <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
           <div className="w-full">
             <ul className="h-full flex items-center justify-between text-base gap-4">
@@ -82,16 +82,11 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
 
               <li>
                 <NavLink
-                  href="/"
-                  aria-label="Go to home"
+                  href="/reports"
+                  aria-label="Go to Reports"
                 >
-                  <Image
-                    src="/images/icons/five-icon-64.png"
-                    width={64}
-                    height={64}
-                    alt="App logo"
-                    className="h-10 w-auto block object-cover"
-                  />
+                  <ClipboardList className={/\/reports/.test(pathname) ? 'text-cash' : ''}/>
+                  <span className={/\/reports/.test(pathname) ? 'text-cash' : ''}>Reports</span>
                 </NavLink>
               </li>
 
@@ -100,8 +95,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/metrics"
                   aria-label="Go to metrics"
                 >
-                  <ChartColumnIncreasing className={/\/metrics/.test(pathname) ? 'text-cash' : ''}/>
-                  <span className={/\/metrics/.test(pathname) ? 'text-cash' : ''}>Metrics</span>
+                  <ChartColumnIncreasing className={/\/metrics/.test(pathname) ? 'text-work' : ''}/>
+                  <span className={/\/metrics/.test(pathname) ? 'text-work' : ''}>Metrics</span>
                 </NavLink>
               </li>
 
@@ -110,8 +105,8 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
                   href="/settings"
                   aria-label="Go to settings"
                 >
-                  <Cog className={/\/settings/.test(pathname) ? 'text-work' : ''}/>
-                  <span className={/\/settings/.test(pathname) ? 'text-work' : ''}>Settings</span>
+                  <Cog className={/\/settings/.test(pathname) ? 'text-bond' : ''}/>
+                  <span className={/\/settings/.test(pathname) ? 'text-bond' : ''}>Settings</span>
                 </NavLink>
               </li>
             </ul>
