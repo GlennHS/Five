@@ -48,4 +48,4 @@ export const METRIC_INFO = {
   }
 }
 
-export const VERSION_NUMBER = "0.3.0-alpha"
+export const VERSION_NUMBER = "0.3.1-beta"
