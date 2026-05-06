@@ -50,7 +50,7 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <div className="pb-4">
       <BackLink />
       <h1 className="my-4! font-bold text-lg">Settings</h1>
 
