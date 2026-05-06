@@ -36,7 +36,6 @@ export default function MetricPage({ metric }: { metric: MetricKey }) {
     metricsForWeek.push(getDailyMetric(filteredActions, actionDefinitions, metric, getToday().subtract(6 - i, 'days')))
   }
 
-  // const score = calculateMetricsForRange(actions, actionDefinitions, getAWeekAgo(), getToday(), true)[metric]
   const score = applyBonusToMetric(metricsForWeek.map((m:DailyMetric) => m.value).reduce((a,b) => a + b))
   const dailyChange = metricsForWeek[metricsForWeek.length - 1].value
   const weeklyChange = metricsForWeek.map((m:DailyMetric) => m.value).reduce((a,b) => a + b)

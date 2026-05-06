@@ -1,6 +1,6 @@
 import { MetricKey } from "@/app/types"
-import getMetricDisplayInfo from "@/app/lib/metrics/getMetricDisplayInfo"
 import { useInViewAnimation } from "@/app/components/useInViewAnimation";
+import { METRIC_INFO } from "@/app/constants/Constants";
 
 // components/metrics/AboutSection.tsx
 export default function AboutSection({
@@ -8,7 +8,7 @@ export default function AboutSection({
 }: {
   metric: MetricKey
 }) {
-  const metricInfo = getMetricDisplayInfo(metric)
+  const metricInfo = METRIC_INFO[metric]
 
   const { ref, isVisible } = useInViewAnimation<HTMLDivElement>();
 

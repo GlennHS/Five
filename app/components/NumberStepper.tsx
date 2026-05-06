@@ -4,18 +4,22 @@ import { MetricKey } from "../types"
 
 type NumberStepperProps = {
   value: number
+  min?: number
+  max?: number
   onChange: (value: number) => void
   metricName: MetricKey
   className?: string
 }
 
-export const NumberStepper: React.FC<NumberStepperProps> = ({
+export default function NumberStepper({
   value,
+  min = -100,
+  max = 100,
   onChange,
   metricName,
   className = "",
-}) => {
-  const clamp = (val: number) => Math.min(Math.max(val, -100), 100)
+} : NumberStepperProps) {
+  const clamp = (val: number) => Math.min(Math.max(val, min), max)
 
   const dec = () => onChange(clamp(value - 1))
   const inc = () => onChange(clamp(value + 1))

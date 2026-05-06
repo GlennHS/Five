@@ -1,4 +1,4 @@
-import { NextStep, useNextStep } from "nextstepjs"
+import { useNextStep } from "nextstepjs"
 import { useConsent } from "../context/ConsentContext";
 import dynamic from "next/dynamic";
 
@@ -10,10 +10,18 @@ export default function AnalyticsBanner() {
     () => import('@vercel/analytics/next').then(mod => mod.Analytics),
     { ssr: false }
   )
+  
+  const SpeedInsights = dynamic(
+    () => import('@vercel/speed-insights/next').then(mod => mod.SpeedInsights),
+    { ssr: false }
+  )
 
   if (isNextStepVisible || loadingConsent || acceptedAnalytics === false) return;
 
-  if (acceptedAnalytics) return <Analytics />
+  if (acceptedAnalytics) return <>
+    <Analytics />
+    <SpeedInsights />
+  </>
 
   return (
     <div className="w-full flex items-center justify-center text-center fixed top-0 left-0 backdrop-blur-lg z-50">

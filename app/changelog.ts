@@ -2,7 +2,42 @@ import { ChangelogEntry } from "./types";
 
 const CHANGELOG: ChangelogEntry[] = [
   {
-    date: "2026-04-23",
+    date: "2026-05-06",
+    version: "v0.3.1-beta",
+    changes: [
+      { type: "feat", notes: "Add weekly report with per-metric scores, trend charts, and week-on-week comparison" },
+      { type: "feat", notes: "Report accessible via navbar" },
+      { type: "fix", notes: "Fix settings page showing update notification on load" },
+      { type: "fix", notes: "General bugfixes and style improvements" },
+    ],
+  },
+  {
+    date: "2026-05-01",
+    version: "v0.3.0-beta",
+    changes: [
+      { type: "feat", notes: "Completely overhaul insights - new carousel with collapsible categories" },
+      { type: "feat", notes: "Add new insights: calendar days logged, biggest metric gains and losses, most frequent action, streaks" },
+      { type: "feat", notes: "Add more tag colours" },
+      { type: "feat", notes: "Add search bar to actions settings page" },
+      { type: "feat", notes: "Add Vercel speed insights (with analytics consent)" },
+      { type: "fix", notes: "General bugfixes and style improvements" },
+      { type: "style", notes: "Non-metric insights now styled with a neutral colour" },
+    ],
+  },
+  {
+    date: "2026-04-28",
+    version: "v0.2.5-alpha",
+    changes: [
+      { type: "feat", notes: "Users can now set a personal metric goal" },
+      { type: "feat", notes: "Users can now configure per-metric daily decay rates" },
+      { type: "feat", notes: "Add OpenGraph image for link previews" },
+      { type: "feat", notes: "Tap version number in footer to see version history" },
+      { type: "fix", notes: "Fix analytics consent using cookies — now uses localStorage" },
+      { type: "fix", notes: "General bugfixes" },
+    ],
+},
+  {
+    date: "2026-04-25",
     version: "v0.2.3-alpha",
     changes: [
       { type: "feat", notes: "Add graph to metric page" },
