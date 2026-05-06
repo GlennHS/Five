@@ -25,6 +25,7 @@ export default function Page() {
   const [settings, setSettings] = useState<SettingsConfig>(settingsDefaults)
   const [goalInput, setGoalInput] = useState(settings.goal)
   const [decay, setDecay] = useState<FiveMetric>(defaultDecay)
+  const [debouncesLoaded, setDebouncesLoaded] = useState(false)
   const debouncedGoal = useDebounce(goalInput, 1000)
   const debouncedDecay = useDebounce(decay, 1000)
 
@@ -48,10 +49,11 @@ export default function Page() {
     setSettings(all)
     setGoalInput(all.goal)
     setDecay(all.decayRate ? JSON.parse(all.decayRate) : defaultDecay)
+    setDebouncesLoaded(true)
   }, [])
 
   useEffect(() => {
-    if (debouncedGoal === settings.goal || debouncedGoal === undefined) return
+    if (!debouncesLoaded || debouncedGoal === settings.goal || debouncedGoal === undefined) return
 
     Settings.set("goal", debouncedGoal)
     setSettings(prev => ({ ...prev, goal: debouncedGoal }))
@@ -59,6 +61,7 @@ export default function Page() {
   }, [debouncedGoal])
 
   useEffect(() => {
+    if (!debouncesLoaded) return
     const current = settings.decayRate
       ? JSON.parse(settings.decayRate)
       : defaultDecay
