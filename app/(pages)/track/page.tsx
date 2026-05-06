@@ -7,12 +7,11 @@ import { AArrowDown, AArrowUp, ClockArrowDown, ClockArrowUp, Search } from "luci
 
 import { ActionDefinition, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
 import { useApp } from "@/app/context/AppContext"
-import Toast from "@/app/components/Toast"
 import LogModal from "@/app/components/LogModal"
 import { TAG_COLOR_CLASSES } from "@/app/constants/Colors"
-import TrackCard from "@/app/components/TrackCard"
 import { useTracking } from "@/app/hooks/useTracking"
 import { useDebounce } from "@/app/hooks/useDebounce"
+import FullTrackCard from "@/app/components/Tracking/FullTrackCard"
 
 export default function Page() {
   const { actions, actionDefinitions, tags, loading, addAction } = useApp()
@@ -171,7 +170,7 @@ export default function Page() {
 
       <div className="flex flex-col gap-2 mt-4" id="track-list">
         {filteredActionDefinitions.map((def, i) => (
-          <TrackCard
+          <FullTrackCard
             key={def.id}
             def={def}
             onLog={trackingMethods.handleQuickLog}

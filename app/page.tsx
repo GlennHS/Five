@@ -13,7 +13,6 @@ import LoadingSpinner from '@/app/components/LoadingSpinner';
 import LogModal from '@/app/components/LogModal';
 import MetricCard from '@/app/components/MetricCard';
 import SectionDivider from '@/app/components/SectionDivider';
-import TrackCard from '@/app/components/TrackCard';
 
 import {
   Chart as ChartJS,
@@ -43,6 +42,7 @@ import VersionModal from '@/app/components/VersionModal';
 import { useNextStep } from 'nextstepjs';
 import { getDailyMetric } from './lib/metrics/getDailyMetric';
 import InsightsCarousel from './components/InsightsCarousel';
+import SimpleTrackCard from './components/Tracking/SimpleTrackCard';
 
 ChartJS.register(
   RadialLinearScale,
@@ -285,13 +285,12 @@ export default function Home() {
                 .map(m => actionDefinitions.find(d => d.id === m[0]))
                 .filter(d => d !== undefined)
                 .map((def, i) => (
-                  <TrackCard
+                  <SimpleTrackCard
                     key={def.id}
                     def={def}
                     onLog={trackingMethods.handleQuickLog}
                     onAdvancedLog={trackingMethods.handleAdvancedLog}
                     className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
-                    simple
                   />
                 ))}
             </div>

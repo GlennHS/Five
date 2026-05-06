@@ -2,23 +2,20 @@
 
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import { Action, ActionDefinition, ActionDefinitionDB, Tag } from "@/app/types"
 import { ActionController } from "@/app/controllers/ActionController"
 import { ActionDefinitionController } from "@/app/controllers/ActionDefinitionController"
 import { TagController } from "@/app/controllers/TagController"
 import hydrateActionDefinitions from "../lib/actionDefinitions/hydrateActionDefinitions"
 import hydrateActions from "../lib/actions/hydrateActions"
-import buildActionMap from "../lib/actions/buildActionMap"
-
-type ActionMap = Record<string, ActionDefinition>
 
 type AppState = {
   actions: Action[]
   actionDefinitions: ActionDefinition[]
   tags: Tag[]
   loading: boolean
-  actionMap: ActionMap
+  lastLoggedMap: Record<number, number> // defId -> most recent timestamp
 
   addAction: (actionId: number, timestamp?: number, note?: string) => Promise<void>
   addActionDefinition: (def: Omit<ActionDefinitionDB, 'id'>) => Promise<void>
@@ -41,7 +38,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [actionDefinitions, setActionDefinitions] = useState<ActionDefinition[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(true)
-  const [actionMap, setActionMap] = useState<ActionMap>({})
+  const lastLoggedMap = useMemo(() => {
+    const map: Record<number, number> = {} // defId -> most recent timestamp
+    actions.forEach(a => {
+      if (!map[a.actionId] || a.timestamp > map[a.actionId]) {
+        map[a.actionId] = a.timestamp
+      }
+    })
+    return map
+  }, [actions])
 
   async function addAction(actionId: number, timestamp = Date.now(), note = "") {
     const id: number = await ActionController.create({
@@ -157,10 +162,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }
 
-  useEffect(() => {
-    setActionMap(buildActionMap(actionDefinitions))
-  }, [actionDefinitions])
-
   // initial load
   useEffect(() => {
     loadFromDB()
@@ -173,7 +174,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           actionDefinitions,
           tags,
           loading,
-          actionMap,
+          lastLoggedMap,
           addAction,
           addActionDefinition,
           updateActionDefinition,
