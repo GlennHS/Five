@@ -43,7 +43,7 @@ export default function Page() {
   )
 
   return (
-    <main className="min-h-screen w-full bg-white px-4 py-8">
+    <main className="min-h-screen w-full bg-white">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
         <BackLink />
 
