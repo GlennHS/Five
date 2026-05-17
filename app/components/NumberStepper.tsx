@@ -36,7 +36,7 @@ export default function NumberStepper({
       <button
         type="button"
         onClick={inc}
-        disabled={value >= 100}
+        disabled={value >= max}
         className="p-1 active:scale-95 disabled:opacity-40 border-b border-black bg-gray-200 w-full rounded-t flex items-center justify-center"
         aria-label="Increase"
       >
@@ -55,7 +55,7 @@ export default function NumberStepper({
       <button
         type="button"
         onClick={dec}
-        disabled={value <= -100}
+        disabled={value <= min}
         className="p-1 active:scale-95 disabled:opacity-40 border-t border-black bg-gray-200 w-full rounded-b flex items-center justify-center"
         aria-label="Decrease"
       >
