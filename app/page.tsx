@@ -281,16 +281,16 @@ export default function Home() {
             <div>
               {Array.from(actionCountMap.entries())
                 .sort((a, b) => b[1] - a[1]) // sort by count desc
-                .slice(0, 5)
                 .map(m => actionDefinitions.find(d => d.id === m[0]))
                 .filter(d => d !== undefined)
-                .map((def, i) => (
+                .filter(d => !d.archived) // You would think I could combine this with the filter above but no, because TypeScript has 2 braincells on a good day
+                .slice(0, 5)
+                .map(def => (
                   <TrackCard
                     key={def.id}
                     def={def}
                     onLog={trackingMethods.handleQuickLog}
                     onAdvancedLog={trackingMethods.handleAdvancedLog}
-                    className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
                     simple
                   />
                 ))}

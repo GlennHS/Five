@@ -58,7 +58,6 @@ export default function Page() {
     const term = debouncedSearch.trim().toLowerCase()
     
     const filteredDefs = actionDefinitions
-      .filter(def => !def.archived)
       .filter(def => {
         // search
         const nameMatch = term ? def.name.toLowerCase().includes(term) : true
@@ -278,7 +277,7 @@ export default function Page() {
                   />
                 ) : (
                   <div className="font-medium">
-                    {action.archived && (<span className="italic font-semibold">[Archived] </span>)}
+                    {action.archived && (<span className="italic font-semibold text-2xs">[Arc.] </span>)}
                     {action.name}
                   </div>
                 )}
