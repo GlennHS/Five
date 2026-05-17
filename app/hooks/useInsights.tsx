@@ -1,12 +1,12 @@
 "use client"
 
 import { ReactNode, useMemo } from "react"
-import { Action, ActionDefinition, Metric, METRIC_KEYS, MetricKey } from "@/app/types"
+import { Action, ActionDefinition, METRIC_KEYS, MetricKey } from "@/app/types"
 import definitionAffectsMetric from "../lib/actionDefinitions/definitionAffectsMetric"
 import { Calendar, ChartColumnIncreasing, Flame, LucideIcon, Star } from "lucide-react"
 import { METRIC_INFO } from "../constants/Constants"
 import { calculateMetricsForRange } from "../lib/metrics/calculateMetricsForRange"
-import { getAWeekAgo, getToday, getYesterday, toDay } from "../lib/dateTime"
+import { getAWeekAgo, getToday, toDay } from "../lib/dateTime"
 import getDominantMetric from "../lib/metrics/getDominantMetric"
 import isActionNegative from "../lib/actionDefinitions/isActionNegative"
 import dayjs from "dayjs"
@@ -255,6 +255,7 @@ function getLongestSingleActionStreak(
   let best: { definition: ActionDefinition; streak: number } | null = null
 
   defs.forEach(def => {
+    if (isActionNegative(def)) return // Don't show them a negative streak
     const days = new Set(
       actions
         .filter(a => a.actionId === def.id)
