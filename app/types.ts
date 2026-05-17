@@ -92,3 +92,8 @@ export interface ChangelogEntry {
   version: string
   changes: { type: string, notes: string }[]
 }
+
+export interface HeatmapDay {
+  day: Dayjs,
+  value: number,
+}

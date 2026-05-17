@@ -43,7 +43,11 @@ export default function ReportPage() {
 
       <div className="space-y-4">
         {report.metrics.map(m => (
-          <ReportMetricCard key={m.metric} report={m} />
+          <ReportMetricCard
+            key={m.metric}
+            report={m}
+            weekStart={report.thisWeek.start}
+          />
         ))}
       </div>
     </div>
