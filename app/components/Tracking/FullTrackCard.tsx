@@ -7,11 +7,13 @@ import { toSentenceCase } from "@/app/lib/utils"
 import { useApp } from "@/app/context/AppContext"
 import { dateToHumanString, formatSmartDate } from "@/app/lib/dateTime"
 import dayjs from "dayjs"
+import FavouriteStar from "./FavouriteStar"
 
 type Props = {
   def: ActionDefinition
   onLog: (def: ActionDefinition) => void
   onAdvancedLog: (def: ActionDefinition) => void
+  onFavourite: () => void
   className?: string
 }
 
@@ -20,7 +22,7 @@ const getBGString = (def: ActionDefinition, key: MetricKey): string => {
   return `bg-${key}/10`
 }
 
-export default function FullTrackCard({ def, onLog, onAdvancedLog, className }: Props) {
+export default function FullTrackCard({ def, onLog, onAdvancedLog, onFavourite, className }: Props) {
   const { lastLoggedMap } = useApp()
   const lastLogged = lastLoggedMap[def.id]
 
@@ -29,7 +31,10 @@ export default function FullTrackCard({ def, onLog, onAdvancedLog, className }: 
       {/* Left side */}
       <div className="flex flex-col gap-2 w-full py-2">
         <div className="flex flex-col w-full">
-          <span className="font-medium">{def.name}</span>
+          <div className="flex items-center gap-2">
+            <FavouriteStar isFilled={def.favourite} onClick={onFavourite} />
+            <span className="font-medium">{def.name}</span>
+          </div>
           <span className="text-2xs opacity-50 font-semibold">Last logged: {formatSmartDate(dayjs(lastLogged))}</span>
         </div>
 

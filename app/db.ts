@@ -32,6 +32,16 @@ db.version(1).stores({
   actions: "++id, name, actionId, timestamp",
 })
 
+db.version(2).stores({
+  tags: "++id, name, colorKey", // primary key "id" (for the runtime!)
+  actionDefinitions: "++id, name, *tagIds, favourite",
+  actions: "++id, name, actionId, timestamp",
+}).upgrade(tx => {
+  return tx.table("actionDefinitions").toCollection().modify(def => {
+      def.favourite = false
+  });
+});
+
 db.on("populate", async () => {
   const tagIdMap = new Map<string, number>()
 
@@ -54,6 +64,7 @@ db.on("populate", async () => {
     await db.actionDefinitions.add({
       name: def.name,
       tagIds,
+      favourite: false,
       mind: def.mind ?? 0,
       body: def.body ?? 0,
       work: def.work ?? 0,

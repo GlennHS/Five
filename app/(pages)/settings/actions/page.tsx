@@ -99,19 +99,20 @@ export default function Page() {
   }
 
   async function saveEdit(id: number) {
-  if (!editName.trim()) return
+    if (!editName.trim()) return
 
-  const updated: ActionDefinitionDB = {
-    id,
-    name: editName,
-    tagIds: editTagIds,
-    ...editMetrics,
-    archived: false,
+    const updated: ActionDefinitionDB = {
+      id,
+      name: editName,
+      tagIds: editTagIds,
+      favourite: false,
+      ...editMetrics,
+      archived: false,
+    }
+
+    updateActionDefinition(updated)
+    setEditingId(null)
   }
-
-  updateActionDefinition(updated)
-  setEditingId(null)
-}
 
   function cancelEdit() {
     setEditingId(null)
@@ -142,6 +143,7 @@ export default function Page() {
     const newDef: Omit<ActionDefinitionDB, "id"> = {
       name,
       tagIds: selectedTagIds,
+      favourite: false,
       ...metrics,
       archived: false,
     }

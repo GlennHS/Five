@@ -5,17 +5,19 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import LoadingSpinner from "@/app/components/LoadingSpinner"
 import { AArrowDown, AArrowUp, ClockArrowDown, ClockArrowUp, Search } from "lucide-react"
 
-import { ActionDefinition, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
+import { ActionDefinition, ActionDefinitionDB, METRIC_KEYS, MetricKey, Tag } from "@/app/types"
 import { useApp } from "@/app/context/AppContext"
 import LogModal from "@/app/components/LogModal"
 import { TAG_COLOR_CLASSES } from "@/app/constants/Colors"
 import { useTracking } from "@/app/hooks/useTracking"
 import { useDebounce } from "@/app/hooks/useDebounce"
 import FullTrackCard from "@/app/components/Tracking/FullTrackCard"
+import { useToast } from "@/app/context/ToastContext"
 
 export default function Page() {
-  const { actions, actionDefinitions, tags, loading, addAction } = useApp()
+  const { actions, actionDefinitions, tags, loading, addAction, updateActionDefinition } = useApp()
   const { modal, trackingMethods } = useTracking(addAction)
+  const { showToast } = useToast()
   const [search, setSearch] = useState("")
   const searchBar = useRef<HTMLInputElement>(null)
   const [filterMetrics, setFilterMetrics] = useState<MetricKey[]>([])
@@ -37,6 +39,21 @@ export default function Page() {
 
     return map
   }, [actions])
+
+  function handleFavourite(def: ActionDefinition) {
+    const updated: ActionDefinitionDB = {
+      ...def,
+      tagIds: def.tags.map(t => t.id),
+      favourite: !def.favourite,
+      mind: def.mind ?? 0,
+      body: def.body ?? 0,
+      work: def.work ?? 0,
+      cash: def.cash ?? 0,
+      bond: def.bond ?? 0,
+    }
+    updateActionDefinition(updated)
+    showToast(def.favourite ? `Removed "${def.name}" from favourites` : `Added "${def.name}" to favourites`)
+  }
 
   useEffect(() => {
     const term = debouncedSearch.trim().toLowerCase()
@@ -63,13 +80,13 @@ export default function Page() {
 
     switch (sortType) {
       case 'alpha':
-        sortedDefs = filteredDefs.sort((a,b) => a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0)
+        sortedDefs = sortedDefs.sort((a,b) => a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0)
         break;
       case 'alpha-reverse':
-        sortedDefs = filteredDefs.sort((a,b) => a.name.toUpperCase() < b.name.toUpperCase() ? 1 : a.name.toUpperCase() > b.name.toUpperCase() ? -1 : 0)
+        sortedDefs = sortedDefs.sort((a,b) => a.name.toUpperCase() < b.name.toUpperCase() ? 1 : a.name.toUpperCase() > b.name.toUpperCase() ? -1 : 0)
         break;
       case 'chrono':
-        sortedDefs = [...filteredDefs].sort((a, b) => {
+        sortedDefs = [...sortedDefs].sort((a, b) => {
           const aTime = lastUsedMap.get(a.id) ?? 0
           const bTime = lastUsedMap.get(b.id) ?? 0
           return bTime - aTime // most recent first
@@ -77,7 +94,7 @@ export default function Page() {
         break;
 
       case 'chrono-reverse':
-        sortedDefs = [...filteredDefs].sort((a, b) => {
+        sortedDefs = [...sortedDefs].sort((a, b) => {
           const aTime = lastUsedMap.get(a.id) ?? 0
           const bTime = lastUsedMap.get(b.id) ?? 0
           return aTime - bTime
@@ -86,6 +103,8 @@ export default function Page() {
       default:
         break;
     }
+
+    sortedDefs = sortedDefs.sort((a,b) => a.favourite === b.favourite ? 0 : a.favourite ? -1 : 1)
 
     setFilteredActionDefinitions(sortedDefs)
 
@@ -175,6 +194,7 @@ export default function Page() {
             def={def}
             onLog={trackingMethods.handleQuickLog}
             onAdvancedLog={trackingMethods.handleAdvancedLog}
+            onFavourite={() => handleFavourite(def)}
             className={`${i % 2 === 0 ? 'bg-white' : 'bg-white'} track-card`}
           />
         ))}

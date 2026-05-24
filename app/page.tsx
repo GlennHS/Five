@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, Hash } from 'lucide-react';
 
-import { DailyMetric, METRIC_KEYS, SettingsSetupResult, type MetricKey } from '@/app/types';
+import { ActionDefinition, ActionDefinitionDB, DailyMetric, METRIC_KEYS, SettingsSetupResult, type MetricKey } from '@/app/types';
 
 import ActionCard from '@/app/components/ActionCards/ActionCard';
 import ActionCardList from '@/app/components/ActionCards/ActionCardList';
@@ -43,6 +43,8 @@ import { useNextStep } from 'nextstepjs';
 import { getDailyMetric } from './lib/metrics/getDailyMetric';
 import InsightsCarousel from './components/InsightsCarousel';
 import SimpleTrackCard from './components/Tracking/SimpleTrackCard';
+import { useToast } from './context/ToastContext';
+import ScrollFadeContainer from './components/ScrollFadeContainer';
 
 ChartJS.register(
   RadialLinearScale,
@@ -54,7 +56,8 @@ ChartJS.register(
 );
 
 export default function Home() {
-  const { actions, actionDefinitions, loading, addAction } = useApp()
+  const { actions, actionDefinitions, loading, updateActionDefinition, addAction } = useApp()
+  const { showToast } = useToast()
   const { modal, trackingMethods } = useTracking(addAction)
   const insights = useInsights(actions, actionDefinitions)
 
@@ -169,6 +172,23 @@ export default function Home() {
     return sorted.slice(0, 500)
   }, [actions, sortType, actionCountMap])
 
+  const sortedQuickLog = useMemo(() => {
+    return Array.from(actionCountMap.entries())
+      .sort((a, b) => {
+        const defA = actionDefinitions.find(d => d.id === a[0])
+        const defB = actionDefinitions.find(d => d.id === b[0])
+        const favA = defA?.favourite ? 1 : 0
+        const favB = defB?.favourite ? 1 : 0
+
+        // Favourites always win, then sort by count within each group
+        if (favB !== favA) return favB - favA
+        return b[1] - a[1]
+      })
+      .slice(0, 15)
+      .map(([id]) => actionDefinitions.find(d => d.id === id))
+      .filter((d): d is ActionDefinition => d !== undefined)
+  }, [actionCountMap, actionDefinitions])
+
   const handleMetricCardClick = (metricName: MetricKey | "total") => {
     if (metricName === "total") {
       setHighlightedMetric(null);
@@ -189,6 +209,21 @@ export default function Home() {
       dayHasNoLog = matchingDays.length === 0
     }
     return daysBack - 1
+  }
+
+  function handleFavourite(def: ActionDefinition) {
+    const updated: ActionDefinitionDB = {
+      ...def,
+      tagIds: def.tags.map(t => t.id),
+      favourite: !def.favourite,
+      mind: def.mind ?? 0,
+      body: def.body ?? 0,
+      work: def.work ?? 0,
+      cash: def.cash ?? 0,
+      bond: def.bond ?? 0,
+    }
+    updateActionDefinition(updated)
+    showToast(def.favourite ? `Removed "${def.name}" from favourites` : `Added "${def.name}" to favourites`)
   }
 
   useEffect(() => {
@@ -278,22 +313,17 @@ export default function Home() {
         { actions.length > 0 && (
           <section>
             <SectionDivider text='Quick Log' />
-            <div>
-              {Array.from(actionCountMap.entries())
-                .sort((a, b) => b[1] - a[1]) // sort by count desc
-                .slice(0, 5)
-                .map(m => actionDefinitions.find(d => d.id === m[0]))
-                .filter(d => d !== undefined)
-                .map((def, i) => (
-                  <SimpleTrackCard
-                    key={def.id}
-                    def={def}
-                    onLog={trackingMethods.handleQuickLog}
-                    onAdvancedLog={trackingMethods.handleAdvancedLog}
-                    className={`${i === 0 && 'border-t-2'} ${i === 4 && 'border-b-2'}`}
-                  />
-                ))}
-            </div>
+            <ScrollFadeContainer maxHeight='max-h-40'>
+              {sortedQuickLog.map((def) => (
+                <SimpleTrackCard
+                  key={def.id}
+                  def={def}
+                  onLog={trackingMethods.handleQuickLog}
+                  onAdvancedLog={trackingMethods.handleAdvancedLog}
+                  onFavourite={() => handleFavourite(def)}
+                />
+              ))}
+            </ScrollFadeContainer>
           </section>
         )}
 
@@ -315,7 +345,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <ActionCardList>
+          <ScrollFadeContainer maxHeight="max-h-60" className="flex flex-col gap-12">
             {actionsToShow
               .map(action => {
                 const def = actionDefinitions.find(def => def.id === action.actionId)
@@ -332,13 +362,13 @@ export default function Home() {
                   return
               }
             )}
-          </ActionCardList>
+          </ScrollFadeContainer>
         </section> }
 
         <section className="w-full mt-24">
           <div className='w-full flex flex-col items-center mb-1'>
             <SectionDivider />
-            <blockquote className='italic px-12 text-black opacity-50 text-center text-sm'>{ quote }</blockquote>
+            <blockquote className='italic px-12 pb-4 text-black opacity-50 text-center text-sm'>{ quote }</blockquote>
           </div>
         </section>
       </main>

@@ -38,6 +38,7 @@ export type ActionDefinition = {
   id: number
   name: string,
   tags: Tag[],
+  favourite: boolean,
   archived: boolean
 } & Partial<FiveMetric>
 
@@ -71,6 +72,7 @@ export interface ActionDefinitionDB {
   id: number
   name: string
   tagIds: number[]
+  favourite: boolean
   mind: number
   body: number
   work: number

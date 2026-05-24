@@ -55,65 +55,40 @@ export default function Navbar({ pageScrolledToTop, scrollDirection } : NavbarPr
   }, []);
 
   return (
-    <>
-      <nav className={`w-full border-t-2 bg-white border-slate-600 fixed bottom-0 left-0 h-16 z-40 flex flex-col justify-center items-center transition-opacity duration-300 ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-        <div className="w-full flex flex-col items-center gap-2 px-4 py-2">
-          <div className="w-full">
-            <ul className="h-full flex items-center justify-between text-base gap-4">
-              <li>
-                <NavLink
-                  href="/"
-                  aria-label="Go to home"
-                >
-                  <House className={pathname === '/' ? 'text-mind' : ''} />
-                  <span className={pathname === '/' ? 'text-mind' : ''}>Home</span>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  href="/track"
-                  aria-label="Go to track"
-                >
-                  <ListChecks className={pathname === '/track' ? 'text-body' : ''}/>
-                  <span className={pathname === '/track' ? 'text-body' : ''}>Track</span>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  href="/reports"
-                  aria-label="Go to Reports"
-                >
-                  <ClipboardList className={/\/reports/.test(pathname) ? 'text-cash' : ''}/>
-                  <span className={/\/reports/.test(pathname) ? 'text-cash' : ''}>Reports</span>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  href="/metrics"
-                  aria-label="Go to metrics"
-                >
-                  <ChartColumnIncreasing className={/\/metrics/.test(pathname) ? 'text-work' : ''}/>
-                  <span className={/\/metrics/.test(pathname) ? 'text-work' : ''}>Metrics</span>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  href="/settings"
-                  aria-label="Go to settings"
-                >
-                  <Cog className={/\/settings/.test(pathname) ? 'text-bond' : ''}/>
-                  <span className={/\/settings/.test(pathname) ? 'text-bond' : ''}>Settings</span>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </>
+    <nav className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-16 z-40 bg-white border-t-2 border-slate-600 flex items-center transition-opacity duration-300 ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+      <ul className="w-full h-full flex items-center justify-between px-4 gap-4 text-base">
+        <li>
+          <NavLink href="/" aria-label="Go to home">
+            <House className={pathname === '/' ? 'text-mind' : ''} />
+            <span className={pathname === '/' ? 'text-mind' : ''}>Home</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink href="/track" aria-label="Go to track">
+            <ListChecks className={pathname === '/track' ? 'text-body' : ''} />
+            <span className={pathname === '/track' ? 'text-body' : ''}>Track</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink href="/reports" aria-label="Go to Reports">
+            <ClipboardList className={/\/reports/.test(pathname) ? 'text-cash' : ''} />
+            <span className={/\/reports/.test(pathname) ? 'text-cash' : ''}>Reports</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink href="/metrics" aria-label="Go to metrics">
+            <ChartColumnIncreasing className={/\/metrics/.test(pathname) ? 'text-work' : ''} />
+            <span className={/\/metrics/.test(pathname) ? 'text-work' : ''}>Metrics</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink href="/settings" aria-label="Go to settings">
+            <Cog className={/\/settings/.test(pathname) ? 'text-bond' : ''} />
+            <span className={/\/settings/.test(pathname) ? 'text-bond' : ''}>Settings</span>
+          </NavLink>
+        </li>
+      </ul>
+    </nav>
   );
 }
 

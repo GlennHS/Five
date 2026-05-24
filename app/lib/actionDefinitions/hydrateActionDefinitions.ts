@@ -15,6 +15,7 @@ function hydrateActionDefinitions(
       id: def.id!,
       name: def.name,
       tags: hydratedTags.length > 0 ? hydratedTags : [],
+      favourite: def.favourite,
       mind: def.mind,
       body: def.body,
       work: def.work,
